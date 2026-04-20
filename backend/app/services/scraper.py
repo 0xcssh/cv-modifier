@@ -1,5 +1,7 @@
 import logging
+import re
 from dataclasses import dataclass
+from urllib.parse import parse_qs, urlparse
 
 import httpx
 from bs4 import BeautifulSoup
@@ -40,6 +42,24 @@ BLOCK_PATTERNS = [
 def _is_blocked_page(text: str) -> bool:
     lower = text.lower()
     return sum(1 for p in BLOCK_PATTERNS if p in lower) >= 2
+
+
+def _normalize_url(url: str) -> str:
+    """Transform common URL formats to direct job URLs for better scraping."""
+    parsed = urlparse(url)
+
+    # LinkedIn: /jobs/collections/... or /jobs/search/... with currentJobId
+    if "linkedin.com" in parsed.netloc:
+        params = parse_qs(parsed.query)
+        job_id = params.get("currentJobId", [None])[0]
+        if job_id:
+            return f"https://www.linkedin.com/jobs/view/{job_id}/"
+        # Extract ID from /jobs/view/ID/... URLs as well
+        match = re.search(r"/jobs/view/(\d+)", parsed.path)
+        if match:
+            return f"https://www.linkedin.com/jobs/view/{match.group(1)}/"
+
+    return url
 
 
 @dataclass
@@ -141,6 +161,8 @@ async def _scrape_with_playwright(url: str) -> ScrapingResult:
 
 async def scrape_job_offer(url: str) -> ScrapingResult:
     """Scrape a job offer URL. Tries requests first, then Playwright as fallback."""
+    url = _normalize_url(url)
+
     # 1. Try httpx (fast)
     result = await _scrape_with_requests(url)
     if result.success:
