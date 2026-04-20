@@ -102,12 +102,15 @@ export default function ProfilePage() {
     }
     setUploadingPhoto(true);
     try {
+      // Show local preview immediately
+      const localUrl = URL.createObjectURL(file);
+      setPhotoUrl(localUrl);
       await api.uploadPhoto(file);
-      setPhotoUrl(URL.createObjectURL(file));
       await refreshProfile();
       toast.success("Photo mise à jour");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Erreur lors de l'upload");
+      setPhotoUrl(null);
     } finally {
       setUploadingPhoto(false);
     }
@@ -247,14 +250,13 @@ export default function ProfilePage() {
           <h2 className="font-semibold text-slate-900 mb-4">Photo de profil</h2>
           <div className="flex items-center gap-6">
             <div className="relative">
-              {photoUrl || profile?.photo_path ? (
+              {photoUrl ? (
                 <div className="w-24 h-24 rounded-full overflow-hidden bg-slate-100 border-2 border-slate-200">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={photoUrl || `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/profile/photo?t=${Date.now()}`}
+                    src={photoUrl}
                     alt="Photo de profil"
                     className="w-full h-full object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                   />
                 </div>
               ) : (
