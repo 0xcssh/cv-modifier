@@ -113,10 +113,16 @@ async def upload_photo(
     user: User = Depends(current_active_user),
     db: AsyncSession = Depends(get_db),
 ):
-    profile = await _get_profile(user, db)
-
     if file.size and file.size > 5 * 1024 * 1024:
         raise HTTPException(413, "Photo trop volumineuse (max 5 Mo)")
+
+    # Get or create profile
+    result = await db.execute(select(Profile).where(Profile.user_id == user.id))
+    profile = result.scalar_one_or_none()
+    if not profile:
+        profile = Profile(user_id=user.id, full_name="")
+        db.add(profile)
+        await db.flush()
 
     content = await file.read()
     key = f"photos/{user.id}/{file.filename}"
@@ -291,24 +297,29 @@ async def confirm_extracted_profile(
     db: AsyncSession = Depends(get_db),
 ):
     """Save the confirmed/edited extracted profile data."""
+    # Preserve existing photo_path if any
+    existing_photo_path = None
+
     # Delete existing profile if any
     result = await db.execute(
         select(Profile).where(Profile.user_id == user.id)
     )
     existing = result.scalar_one_or_none()
     if existing:
+        existing_photo_path = existing.photo_path
         await db.delete(existing)
         await db.flush()
 
-    # Check if a photo was extracted earlier
+    # Check if a photo was extracted from a CV upload
     storage = get_storage()
-    photo_path = None
-    try:
-        photo_key = f"photos/{user.id}/cv_photo.jpg"
-        await storage.get(photo_key)
-        photo_path = photo_key
-    except FileNotFoundError:
-        pass
+    photo_path = existing_photo_path
+    if not photo_path:
+        try:
+            photo_key = f"photos/{user.id}/cv_photo.jpg"
+            await storage.get(photo_key)
+            photo_path = photo_key
+        except FileNotFoundError:
+            pass
 
     # Create new profile
     profile = Profile(
