@@ -39,6 +39,10 @@ class Settings(BaseSettings):
     signup_credits: int = 3
     cost_per_generation: float = 0.08
 
+    # Email (Resend)
+    resend_api_key: str = ""
+    email_from: str = "CV Modifier <onboarding@resend.dev>"
+
     # PDF layout
     page_width: int = 210
     page_height: int = 297

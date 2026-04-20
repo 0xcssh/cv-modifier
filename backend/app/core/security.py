@@ -24,8 +24,16 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     verification_token_secret = settings.secret_key
 
     async def on_after_register(self, user: User, request=None):
-        # Give signup credits
-        user.credits = settings.signup_credits
+        from app.services.email_service import send_welcome_email
+        send_welcome_email(user.email)
+
+    async def on_after_forgot_password(self, user: User, token: str, request=None):
+        from app.services.email_service import send_reset_password_email
+        send_reset_password_email(user.email, token)
+
+    async def on_after_request_verify(self, user: User, token: str, request=None):
+        from app.services.email_service import send_verification_email
+        send_verification_email(user.email, token)
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):

@@ -75,6 +75,11 @@ export default function LoginPage() {
                 required
                 className="mt-1.5 h-12"
               />
+              <div className="text-right mt-2">
+                <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                  Mot de passe oublié ?
+                </Link>
+              </div>
             </div>
             <Button
               type="submit"
