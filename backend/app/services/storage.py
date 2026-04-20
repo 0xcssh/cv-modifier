@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from pathlib import Path
 from typing import Protocol
@@ -37,5 +38,71 @@ class LocalStorage:
             path.unlink()
 
 
+class S3Storage:
+    """S3-compatible storage (AWS S3, Cloudflare R2, MinIO, etc.)."""
+
+    def __init__(
+        self,
+        bucket: str,
+        endpoint_url: str,
+        access_key: str,
+        secret_key: str,
+        region: str = "auto",
+    ):
+        import boto3
+        from botocore.config import Config
+
+        self.bucket = bucket
+        self.client = boto3.client(
+            "s3",
+            endpoint_url=endpoint_url,
+            aws_access_key_id=access_key,
+            aws_secret_access_key=secret_key,
+            region_name=region,
+            config=Config(signature_version="s3v4"),
+        )
+
+    async def put(self, key: str, data: bytes) -> None:
+        await asyncio.to_thread(
+            self.client.put_object, Bucket=self.bucket, Key=key, Body=data
+        )
+
+    async def get(self, key: str) -> bytes:
+        try:
+            response = await asyncio.to_thread(
+                self.client.get_object, Bucket=self.bucket, Key=key
+            )
+            return response["Body"].read()
+        except self.client.exceptions.NoSuchKey:
+            raise FileNotFoundError(f"File not found: {key}")
+        except Exception as e:
+            if "NoSuchKey" in str(e) or "404" in str(e):
+                raise FileNotFoundError(f"File not found: {key}")
+            raise
+
+    async def delete(self, key: str) -> None:
+        await asyncio.to_thread(
+            self.client.delete_object, Bucket=self.bucket, Key=key
+        )
+
+
+_storage_instance: StorageBackend | None = None
+
+
 def get_storage() -> StorageBackend:
-    return LocalStorage()
+    global _storage_instance
+    if _storage_instance is not None:
+        return _storage_instance
+
+    if settings.storage_backend == "s3":
+        _storage_instance = S3Storage(
+            bucket=settings.s3_bucket,
+            endpoint_url=settings.s3_endpoint_url,
+            access_key=settings.s3_access_key,
+            secret_key=settings.s3_secret_key,
+            region=settings.s3_region,
+        )
+    else:
+        _storage_instance = LocalStorage()
+
+    return _storage_instance

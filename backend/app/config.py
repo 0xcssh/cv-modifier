@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     debug: bool = False
     secret_key: str = "CHANGE-ME-IN-PRODUCTION"
     frontend_url: str = "http://localhost:3000"
+    cors_origins: str = "http://localhost:3000"  # comma-separated list
 
     # Database
     database_url: str = "sqlite+aiosqlite:///./cv_modifier.db"
@@ -26,6 +27,13 @@ class Settings(BaseSettings):
     # Storage
     storage_backend: str = "local"  # "local" or "s3"
     storage_local_dir: str = "./storage"
+
+    # S3 / Cloudflare R2 (only if storage_backend="s3")
+    s3_bucket: str = ""
+    s3_endpoint_url: str = ""
+    s3_access_key: str = ""
+    s3_secret_key: str = ""
+    s3_region: str = "auto"
 
     # Credits
     signup_credits: int = 3
