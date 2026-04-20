@@ -25,6 +25,22 @@ HEADERS = {
 
 MAX_TEXT_LENGTH = 8000
 
+BLOCK_PATTERNS = [
+    "requête bloquée",
+    "access denied",
+    "cloudflare",
+    "ray id",
+    "robot check",
+    "verify you are human",
+    "unusual traffic",
+    "captcha",
+]
+
+
+def _is_blocked_page(text: str) -> bool:
+    lower = text.lower()
+    return sum(1 for p in BLOCK_PATTERNS if p in lower) >= 2
+
 
 @dataclass
 class ScrapingResult:
@@ -72,6 +88,12 @@ async def _scrape_with_requests(url: str) -> ScrapingResult:
                 error="Contenu insuffisant (site SPA probable)",
             )
 
+        if _is_blocked_page(text):
+            return ScrapingResult(
+                text="", char_count=0, method="requests", success=False,
+                error="Le site bloque l'extraction automatique. Copiez-collez le texte de l'offre manuellement.",
+            )
+
         return ScrapingResult(
             text=text, char_count=len(text), method="requests", success=True,
         )
@@ -100,6 +122,12 @@ async def _scrape_with_playwright(url: str) -> ScrapingResult:
             return ScrapingResult(
                 text="", char_count=0, method="playwright", success=False,
                 error="Contenu insuffisant même avec navigateur",
+            )
+
+        if _is_blocked_page(text):
+            return ScrapingResult(
+                text="", char_count=0, method="playwright", success=False,
+                error="Le site bloque l'extraction automatique (Indeed, LinkedIn). Copiez-collez le texte de l'offre manuellement dans le champ ci-dessous.",
             )
 
         return ScrapingResult(
