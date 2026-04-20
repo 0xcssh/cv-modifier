@@ -1,0 +1,117 @@
+PROFILE = {
+    "name": "Anthony Awdi",
+    "education": [
+        {
+            "title": "Master en Management & Stratégie d'Entreprise",
+            "school": "ISTEF",
+            "location": "Toulouse, France",
+            "dates": "Sept. 2023 - Sept. 2024",
+        },
+        {
+            "title": "Bachelor Chef De Projet Digital",
+            "school": "École WIS",
+            "location": "Toulouse",
+            "dates": "Sept. 2022 - Juil. 2023",
+        },
+        {
+            "title": "BTS Négociation et Digitalisation de la Relation Client",
+            "school": "École Vidal",
+            "location": "Toulouse",
+            "dates": "Sept. 2020 - Juin 2022",
+        },
+    ],
+    "experiences": [
+        {
+            "title": "Directeur Général",
+            "company": "AY CLEAN",
+            "location": "Toulouse",
+            "dates": "Depuis avr. 2025",
+            "is_locked": False,
+            "bullets": [
+                "Fondateur de la société de nettoyage AY CLEAN, sous-traitant de plusieurs grandes marques automobiles, d'Airbus et de Thales.",
+                "Prospection client",
+                "Gestion RH",
+                "Management d'équipe",
+                "Facturation",
+                "Relation client",
+            ],
+        },
+        {
+            "title": "Project Manager Officer",
+            "company": "Devoteam",
+            "location": "Toulouse, France",
+            "dates": "Sept. 2023 - Sept. 2024",
+            "is_locked": False,
+            "bullets": [
+                "Support au chef de projets",
+                "Analyse des KPIs & Création de Google Sheets pour pilotage",
+                "Suivis et contrôle des comptes rendus d'activités",
+            ],
+        },
+        {
+            "title": "Assistant Web-Marketing",
+            "company": "FINVENS",
+            "location": "Toulouse",
+            "dates": "Sept. 2022 - Sept. 2023",
+            "is_locked": False,
+            "bullets": [
+                "E-mail marketing & marketing automation",
+                "SEA/SEO",
+                "Community Management",
+            ],
+        },
+        {
+            "title": "Alternant Conseiller E-commerce",
+            "company": "Carrefour Proximité",
+            "location": "Toulouse",
+            "dates": "Avr. 2021 - Sept. 2021",
+            "is_locked": False,
+            "bullets": [
+                "Vente de services E-commerce (Drive piéton, Uber Eats, Deliveroo et Livraison Express).",
+                "Formation aux services E-commerce.",
+                "Suivis personnalisés.",
+            ],
+        },
+        {
+            "title": "Fondateur de plusieurs boutiques en ligne",
+            "company": "Meara™, Lumidor®, BeautyBody®, Dreamcut®, MagicGloves™",
+            "location": "Toulouse",
+            "dates": "Depuis avr. 2020",
+            "is_locked": False,
+            "bullets": [
+                "Création de boutique en ligne avec Shopify",
+                "Sourcing produit",
+                "Copywriting",
+                "Gestion de campagnes d'acquisition de trafic sur Google Ads, Facebook Ads et TikTok Ads",
+            ],
+        },
+        {
+            "title": "Fondateur Restaurant",
+            "company": "Simplement Libanais",
+            "location": "Toulouse, France",
+            "dates": "Mai 2019 - 2020",
+            "is_locked": False,
+            "bullets": [
+                "Gestion de Stock & Management",
+            ],
+        },
+    ],
+    "skills": [
+        "Power BI", "VBA", "Google Ads", "Facebook Ads", "TikTok Ads",
+        "Klaviyo", "Getresponse", "Customer.io", "Pack Office",
+        "Shopify", "WordPress", "HTML", "Canva",
+    ],
+    "languages": ["Anglais", "Espagnol", "Arabe littéraire"],
+    "soft_skills": [
+        "Persévérant", "Ambitieux", "Rigoureux", "Autonome",
+        "Sens de l'initiative", "Organisé", "Pragmatique",
+    ],
+    "contact": {
+        "email": "awdianthony@gmail.com",
+        "phone": "07 68 45 43 86",
+        "address": "83 avenue de Lombez, 31300 Toulouse",
+        "age": "26 ans",
+        "permis": "Permis B / B1",
+        "vehicule": "Véhicule personnel",
+    },
+}

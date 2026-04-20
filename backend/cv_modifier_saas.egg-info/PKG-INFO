@@ -1,0 +1,25 @@
+Metadata-Version: 2.4
+Name: cv-modifier-saas
+Version: 0.1.0
+Summary: SaaS pour adapter automatiquement CV et lettres de motivation aux offres d'emploi
+Requires-Python: >=3.12
+Requires-Dist: fastapi>=0.115.0
+Requires-Dist: uvicorn[standard]>=0.34.0
+Requires-Dist: sqlalchemy[asyncio]>=2.0.36
+Requires-Dist: aiosqlite>=0.20.0
+Requires-Dist: alembic>=1.14.0
+Requires-Dist: fastapi-users[sqlalchemy]>=14.0.0
+Requires-Dist: anthropic>=0.87.0
+Requires-Dist: httpx>=0.28.0
+Requires-Dist: beautifulsoup4>=4.13.0
+Requires-Dist: fpdf2>=2.8.7
+Requires-Dist: python-dotenv>=1.1.0
+Requires-Dist: pydantic-settings>=2.7.0
+Requires-Dist: pypdf>=5.0.0
+Requires-Dist: playwright>=1.49.0
+Requires-Dist: python-multipart>=0.0.18
+Requires-Dist: slowapi>=0.1.9
+Provides-Extra: prod
+Requires-Dist: asyncpg>=0.30.0; extra == "prod"
+Requires-Dist: boto3>=1.35.0; extra == "prod"
+Requires-Dist: stripe>=12.0.0; extra == "prod"
