@@ -11,15 +11,16 @@ export default function LandingPage() {
           <Link href="/" className="text-white font-bold text-xl">
             CV <span className="text-blue-400">Modifier</span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link href="/login">
-              <Button variant="ghost" className="text-slate-300 hover:text-white">
+              <Button variant="ghost" className="text-slate-300 hover:text-white text-sm sm:text-base">
                 Connexion
               </Button>
             </Link>
             <Link href="/register">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                Commencer gratuitement
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base">
+                <span className="sm:hidden">S&apos;inscrire</span>
+                <span className="hidden sm:inline">Commencer gratuitement</span>
               </Button>
             </Link>
           </div>
