@@ -200,6 +200,20 @@ async def run_generation_pipeline(
                 f"Generation {generation_id} completed: {adapted.get('titre_poste', '?')} @ {adapted.get('nom_entreprise', '?')}"
             )
 
+            # Credit-level notifications — fire-and-forget, failures must not block the pipeline.
+            try:
+                await db.refresh(user, ["credits"])
+                if user.credits == 1:
+                    from app.services.email_service import send_low_credits_email
+                    send_low_credits_email(user.email, 1)
+                elif user.credits == 0:
+                    from app.services.email_service import send_no_credits_email
+                    send_no_credits_email(user.email)
+            except Exception:
+                logger.exception(
+                    f"Failed to send credit notification for user {user_id}"
+                )
+
         except Exception as e:
             generation.status = "failed"
             generation.error_message = _sanitize_error(e)

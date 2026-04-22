@@ -40,6 +40,10 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         from app.services.email_service import send_reset_password_email
         send_reset_password_email(user.email, token)
 
+    async def on_after_reset_password(self, user: User, request=None):
+        from app.services.email_service import send_password_changed_email
+        send_password_changed_email(user.email)
+
     async def on_after_request_verify(self, user: User, token: str, request=None):
         from app.services.email_service import send_verification_email
         send_verification_email(user.email, token)

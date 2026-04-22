@@ -119,3 +119,76 @@ def send_reset_password_email(to: str, token: str) -> None:
         "Réinitialiser votre mot de passe",
     )
     _send(to, "Réinitialisation de votre mot de passe — CV Modifier", html)
+
+
+def send_password_changed_email(to: str) -> None:
+    html = _wrap(
+        f"""
+        <h1>Votre mot de passe a été modifié 🔒</h1>
+        <p>Nous vous confirmons que le mot de passe de votre compte CV Modifier vient d'être changé.</p>
+        <p>Si vous êtes à l'origine de cette modification, aucune action n'est requise.</p>
+        <p><strong>Vous ne reconnaissez pas cette action ?</strong> Répondez immédiatement à cet email ou contactez-nous — votre compte pourrait être compromis.</p>
+        <a href="{settings.frontend_url}/login" class="btn">Se connecter</a>
+        """,
+        "Mot de passe modifié",
+    )
+    _send(to, "Votre mot de passe a été modifié — CV Modifier", html)
+
+
+def send_low_credits_email(to: str, credits_left: int) -> None:
+    html = _wrap(
+        f"""
+        <h1>Il ne vous reste plus qu'{credits_left} crédit</h1>
+        <p>Vous avez utilisé presque tous vos crédits CV Modifier.</p>
+        <p>Pour continuer à générer des CV adaptés à chaque offre, rechargez votre compte dès maintenant.</p>
+        <a href="{settings.frontend_url}/dashboard/upgrade" class="btn">Recharger mes crédits</a>
+        <p class="muted">Un crédit = 1 CV + 1 lettre de motivation adaptés par l'IA.</p>
+        """,
+        "Crédits bientôt épuisés",
+    )
+    _send(to, f"Plus qu'{credits_left} crédit — rechargez avant votre prochaine candidature", html)
+
+
+def send_no_credits_email(to: str) -> None:
+    html = _wrap(
+        f"""
+        <h1>Vos crédits sont épuisés</h1>
+        <p>Vous n'avez plus de crédits disponibles pour générer de nouveaux CV.</p>
+        <p>Ne ratez pas votre prochaine opportunité — rechargez votre compte en quelques secondes :</p>
+        <a href="{settings.frontend_url}/dashboard/upgrade" class="btn">Recharger mes crédits</a>
+        <p class="muted">Vos anciens CV générés restent accessibles dans votre historique.</p>
+        """,
+        "Crédits épuisés",
+    )
+    _send(to, "Vos crédits sont épuisés — rechargez pour continuer", html)
+
+
+def send_monthly_recap_email(
+    to: str,
+    month_label: str,
+    generation_count: int,
+    companies: list[str],
+) -> None:
+    if generation_count == 0:
+        return  # Don't email inactive users
+
+    companies_html = ""
+    if companies:
+        top_companies = companies[:5]
+        items = "".join(f"<li>{c}</li>" for c in top_companies)
+        companies_html = f"""
+        <p>Quelques-unes des entreprises ciblées :</p>
+        <ul>{items}</ul>
+        """
+
+    html = _wrap(
+        f"""
+        <h1>Votre mois sur CV Modifier — {month_label}</h1>
+        <p>Ce mois-ci, vous avez généré <strong>{generation_count} CV{'s' if generation_count > 1 else ''} adapté{'s' if generation_count > 1 else ''}</strong>.</p>
+        {companies_html}
+        <p>Continuez comme ça — chaque candidature personnalisée augmente vos chances d'être rappelé·e.</p>
+        <a href="{settings.frontend_url}/dashboard/generate" class="btn">Générer un nouveau CV</a>
+        """,
+        f"Votre récapitulatif {month_label}",
+    )
+    _send(to, f"Votre mois sur CV Modifier — {month_label}", html)
