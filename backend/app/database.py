@@ -8,7 +8,18 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-engine = create_async_engine(settings.database_url, echo=settings.debug)
+engine = create_async_engine(
+    settings.database_url,
+    echo=settings.debug,
+    # Neon ferme les connexions inactives après quelques minutes. pool_pre_ping
+    # envoie un SELECT 1 avant checkout pour jeter une connexion morte au
+    # lieu de la donner au requêtant. pool_recycle force la recréation après
+    # 30 min, en filet de sécurité.
+    pool_pre_ping=True,
+    pool_recycle=1800,
+    pool_size=5,
+    max_overflow=10,
+)
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
