@@ -1,15 +1,16 @@
 import logging
 import uuid
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from fastapi.responses import Response
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import current_active_user
 from app.database import get_db
 import re
 
+from app.core.limiter import limiter
 from app.models import Generation, Profile, User
 
 logger = logging.getLogger(__name__)
@@ -43,19 +44,17 @@ router = APIRouter(prefix="/generations", tags=["generations"])
 
 
 @router.post("", response_model=GenerationRead, status_code=201)
+@limiter.limit("10/hour")
 async def create_generation(
-    request: GenerationRequest,
+    request: Request,
+    payload: GenerationRequest,
     background_tasks: BackgroundTasks,
     user: User = Depends(current_active_user),
     db: AsyncSession = Depends(get_db),
 ):
     """Start a new CV generation. Runs in background."""
-    if not request.job_url and not request.job_text:
+    if not payload.job_url and not payload.job_text:
         raise HTTPException(400, "Fournissez une URL ou le texte de l'offre.")
-
-    # Check credits
-    if user.credits <= 0:
-        raise HTTPException(402, "Crédits insuffisants.")
 
     # Check profile exists
     result = await db.execute(
@@ -64,11 +63,23 @@ async def create_generation(
     if not result.scalar_one_or_none():
         raise HTTPException(400, "Créez d'abord votre profil avant de générer.")
 
+    # Atomic credit claim — prevents race where two concurrent requests both see credits>0.
+    claim = await db.execute(
+        update(User)
+        .where(User.id == user.id, User.credits > 0)
+        .values(credits=User.credits - 1)
+        .returning(User.credits)
+    )
+    if claim.first() is None:
+        await db.rollback()
+        raise HTTPException(402, "Crédits insuffisants.")
+    await db.commit()
+
     # Create generation record
     generation = Generation(
         user_id=user.id,
-        job_url=request.job_url,
-        job_text=request.job_text,
+        job_url=payload.job_url,
+        job_text=payload.job_text,
         status="pending",
     )
     db.add(generation)
@@ -80,8 +91,8 @@ async def create_generation(
         run_generation_pipeline,
         generation.id,
         user.id,
-        request.job_url,
-        request.job_text,
+        payload.job_url,
+        payload.job_text,
     )
 
     return generation
@@ -309,9 +320,13 @@ async def delete_generation(
 # --- Scraping preview ---
 
 @router.post("/scrape", response_model=ScrapeResponse, tags=["jobs"])
-async def scrape_preview(request: ScrapeRequest):
+@limiter.limit("20/minute")
+async def scrape_preview(request: Request, payload: ScrapeRequest):
     """Scrape a job URL and return the text preview (no credit cost)."""
-    result = await scrape_job_offer(request.url)
+    try:
+        result = await scrape_job_offer(payload.url)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
     return ScrapeResponse(
         text=result.text,
         char_count=result.char_count,

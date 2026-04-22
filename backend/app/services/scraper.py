@@ -1,5 +1,8 @@
+import asyncio
+import ipaddress
 import logging
 import re
+import socket
 from dataclasses import dataclass
 from urllib.parse import parse_qs, urlparse
 
@@ -7,6 +10,46 @@ import httpx
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
+
+
+async def _validate_url(url: str) -> None:
+    """Reject non-http(s) schemes and hosts resolving to private/loopback/link-local IPs (SSRF guard)."""
+    if not isinstance(url, str) or not url.strip():
+        raise ValueError("URL non autorisée.")
+
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError("URL non autorisée.")
+
+    hostname = parsed.hostname
+    if not hostname or "." not in hostname:
+        raise ValueError("URL non autorisée.")
+
+    try:
+        infos = await asyncio.to_thread(
+            socket.getaddrinfo, hostname, None, 0, socket.SOCK_STREAM
+        )
+    except socket.gaierror:
+        raise ValueError("URL non autorisée.")
+
+    if not infos:
+        raise ValueError("URL non autorisée.")
+
+    for info in infos:
+        addr = info[4][0]
+        try:
+            ip = ipaddress.ip_address(addr.split("%", 1)[0])
+        except ValueError:
+            raise ValueError("URL non autorisée.")
+        if (
+            ip.is_private
+            or ip.is_loopback
+            or ip.is_link_local
+            or ip.is_multicast
+            or ip.is_reserved
+            or ip.is_unspecified
+        ):
+            raise ValueError("URL non autorisée.")
 
 HEADERS = {
     "User-Agent": (
@@ -161,7 +204,10 @@ async def _scrape_with_playwright(url: str) -> ScrapingResult:
 
 async def scrape_job_offer(url: str) -> ScrapingResult:
     """Scrape a job offer URL. Tries requests first, then Playwright as fallback."""
+    await _validate_url(url)
     url = _normalize_url(url)
+    # Re-validate: normalization may change the host (e.g. LinkedIn collections → view).
+    await _validate_url(url)
 
     # 1. Try httpx (fast)
     result = await _scrape_with_requests(url)

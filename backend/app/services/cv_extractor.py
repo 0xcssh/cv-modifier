@@ -54,9 +54,16 @@ async def extract_profile_from_pdf(pdf_bytes: bytes) -> dict:
     # 1. Extract text from PDF
     import io
     reader = PdfReader(io.BytesIO(pdf_bytes))
+    if len(reader.pages) > 10:
+        raise ValueError("PDF trop long (max 10 pages).")
+
     text_parts = []
     for page in reader.pages:
-        text = page.extract_text()
+        try:
+            text = page.extract_text()
+        except Exception as e:
+            logger.warning("Failed to extract text from a PDF page: %s", e)
+            continue
         if text:
             text_parts.append(text)
 
@@ -108,15 +115,22 @@ def extract_photo_from_pdf(pdf_bytes: bytes) -> bytes | None:
     import io
 
     reader = PdfReader(io.BytesIO(pdf_bytes))
+    if len(reader.pages) > 10:
+        raise ValueError("PDF trop long (max 10 pages).")
+
     best_image: bytes | None = None
     best_size = 0
 
     for page in reader.pages:
-        for image in page.images:
-            image_data = image.data
-            if len(image_data) > best_size:
-                best_size = len(image_data)
-                best_image = image_data
+        try:
+            for image in page.images:
+                image_data = image.data
+                if len(image_data) > best_size:
+                    best_size = len(image_data)
+                    best_image = image_data
+        except Exception as e:
+            logger.warning("Failed to extract images from a PDF page: %s", e)
+            continue
 
     if best_image and best_size > 1000:
         return best_image

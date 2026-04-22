@@ -2,7 +2,7 @@ import logging
 import re
 import uuid
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
@@ -152,8 +152,7 @@ async def run_generation_pipeline(
             generation.cover_letter_pdf_path = letter_key
             generation.status = "completed"
 
-            # Step 5: Deduct credit
-            user.credits -= 1
+            # Ledger entry only — credit was already atomically claimed by the API endpoint.
             db.add(
                 CreditTransaction(
                     user_id=user_id,
@@ -173,3 +172,24 @@ async def run_generation_pipeline(
             generation.error_message = str(e)
             await db.commit()
             logger.exception(f"Generation {generation_id} failed")
+
+            # Refund the credit atomically so a failed generation doesn't cost the user.
+            try:
+                await db.execute(
+                    update(User)
+                    .where(User.id == user_id)
+                    .values(credits=User.credits + 1)
+                )
+                db.add(
+                    CreditTransaction(
+                        user_id=user_id,
+                        amount=1,
+                        reason="generation_refund",
+                        generation_id=generation_id,
+                    )
+                )
+                await db.commit()
+            except Exception:
+                logger.exception(
+                    f"Refund failed for generation {generation_id} (user {user_id})"
+                )

@@ -1,10 +1,13 @@
+import io
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File
 from fastapi.responses import Response
+from PIL import Image, ImageOps
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.limiter import limiter
 from app.core.security import current_active_user
 from app.database import get_db
 from app.models import Education, Experience, Profile, User
@@ -136,9 +139,32 @@ async def upload_photo(
         await db.flush()
 
     content = await file.read()
-    key = f"photos/{user.id}/{file.filename}"
+
+    # Validate via Pillow (magic-byte validation)
+    try:
+        img = Image.open(io.BytesIO(content))
+        img.load()
+    except Exception:
+        raise HTTPException(415, "Image invalide ou corrompue.")
+
+    if img.format not in {"JPEG", "PNG", "WEBP"}:
+        raise HTTPException(415, "Image invalide ou corrompue.")
+
+    if img.width > 4000 or img.height > 4000:
+        raise HTTPException(413, "Image trop grande.")
+
+    # Apply EXIF orientation BEFORE stripping, then drop alpha + EXIF via re-encode
+    img = ImageOps.exif_transpose(img)
+    img = img.convert("RGB")
+
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", quality=88, optimize=True)
+    jpeg_bytes = buf.getvalue()
+
+    # Server-controlled filename (never trust file.filename)
+    key = f"photos/{user.id}/{uuid.uuid4().hex}.jpg"
     storage = get_storage()
-    await storage.put(key, content)
+    await storage.put(key, jpeg_bytes)
 
     profile.photo_path = key
     await db.commit()
@@ -270,7 +296,9 @@ async def delete_experience(
 # --- CV Upload + Extraction ---
 
 @router.post("/extract")
+@limiter.limit("5/hour")
 async def extract_profile_from_cv(
+    request: Request,
     file: UploadFile = File(...),
     user: User = Depends(current_active_user),
 ):
