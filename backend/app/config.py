@@ -39,9 +39,9 @@ class Settings(BaseSettings):
     signup_credits: int = 3
     cost_per_generation: float = 0.08
 
-    # Email (Resend)
+    # Email (Resend) — EMAIL_FROM must be a verified Resend sender for the cvmodifier.com domain
     resend_api_key: str = ""
-    email_from: str = "CV Modifier <onboarding@resend.dev>"
+    email_from: str = "CV Modifier <hello@cvmodifier.com>"
 
     # PDF layout
     page_width: int = 210

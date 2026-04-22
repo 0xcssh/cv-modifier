@@ -4,10 +4,11 @@
 SaaS web app that adapts CVs and cover letters to job offers using Claude AI. Users upload their CV (auto-extracted by AI), paste a job URL, and get tailored PDF documents.
 
 ## Live URLs (production)
-- **Frontend (Vercel)**: https://cv-modifier-seven.vercel.app
+- **Frontend**: https://cvmodifier.com (+ Vercel preview: https://cv-modifier-seven.vercel.app)
 - **Backend (Railway)**: https://cv-modifier-production.up.railway.app
 - **Database**: Neon PostgreSQL (eu-central-1)
 - **File storage**: Cloudflare R2 (bucket `cv-modifier`)
+- **Email sender**: hello@cvmodifier.com (Resend)
 - **GitHub**: https://github.com/0xcssh/cv-modifier
 
 ## Architecture
