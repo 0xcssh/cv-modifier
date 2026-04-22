@@ -305,7 +305,7 @@ export default function EditGenerationPage({
         </Button>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6 px-4 lg:px-8 py-6">
+      <div className="grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-6 px-4 lg:px-8 py-6">
         {/* LEFT: Form */}
         <div className="space-y-6">
           {/* Poste & entreprise */}
@@ -649,7 +649,7 @@ export default function EditGenerationPage({
                 Lettre
               </button>
             </div>
-            <div className="relative bg-slate-100" style={{ height: "calc(100vh - 12rem)" }}>
+            <div className="relative bg-slate-100" style={{ height: "calc(100vh - 8rem)" }}>
               {previewLoading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-10">
                   <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
@@ -658,9 +658,9 @@ export default function EditGenerationPage({
               {activePreviewUrl ? (
                 <iframe
                   key={activePreviewUrl}
-                  src={activePreviewUrl}
+                  src={`${activePreviewUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
                   title={previewTab === "cv" ? "Aperçu CV" : "Aperçu lettre"}
-                  className="w-full h-full"
+                  className="w-full h-full bg-white"
                 />
               ) : (
                 !previewLoading && (
