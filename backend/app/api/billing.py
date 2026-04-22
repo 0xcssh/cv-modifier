@@ -28,6 +28,23 @@ from app.models import CreditTransaction, StripeEvent, User
 
 logger = logging.getLogger(__name__)
 
+
+def _sget(obj: Any, key: str, default: Any = None) -> Any:
+    """Safe key access that works on both plain dicts and Stripe objects.
+
+    stripe-python v15 StripeObject no longer exposes dict.get() reliably
+    (attribute-style __getattr__ intercepts it and raises), so calling
+    `session.get("mode")` blows up with KeyError: 'get'. Using __getitem__
+    with a try/except matches the classic `.get()` semantics and works
+    uniformly across dicts, StripeObject, and anything else that
+    implements __getitem__.
+    """
+    try:
+        value = obj[key]
+    except (KeyError, TypeError):
+        return default
+    return default if value is None else value
+
 # Initialize the Stripe SDK. Safe to assign even when empty; any actual call
 # will then fail with AuthenticationError which we surface as a 500.
 if settings.stripe_secret_key:
@@ -334,10 +351,10 @@ async def _add_credits_atomic(
 async def _handle_checkout_completed(db: AsyncSession, event: dict) -> None:
     session = event["data"]["object"]
     event_id = event["id"]
-    mode = session.get("mode")
-    metadata = session.get("metadata") or {}
-    user_id_str = metadata.get("user_id") or session.get("client_reference_id")
-    plan = metadata.get("plan")
+    mode = _sget(session, "mode")
+    metadata = _sget(session, "metadata") or {}
+    user_id_str = _sget(metadata, "user_id") or _sget(session, "client_reference_id")
+    plan = _sget(metadata, "plan")
 
     if not user_id_str:
         logger.warning(
@@ -395,7 +412,7 @@ async def _handle_checkout_completed(db: AsyncSession, event: dict) -> None:
         # Subscription: record the subscription id + tier. Credit grant
         # happens through invoice.payment_succeeded (which fires on the
         # initial payment too).
-        subscription_id = session.get("subscription")
+        subscription_id = _sget(session, "subscription")
         if not plan_cfg or plan_cfg["mode"] != "subscription":
             logger.warning(
                 "Unknown or mismatched plan %r on subscription checkout (event=%s)",
@@ -428,7 +445,7 @@ async def _handle_checkout_completed(db: AsyncSession, event: dict) -> None:
 async def _handle_invoice_payment_succeeded(db: AsyncSession, event: dict) -> None:
     invoice = event["data"]["object"]
     event_id = event["id"]
-    billing_reason = invoice.get("billing_reason")
+    billing_reason = _sget(invoice, "billing_reason")
     if billing_reason not in ("subscription_create", "subscription_cycle"):
         logger.info(
             "invoice.payment_succeeded: billing_reason=%r ignored (event=%s)",
@@ -437,7 +454,7 @@ async def _handle_invoice_payment_succeeded(db: AsyncSession, event: dict) -> No
         )
         return
 
-    subscription_id = invoice.get("subscription")
+    subscription_id = _sget(invoice, "subscription")
     if not subscription_id:
         logger.info(
             "invoice.payment_succeeded without subscription (event=%s)", event_id
@@ -458,15 +475,15 @@ async def _handle_invoice_payment_succeeded(db: AsyncSession, event: dict) -> No
         return
 
     # Determine plan from the price ID on the first line item
-    lines = (invoice.get("lines") or {}).get("data") or []
+    lines = _sget(_sget(invoice, "lines") or {}, "data") or []
     price_id = None
     period_end_ts = None
     if lines:
         first = lines[0]
-        price_obj = first.get("price") or {}
-        price_id = price_obj.get("id") if isinstance(price_obj, dict) else price_obj
-        period = first.get("period") or {}
-        period_end_ts = period.get("end")
+        price_obj = _sget(first, "price") or {}
+        price_id = _sget(price_obj, "id") if not isinstance(price_obj, str) else price_obj
+        period = _sget(first, "period") or {}
+        period_end_ts = _sget(period, "end")
 
     plan = _plan_for_price_id(price_id)
     plan_cfg = _PLANS.get(plan or "")
@@ -504,7 +521,7 @@ async def _handle_invoice_payment_succeeded(db: AsyncSession, event: dict) -> No
 
 async def _handle_subscription_deleted(db: AsyncSession, event: dict) -> None:
     sub = event["data"]["object"]
-    subscription_id = sub.get("id")
+    subscription_id = _sget(sub, "id")
     if not subscription_id:
         return
     # Find user by subscription id and reset fields. Credits stay.
@@ -527,19 +544,19 @@ async def _handle_subscription_deleted(db: AsyncSession, event: dict) -> None:
 
 async def _handle_subscription_updated(db: AsyncSession, event: dict) -> None:
     sub = event["data"]["object"]
-    subscription_id = sub.get("id")
+    subscription_id = _sget(sub, "id")
     if not subscription_id:
         return
 
     # Try to extract the current price to detect plan changes.
-    items = (sub.get("items") or {}).get("data") or []
+    items = _sget(_sget(sub, "items") or {}, "data") or []
     price_id = None
     if items:
-        price_obj = items[0].get("price") or {}
-        price_id = price_obj.get("id") if isinstance(price_obj, dict) else price_obj
+        price_obj = _sget(items[0], "price") or {}
+        price_id = _sget(price_obj, "id") if not isinstance(price_obj, str) else price_obj
     plan = _plan_for_price_id(price_id)
 
-    period_end_ts = sub.get("current_period_end")
+    period_end_ts = _sget(sub, "current_period_end")
     updates: dict[str, Any] = {}
     if period_end_ts:
         updates["subscription_current_period_end"] = _from_ts(period_end_ts)
