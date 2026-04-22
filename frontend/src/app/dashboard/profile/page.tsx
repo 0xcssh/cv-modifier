@@ -315,7 +315,7 @@ export default function ProfilePage() {
           <p className="text-sm text-slate-500 mb-4">
             Choisissez l&apos;apparence de vos CV générés.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {CV_TEMPLATES.map((tpl) => {
               const isSelected = selectedTemplate === tpl.id;
               const isUpdating = updatingTemplate === tpl.id;
