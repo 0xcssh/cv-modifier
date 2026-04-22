@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { api } from "@/lib/api";
+import { api, CSRF_HEADER } from "@/lib/api";
 import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
 import { Zap, Download, FileText, Loader2, AlertCircle, CheckCircle2, Crown, Pencil } from "lucide-react";
@@ -98,8 +98,12 @@ export default function GeneratePage() {
   const handleDownload = async (type: "cv" | "letter") => {
     if (!generationId) return;
     try {
+      // Cookie auth + CSRF header. We re-implement instead of using
+      // api.downloadFile() because we need the Content-Disposition header
+      // to recover the server-provided filename.
       const res = await fetch(api.getDownloadUrl(generationId, type), {
-        headers: { Authorization: `Bearer ${api.getToken()}` },
+        credentials: "include",
+        headers: CSRF_HEADER,
       });
       if (!res.ok) throw new Error("Téléchargement échoué");
       const blob = await res.blob();

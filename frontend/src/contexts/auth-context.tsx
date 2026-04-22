@@ -11,7 +11,7 @@ interface AuthState {
   credits: number;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   refreshUser: () => Promise<void>;
   setProfile: (profile: ProfileData | null) => void;
@@ -27,16 +27,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const loadUser = useCallback(async () => {
-    const token = api.getToken();
-    if (!token) {
-      setIsAuthenticated(false);
-      setUser(null);
-      setProfile(null);
-      setCredits(0);
-      setLoading(false);
-      return;
-    }
-
+    // With cookie-based auth the JS side can't inspect the httpOnly cookie,
+    // so we just probe /api/auth/me. A 401 means "not logged in".
     const [meResult, profileResult] = await Promise.allSettled([
       api.getMe(),
       api.getProfile(),
@@ -47,11 +39,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setCredits(meResult.value.credits);
       setIsAuthenticated(true);
     } else {
-      if (!api.getToken()) {
-        setIsAuthenticated(false);
-        setUser(null);
-        setCredits(0);
-      }
+      setIsAuthenticated(false);
+      setUser(null);
+      setCredits(0);
+      setProfile(null);
       setLoading(false);
       return;
     }
@@ -75,8 +66,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await loadUser();
   };
 
-  const logout = () => {
-    api.logout();
+  const logout = async () => {
+    await api.logout();
     setIsAuthenticated(false);
     setUser(null);
     setProfile(null);

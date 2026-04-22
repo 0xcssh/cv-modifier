@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { api, ProfileCreateData, CvTemplateId } from "@/lib/api";
+import { api, ProfileCreateData, CvTemplateId, CSRF_HEADER } from "@/lib/api";
 import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
 import { Upload, Save, Plus, X, Loader2, FileText, Camera, Check } from "lucide-react";
@@ -51,9 +51,11 @@ export default function ProfilePage() {
     }
     if (profile?.photo_path) {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-      const token = api.getToken();
+      // Cookie auth: `credentials: "include"` sends the httpOnly cookie;
+      // CSRF_HEADER satisfies the backend's X-Requested-With requirement.
       fetch(`${API_URL}/api/profile/photo`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        credentials: "include",
+        headers: CSRF_HEADER,
       })
         .then((res) => (res.ok ? res.blob() : null))
         .then((blob) => {

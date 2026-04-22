@@ -17,6 +17,39 @@ from app.services.storage import get_storage
 logger = logging.getLogger(__name__)
 
 
+# User-facing error messages we raise ourselves and that are safe to display.
+# Any exception whose str() starts with one of these prefixes is surfaced verbatim
+# to the client; everything else is replaced with a generic message to avoid
+# leaking stack traces, file paths, DB connection strings, or SDK internals.
+_SAFE_ERROR_PREFIXES: tuple[str, ...] = (
+    "Scraping échoué",
+    "Aucun texte d'offre fourni.",
+    "Impossible d'obtenir une réponse JSON valide",
+    "Échec de la génération.",
+    "Clés manquantes",
+    "PDF trop long",
+    "Impossible d'extraire le texte du PDF",
+    "URL non autorisée.",
+)
+
+_GENERIC_ERROR_MESSAGE = (
+    "Une erreur est survenue lors de la génération. "
+    "Notre équipe a été notifiée."
+)
+
+
+def _sanitize_error(exc: Exception) -> str:
+    """Return a user-safe error message.
+
+    Preserves messages we raised ourselves (see `_SAFE_ERROR_PREFIXES`) and
+    replaces anything else with a generic message to avoid leaking internals.
+    """
+    message = str(exc)
+    if message.startswith(_SAFE_ERROR_PREFIXES):
+        return message
+    return _GENERIC_ERROR_MESSAGE
+
+
 def _slugify(text: str) -> str:
     text = text.lower().strip()
     text = re.sub(r"[àáâãäå]", "a", text)
@@ -169,7 +202,7 @@ async def run_generation_pipeline(
 
         except Exception as e:
             generation.status = "failed"
-            generation.error_message = str(e)
+            generation.error_message = _sanitize_error(e)
             await db.commit()
             logger.exception(f"Generation {generation_id} failed")
 

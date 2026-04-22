@@ -1,4 +1,5 @@
 import io
+import logging
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File
@@ -23,6 +24,8 @@ from app.schemas.profile import (
 )
 from app.services.cv_extractor import extract_profile_from_pdf, extract_photo_from_pdf
 from app.services.storage import get_storage
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/profile", tags=["profile"])
 
@@ -311,9 +314,18 @@ async def extract_profile_from_cv(
     try:
         extracted = await extract_profile_from_pdf(content)
     except ValueError as e:
+        # ValueError messages here are all user-facing and safe
+        # (e.g. "PDF trop long (max 10 pages).").
         raise HTTPException(422, str(e))
-    except Exception as e:
-        raise HTTPException(500, f"Erreur lors de l'extraction : {e}")
+    except Exception:
+        logger.exception(
+            "CV extraction failed for user %s", user.id
+        )
+        raise HTTPException(
+            500,
+            "Une erreur est survenue lors de l'extraction du CV. "
+            "Notre équipe a été notifiée.",
+        )
 
     # Try to extract photo from PDF
     try:

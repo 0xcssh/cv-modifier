@@ -1,7 +1,8 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
@@ -9,6 +10,17 @@ from app.api.router import api_router
 from app.config import settings
 from app.core.limiter import limiter
 from app.database import create_tables
+
+# Methods that should be CSRF-checked. Safe methods (GET/HEAD/OPTIONS/TRACE)
+# are skipped since they are not supposed to mutate state and CORS preflight
+# (OPTIONS) must be allowed through.
+_CSRF_PROTECTED_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+# Endpoints exempt from the X-Requested-With requirement. We keep the list
+# intentionally tiny — only the liveness probe. All auth flows (login,
+# register, forgot/reset password) go through our own fetch()-based frontend
+# which attaches the header, and no legitimate third party should be posting
+# to them with user cookies attached.
+_CSRF_EXEMPT_PATHS = {"/health"}
 
 
 @asynccontextmanager
@@ -40,7 +52,34 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# CORS
+# CSRF protection: since cookies are SameSite=None in prod (required for
+# cross-origin Vercel <-> Railway), we rely on a custom-header check to
+# block CSRF. A cross-site attacker cannot set a custom header on a
+# cross-origin request without a CORS preflight, and our CORS regex only
+# whitelists our own Vercel origins, so malicious preflights are rejected.
+#
+# NOTE on middleware ordering: Starlette applies middleware in reverse order
+# of add_middleware() calls — the LAST added wraps the OUTERMOST. We want
+# CORS to be the OUTERMOST (handles preflight OPTIONS before anything else),
+# so CORS must be added AFTER the CSRF middleware below.
+@app.middleware("http")
+async def csrf_protect(request: Request, call_next):
+    if (
+        request.method in _CSRF_PROTECTED_METHODS
+        and request.url.path not in _CSRF_EXEMPT_PATHS
+    ):
+        if request.headers.get("x-requested-with", "").lower() != "xmlhttprequest":
+            return JSONResponse(
+                status_code=403,
+                content={
+                    "detail": "CSRF protection: missing X-Requested-With header"
+                },
+            )
+    return await call_next(request)
+
+
+# CORS (added LAST so it wraps the CSRF middleware — preflight OPTIONS never
+# reach the CSRF check).
 origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,

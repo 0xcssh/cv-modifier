@@ -1,36 +1,27 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+// Headers + fetch options required on every authenticated request:
+//   - `credentials: "include"` so the httpOnly auth cookie is sent cross-origin
+//   - `X-Requested-With: XMLHttpRequest` to satisfy the backend CSRF middleware
+// Exported so the handful of callers that still do `fetch(...)` directly
+// (e.g. PDF downloads) stay consistent.
+export const CSRF_HEADER: Record<string, string> = {
+  "X-Requested-With": "XMLHttpRequest",
+};
+export const AUTH_FETCH_INIT: RequestInit = {
+  credentials: "include",
+  headers: CSRF_HEADER,
+};
+
 class ApiClient {
-  private token: string | null = null;
-
-  setToken(token: string | null) {
-    this.token = token;
-    if (token) {
-      localStorage.setItem("token", token);
-    } else {
-      localStorage.removeItem("token");
-    }
-  }
-
-  getToken(): string | null {
-    if (!this.token && typeof window !== "undefined") {
-      this.token = localStorage.getItem("token");
-    }
-    return this.token;
-  }
-
   private async request<T>(
     path: string,
     options: RequestInit = {}
   ): Promise<T> {
     const headers: Record<string, string> = {
+      ...CSRF_HEADER,
       ...(options.headers as Record<string, string>),
     };
-
-    const token = this.getToken();
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
 
     if (!(options.body instanceof FormData)) {
       headers["Content-Type"] = "application/json";
@@ -38,11 +29,11 @@ class ApiClient {
 
     const res = await fetch(`${API_URL}${path}`, {
       ...options,
+      credentials: "include",
       headers,
     });
 
     if (res.status === 401) {
-      this.setToken(null);
       throw new Error("Non authentifié");
     }
 
@@ -64,22 +55,31 @@ class ApiClient {
   }
 
   async login(email: string, password: string) {
+    // fastapi-users' CookieTransport returns 204 No Content and sets the
+    // httpOnly auth cookie; we don't receive or store any token client-side.
     const res = await fetch(`${API_URL}/api/auth/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      credentials: "include",
+      headers: {
+        ...CSRF_HEADER,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
       body: `username=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       throw new Error(body.detail || "Email ou mot de passe incorrect");
     }
-    const data = await res.json();
-    this.setToken(data.access_token);
-    return data;
   }
 
-  logout() {
-    this.setToken(null);
+  async logout() {
+    // Backend clears the cookie (Set-Cookie with max-age=0). Swallow errors —
+    // a stale session means we are effectively already logged out.
+    try {
+      await this.request<null>("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore
+    }
   }
 
   async forgotPassword(email: string) {
@@ -196,9 +196,11 @@ class ApiClient {
   }
 
   async downloadFile(generationId: string, type: "cv" | "letter") {
-    const token = this.getToken();
+    // Cookie auth: `credentials: "include"` lets the browser attach the
+    // httpOnly auth cookie; the CSRF header keeps our middleware happy.
     const res = await fetch(this.getDownloadUrl(generationId, type), {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: "include",
+      headers: CSRF_HEADER,
     });
     if (!res.ok) throw new Error("Téléchargement échoué");
     return res.blob();
