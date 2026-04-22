@@ -90,6 +90,7 @@ class ProfileUpdate(BaseModel):
 class ProfileRead(ProfileBase):
     id: uuid.UUID
     photo_path: str | None = None
+    photo_url: str | None = None
     education: list[EducationRead] = []
     experiences: list[ExperienceRead] = []
 

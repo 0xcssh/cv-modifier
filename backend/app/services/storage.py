@@ -12,6 +12,7 @@ class StorageBackend(Protocol):
     async def put(self, key: str, data: bytes) -> None: ...
     async def get(self, key: str) -> bytes: ...
     async def delete(self, key: str) -> None: ...
+    async def presigned_get_url(self, key: str, expires: int = 3600) -> str | None: ...
 
 
 class LocalStorage:
@@ -36,6 +37,9 @@ class LocalStorage:
         path = self.base_dir / key
         if path.exists():
             path.unlink()
+
+    async def presigned_get_url(self, key: str, expires: int = 3600) -> str | None:
+        return None
 
 
 class S3Storage:
@@ -84,6 +88,18 @@ class S3Storage:
         await asyncio.to_thread(
             self.client.delete_object, Bucket=self.bucket, Key=key
         )
+
+    async def presigned_get_url(self, key: str, expires: int = 3600) -> str | None:
+        try:
+            return await asyncio.to_thread(
+                self.client.generate_presigned_url,
+                "get_object",
+                Params={"Bucket": self.bucket, "Key": key},
+                ExpiresIn=expires,
+            )
+        except Exception:
+            logger.exception("Failed to generate presigned URL for %s", key)
+            return None
 
 
 _storage_instance: StorageBackend | None = None

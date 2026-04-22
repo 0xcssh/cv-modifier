@@ -14,6 +14,7 @@ interface AuthState {
   logout: () => void;
   refreshProfile: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  setProfile: (profile: ProfileData | null) => void;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -103,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, user, profile, loading, credits, login, register, logout, refreshProfile, refreshUser }}
+      value={{ isAuthenticated, user, profile, loading, credits, login, register, logout, refreshProfile, refreshUser, setProfile }}
     >
       {children}
     </AuthContext.Provider>

@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { CV_TEMPLATES, DEFAULT_CV_TEMPLATE } from "@/lib/cv-templates";
 
 export default function ProfilePage() {
-  const { profile, refreshProfile } = useAuth();
+  const { profile, setProfile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [extracting, setExtracting] = useState(false);
   const [form, setForm] = useState<ProfileCreateData>({
@@ -41,8 +41,14 @@ export default function ProfilePage() {
   const [selectedTemplate, setSelectedTemplate] = useState<CvTemplateId>(DEFAULT_CV_TEMPLATE);
   const [updatingTemplate, setUpdatingTemplate] = useState<CvTemplateId | null>(null);
 
-  // Load photo on mount
+  // Load photo on mount.
+  // Prefer a presigned R2 URL (no JS-side fetch, no backend roundtrip);
+  // fall back to the authenticated /profile/photo endpoint for local dev storage.
   useEffect(() => {
+    if (profile?.photo_url) {
+      setPhotoUrl(profile.photo_url);
+      return;
+    }
     if (profile?.photo_path) {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       const token = api.getToken();
@@ -55,7 +61,7 @@ export default function ProfilePage() {
         })
         .catch(() => {});
     }
-  }, [profile?.photo_path]);
+  }, [profile?.photo_url, profile?.photo_path]);
 
   useEffect(() => {
     if (profile) {
@@ -87,8 +93,8 @@ export default function ProfilePage() {
     }
     setLoading(true);
     try {
-      await api.confirmExtraction(form);
-      await refreshProfile();
+      const updated = await api.confirmExtraction(form);
+      setProfile(updated);
       toast.success("Profil sauvegardé");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Erreur");
@@ -109,8 +115,8 @@ export default function ProfilePage() {
       // Show local preview immediately
       const localUrl = URL.createObjectURL(file);
       setPhotoUrl(localUrl);
-      await api.uploadPhoto(file);
-      await refreshProfile();
+      const { photo_path } = await api.uploadPhoto(file);
+      if (profile) setProfile({ ...profile, photo_path });
       toast.success("Photo mise à jour");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Erreur lors de l'upload");
@@ -216,8 +222,8 @@ export default function ProfilePage() {
     setSelectedTemplate(templateId);
     setUpdatingTemplate(templateId);
     try {
-      await api.updateProfile({ cv_template: templateId });
-      await refreshProfile();
+      const updated = await api.updateProfile({ cv_template: templateId });
+      setProfile(updated);
       toast.success("Modèle de CV mis à jour");
     } catch (err: unknown) {
       setSelectedTemplate(previous);

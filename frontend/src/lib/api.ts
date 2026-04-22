@@ -261,6 +261,7 @@ export interface ProfileData {
   vehicule?: string;
   gender: string;
   photo_path?: string;
+  photo_url?: string | null;
   skills: string[];
   languages: string[];
   soft_skills: string[];

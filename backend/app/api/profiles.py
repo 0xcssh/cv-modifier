@@ -34,6 +34,15 @@ async def _get_profile(user: User, db: AsyncSession) -> Profile:
     return profile
 
 
+async def _serialize_profile(profile: Profile) -> ProfileRead:
+    """Serialize a Profile ORM instance to ProfileRead, computing a presigned photo_url if possible."""
+    data = ProfileRead.model_validate(profile)
+    if profile.photo_path:
+        storage = get_storage()
+        data.photo_url = await storage.presigned_get_url(profile.photo_path)
+    return data
+
+
 # --- Profile CRUD ---
 
 @router.get("", response_model=ProfileRead)
@@ -41,7 +50,8 @@ async def get_profile(
     user: User = Depends(current_active_user),
     db: AsyncSession = Depends(get_db),
 ):
-    return await _get_profile(user, db)
+    profile = await _get_profile(user, db)
+    return await _serialize_profile(profile)
 
 
 @router.post("", response_model=ProfileRead, status_code=201)
@@ -88,7 +98,7 @@ async def create_profile(
 
     await db.commit()
     await db.refresh(profile)
-    return profile
+    return await _serialize_profile(profile)
 
 
 @router.put("", response_model=ProfileRead)
@@ -103,7 +113,7 @@ async def update_profile(
         setattr(profile, key, value)
     await db.commit()
     await db.refresh(profile)
-    return profile
+    return await _serialize_profile(profile)
 
 
 # --- Photo ---
@@ -355,4 +365,4 @@ async def confirm_extracted_profile(
 
     await db.commit()
     await db.refresh(profile)
-    return profile
+    return await _serialize_profile(profile)

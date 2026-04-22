@@ -8,23 +8,35 @@ import { Download, FileText, Pencil, Trash2, Clock, Building2, Loader2 } from "l
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-export default function HistoryPage() {
-  const [generations, setGenerations] = useState<GenerationData[]>([]);
-  const [loading, setLoading] = useState(true);
+// Module-level cache: survives route changes within the same tab/session.
+// Invalidated when the user deletes a generation or when the tab is reloaded.
+let cachedGenerations: GenerationData[] | null = null;
 
-  const load = async () => {
-    try {
-      const data = await api.listGenerations();
-      setGenerations(data);
-    } catch {
-      toast.error("Erreur lors du chargement");
-    } finally {
-      setLoading(false);
-    }
-  };
+export default function HistoryPage() {
+  const [generations, setGenerations] = useState<GenerationData[]>(
+    cachedGenerations ?? []
+  );
+  const [loading, setLoading] = useState(cachedGenerations === null);
 
   useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const data = await api.listGenerations();
+        if (cancelled) return;
+        cachedGenerations = data;
+        setGenerations(data);
+      } catch {
+        if (!cancelled) toast.error("Erreur lors du chargement");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    // Always revalidate in background, but don't show loader if we already have cached data
     load();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleDownload = async (id: string, type: "cv" | "letter") => {
@@ -44,7 +56,11 @@ export default function HistoryPage() {
   const handleDelete = async (id: string) => {
     try {
       await api.deleteGeneration(id);
-      setGenerations((prev) => prev.filter((g) => g.id !== id));
+      setGenerations((prev) => {
+        const next = prev.filter((g) => g.id !== id);
+        cachedGenerations = next;
+        return next;
+      });
       toast.success("Génération supprimée");
     } catch {
       toast.error("Erreur lors de la suppression");
