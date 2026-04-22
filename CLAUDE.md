@@ -38,7 +38,7 @@ Frontend: http://localhost:3000
 cd backend
 python -m pytest tests/ -x --tb=short -q
 ```
-33 tests couvrent : credit atomic claim + refund + race, IDOR, SSRF validator, generation edit endpoint.
+44 tests couvrent : credit atomic claim + refund + race, IDOR, SSRF validator, generation edit endpoint, Stripe billing (checkout, portal, webhook events + idempotency).
 
 ## Deployment
 - **Backend**: Railway auto-deploys from `main` branch (Dockerfile-based, Python 3.12.8-slim, non-root user `appuser`)
@@ -54,15 +54,19 @@ uv pip compile pyproject.toml --extra prod --output-file requirements.lock.txt
 Commit + push → Railway rebuild avec les nouvelles deps.
 
 ## Env vars requises en prod
-**Railway (backend)** — toutes obligatoires sauf Sentry :
-`SECRET_KEY` (≥32 chars, fail-closed au boot sinon), `DATABASE_URL`, `ANTHROPIC_API_KEY`, `RESEND_API_KEY`, `EMAIL_FROM`, `FRONTEND_URL`, `CORS_ORIGINS`, `STORAGE_BACKEND=s3`, `S3_BUCKET`, `S3_ENDPOINT_URL`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_REGION`, `SENTRY_DSN` (optionnel).
+**Railway (backend)** — obligatoires :
+`SECRET_KEY` (≥32 chars, fail-closed au boot sinon), `DATABASE_URL`, `ANTHROPIC_API_KEY`, `RESEND_API_KEY`, `EMAIL_FROM`, `FRONTEND_URL`, `CORS_ORIGINS`, `STORAGE_BACKEND=s3`, `S3_BUCKET`, `S3_ENDPOINT_URL`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_REGION`.
+
+Stripe (pour billing) : `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_STARTER`, `STRIPE_PRICE_PRO`, `STRIPE_PRICE_PACK_10`, `STRIPE_PRICE_PACK_30`, `STRIPE_CHECKOUT_SUCCESS_URL`, `STRIPE_CHECKOUT_CANCEL_URL`.
+
+Optionnel : `SENTRY_DSN`, `CLAUDE_MODEL` (override du défaut Haiku 4.5).
 
 **Vercel (frontend)** : `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SENTRY_DSN` (optionnel). Pour source maps Sentry : `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN`.
 
 ## Key directories
 - `backend/app/services/` — Core business logic (ai_engine, scraper, cv_templates/, cover_letter, pipeline, cv_extractor, storage, email_service)
-- `backend/app/api/` — REST endpoints (auth, profiles, generations)
-- `backend/app/models/` — SQLAlchemy models (User, Profile, Education, Experience, Generation, CreditTransaction)
+- `backend/app/api/` — REST endpoints (auth, profiles, generations, billing)
+- `backend/app/models/` — SQLAlchemy models (User, Profile, Education, Experience, Generation, CreditTransaction, StripeEvent)
 - `backend/app/core/` — security (fastapi-users auth), limiter (slowapi)
 - `backend/scripts/` — One-shot scripts (generate_template_previews, send_monthly_recaps)
 - `backend/tests/` — pytest suite (conftest + 4 test files)
@@ -74,6 +78,9 @@ Commit + push → Railway rebuild avec les nouvelles deps.
 - `frontend/public/templates/` — Previews PNG des 4 templates CV
 - `frontend/sentry.*.config.ts` + `instrumentation.ts` — Sentry setup
 - `legacy_cli/` — Ancien CLI (archivé)
+
+## Connexion Neon
+SQLAlchemy engine configuré avec `pool_pre_ping=True` + `pool_recycle=1800` car Neon ferme les connexions inactives après quelques minutes. Sans ça → `InterfaceError: connection is closed` sur requête après idle. Ne pas retirer.
 
 ## Important conventions
 - Backend services return `bytes` for PDFs, not file paths
@@ -120,6 +127,15 @@ Tous définis dans `backend/app/services/email_service.py` :
 - 1 crédit restant / Crédits épuisés (fin pipeline si seuil)
 - Récapitulatif mensuel (script manuel `scripts/send_monthly_recaps.py`)
 
+## Billing Stripe
+- 4 plans : Starter 9.99€/mois (20 cr), Pro 19.99€/mois (50 cr), Pack 10 (4.99€), Pack 30 (12.99€)
+- Checkout Session hébergée Stripe (PCI scope = 0). Customer Portal pour gérer l'abo.
+- Webhook sur `/api/billing/webhook` — signé, idempotent via table `stripe_events` (PK event_id).
+- Events traités : `checkout.session.completed`, `invoice.payment_succeeded`, `customer.subscription.updated`, `customer.subscription.deleted`.
+- Crédits ADDITIONNÉS à chaque paiement (pas reset). Unused credits restent après cancel.
+- CSRF middleware exempt sur `/api/billing/webhook` (Stripe ne peut pas set X-Requested-With).
+- `_sget(obj, key, default)` helper dans `billing.py` parce que stripe-python v15 StripeObject n'expose plus `.get()` fiablement.
+
 ## What's done
 - Phase 1-3 ✓ Backend API + DB + auth, Frontend MVP, CV upload/extraction
 - Phase 4 ✓ Deploy Railway + Vercel + Neon + R2 + domain cvmodifier.com
@@ -127,11 +143,12 @@ Tous définis dans `backend/app/services/email_service.py` :
 - Phase 6 ✓ Sécurité (2 sprints : JWT cookies, CSRF, is_verified, rate limit, SSRF, upload hardening, error sanitize, Dockerfile non-root, prompt caching Haiku 4.5)
 - Phase 7 ✓ Emails transactionnels complets (Resend verified)
 - Phase 8 ✓ Pages légales RGPD + cookie consent + Sentry + tests backend critiques
+- Phase 9 ✓ Stripe billing end-to-end (Checkout + Customer Portal + webhook) en mode TEST
 
 ## What's next
-- **Stripe** intégration (plans Starter/Pro + pay-as-you-go)
-- Rate limiting edge (Cloudflare/Vercel) devant `/auth/*`
+- **Switch Stripe en mode LIVE** : recréer produits/webhook en live, remplacer env vars Railway par `sk_live_...`
+- Remplir les `[À COMPLÉTER]` dans pages légales (SIRET, siège, raison sociale, juridiction)
 - Google OAuth (signup 1-click)
-- Analytics (PostHog / Plausible)
+- Analytics (PostHog / Plausible) pour tracker conversion signup → paiement
+- Rate limiting edge (Cloudflare/Vercel) devant `/auth/*`
 - Script de retention (suppression comptes inactifs 24+ mois)
-- Remplir les `[À COMPLÉTER]` dans pages légales (SIRET, siège, etc.)
