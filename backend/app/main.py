@@ -44,7 +44,9 @@ _CSRF_EXEMPT_PATHS = {"/health"}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Fail-closed on weak/default secret — prevents prod from starting with CHANGE-ME.
+    import logging as _logging
+    _log = _logging.getLogger("app.startup")
+    _log.info("Startup: checking SECRET_KEY")
     if (
         settings.secret_key == "CHANGE-ME-IN-PRODUCTION"
         or len(settings.secret_key) < 32
@@ -53,8 +55,9 @@ async def lifespan(app: FastAPI):
             "SECRET_KEY manquante ou trop courte. "
             "Définissez SECRET_KEY (≥32 caractères) dans les variables d'environnement."
         )
-    # Startup: create tables (dev only, use Alembic in prod)
+    _log.info("Startup: running create_tables()")
     await create_tables()
+    _log.info("Startup: complete, accepting traffic")
     yield
 
 
