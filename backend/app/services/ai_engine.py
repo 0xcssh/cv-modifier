@@ -20,9 +20,9 @@ class UsageStats:
 
     @property
     def estimated_cost(self) -> float:
-        # Sonnet 4 pricing (approx)
-        return (self.input_tokens * 3 / 1_000_000) + (
-            self.output_tokens * 15 / 1_000_000
+        # Haiku 4.5 pricing (approx) — $1/M input, $5/M output
+        return (self.input_tokens * 1 / 1_000_000) + (
+            self.output_tokens * 5 / 1_000_000
         )
 
 
@@ -60,11 +60,15 @@ sans montant chiffré).
 Tu réponds UNIQUEMENT en JSON valide. Pas de markdown, pas de commentaires, pas de texte autour."""
 
 
-def _build_user_prompt(
-    job_text: str,
+def _build_profile_and_format(
     profile_data: dict,
     custom_instructions: str | None = None,
 ) -> str:
+    """Static/cacheable part of the user prompt: profile + custom instructions + output format + rules.
+
+    This string is stable for a given user (profile + custom instructions rarely change),
+    so it's marked with cache_control in the API call to benefit from Anthropic prompt caching.
+    """
     exp_text = ""
     for exp in profile_data.get("experiences", []):
         exp_text += f"\n- {exp['title']} @ {exp['company']} ({exp.get('dates', '')})\n"
@@ -100,13 +104,8 @@ Langues : {", ".join(profile_data.get("languages", []))}
 {custom_rules}
 ---
 
-Voici l'offre d'emploi :
+Tu vas générer un JSON avec cette structure EXACTE, en appliquant les règles ci-dessous à l'offre d'emploi fournie plus bas :
 
-{job_text}
-
----
-
-Génère un JSON avec cette structure EXACTE :
 {{
   "nom_entreprise": "Le nom de l'entreprise qui recrute (tel qu'il apparaît dans l'offre)",
   "titre_poste": "Le titre EXACT du poste tel qu'il apparaît dans l'offre d'emploi",
@@ -169,24 +168,68 @@ RÈGLES IMPÉRATIVES :
 12. Réponds UNIQUEMENT avec le JSON, rien d'autre."""
 
 
+def _build_job_section(job_text: str) -> str:
+    """Dynamic part of the user prompt: the job offer. Varies per generation."""
+    return f"""---
+
+OFFRE D'EMPLOI À ADAPTER :
+
+{job_text}
+
+---
+
+Génère maintenant le JSON."""
+
+
 async def generate_adapted_cv(
     job_text: str,
     profile_data: dict,
     custom_instructions: str | None = None,
     gender: str = "male",
 ) -> tuple[dict, UsageStats]:
-    """Generate an adapted CV using Claude API. Returns (adapted_data, usage_stats)."""
+    """Generate an adapted CV using Claude API with prompt caching.
+
+    The system prompt and the profile+rules block are cached (ephemeral, ~5min TTL)
+    so subsequent generations for the same user within that window benefit from
+    reduced latency and cost on those static sections.
+
+    Returns (adapted_data, usage_stats).
+    """
     client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
     system_prompt = _build_system_prompt(gender)
-    user_prompt = _build_user_prompt(job_text, profile_data, custom_instructions)
+    cached_content = _build_profile_and_format(profile_data, custom_instructions)
+    dynamic_content = _build_job_section(job_text)
 
     for attempt in range(2):
         try:
+            messages_content = [
+                {
+                    "type": "text",
+                    "text": cached_content,
+                    "cache_control": {"type": "ephemeral"},
+                },
+                {
+                    "type": "text",
+                    "text": (
+                        dynamic_content
+                        if attempt == 0
+                        else dynamic_content
+                        + "\n\nTA RÉPONSE PRÉCÉDENTE N'ÉTAIT PAS DU JSON VALIDE. Réponds UNIQUEMENT avec du JSON valide."
+                    ),
+                },
+            ]
+
             response = await client.messages.create(
                 model=settings.claude_model,
                 max_tokens=settings.max_tokens,
-                system=system_prompt,
-                messages=[{"role": "user", "content": user_prompt}],
+                system=[
+                    {
+                        "type": "text",
+                        "text": system_prompt,
+                        "cache_control": {"type": "ephemeral"},
+                    }
+                ],
+                messages=[{"role": "user", "content": messages_content}],
             )
             content = response.content[0].text.strip()
 
@@ -215,12 +258,17 @@ async def generate_adapted_cv(
                 input_tokens=response.usage.input_tokens,
                 output_tokens=response.usage.output_tokens,
             )
+            cache_read = getattr(response.usage, "cache_read_input_tokens", 0) or 0
+            cache_write = getattr(response.usage, "cache_creation_input_tokens", 0) or 0
+            if cache_read or cache_write:
+                logger.info(
+                    f"Prompt cache — read: {cache_read} tokens, write: {cache_write} tokens"
+                )
             return data, usage
 
         except json.JSONDecodeError:
             if attempt == 0:
                 logger.warning("Invalid JSON response, retrying...")
-                user_prompt += "\n\nTA RÉPONSE PRÉCÉDENTE N'ÉTAIT PAS DU JSON VALIDE. Réponds UNIQUEMENT avec du JSON valide."
             else:
                 raise RuntimeError(
                     "Impossible d'obtenir une réponse JSON valide après 2 tentatives."

@@ -13,7 +13,7 @@ import { Zap, Download, FileText, Loader2, AlertCircle, CheckCircle2, Crown, Pen
 type Step = "input" | "generating" | "done" | "error" | "no-credits";
 
 export default function GeneratePage() {
-  const { credits } = useAuth();
+  const { credits, refreshUser } = useAuth();
   const [step, setStep] = useState<Step>("input");
   const [url, setUrl] = useState("");
   const [jobText, setJobText] = useState("");
@@ -79,6 +79,7 @@ export default function GeneratePage() {
             if (pollRef.current) clearInterval(pollRef.current);
             setResult({ job_title: status.job_title, company_name: status.company_name });
             setStep("done");
+            refreshUser();
           } else if (status.status === "failed") {
             if (pollRef.current) clearInterval(pollRef.current);
             setError(status.error_message || "La génération a échoué");

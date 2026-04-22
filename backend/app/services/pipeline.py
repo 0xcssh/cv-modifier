@@ -5,6 +5,7 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.database import async_session
 from app.models import CreditTransaction, Generation, Profile, User
 from app.services.ai_engine import generate_adapted_cv
@@ -119,7 +120,7 @@ async def run_generation_pipeline(
             generation.company_name = adapted.get("nom_entreprise", "")
             generation.tokens_used = usage.total_tokens
             generation.cost_estimate = usage.estimated_cost
-            generation.model_used = "claude-sonnet-4-20250514"
+            generation.model_used = settings.claude_model
             generation.profile_snapshot = profile_data
 
             # Step 3: Generate PDFs

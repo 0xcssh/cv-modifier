@@ -21,8 +21,8 @@ class Settings(BaseSettings):
 
     # Anthropic
     anthropic_api_key: str = ""
-    claude_model: str = "claude-sonnet-4-20250514"
-    max_tokens: int = 6000
+    claude_model: str = "claude-haiku-4-5-20251001"
+    max_tokens: int = 4000
 
     # Storage
     storage_backend: str = "local"  # "local" or "s3"

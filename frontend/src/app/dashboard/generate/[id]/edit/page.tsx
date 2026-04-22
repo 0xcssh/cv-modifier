@@ -94,51 +94,77 @@ export default function EditGenerationPage({
   useEffect(() => {
     let cancelled = false;
     const run = async () => {
-      try {
-        const gen = await api.getGeneration(id);
-        if (cancelled) return;
-        if (gen.status !== "completed" || !gen.adapted_data) {
-          toast.error("Cette génération n'est pas encore prête à être éditée");
-          router.replace("/dashboard/generate");
-          return;
-        }
-        const normalized: AdaptedData = {
-          nom_entreprise: gen.adapted_data.nom_entreprise ?? "",
-          titre_poste: gen.adapted_data.titre_poste ?? "",
-          resume_professionnel: gen.adapted_data.resume_professionnel ?? "",
-          competences: Array.isArray(gen.adapted_data.competences)
-            ? gen.adapted_data.competences
-            : [],
-          atouts: Array.isArray(gen.adapted_data.atouts)
-            ? gen.adapted_data.atouts
-            : [],
-          experiences: Array.isArray(gen.adapted_data.experiences)
-            ? gen.adapted_data.experiences.map((exp) => ({
-                title: exp.title ?? "",
-                company: exp.company ?? "",
-                location: exp.location ?? "",
-                dates: exp.dates ?? "",
-                bullets: Array.isArray(exp.bullets) ? exp.bullets : [],
-              }))
-            : [],
-          lettre_motivation: gen.adapted_data.lettre_motivation ?? "",
-        };
-        setData(normalized);
-        setInitialJson(JSON.stringify(normalized));
-        await loadPreview();
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "Erreur de chargement";
+      setPreviewLoading(true);
+      const [genResult, cvResult, letterResult] = await Promise.allSettled([
+        api.getGeneration(id),
+        api.downloadFile(id, "cv"),
+        api.downloadFile(id, "letter"),
+      ]);
+      if (cancelled) return;
+
+      if (genResult.status !== "fulfilled") {
+        const msg =
+          genResult.reason instanceof Error
+            ? genResult.reason.message
+            : "Erreur de chargement";
         toast.error(msg);
         router.replace("/dashboard/generate");
-      } finally {
-        if (!cancelled) setLoading(false);
+        return;
       }
+
+      const gen = genResult.value;
+      if (gen.status !== "completed" || !gen.adapted_data) {
+        toast.error("Cette génération n'est pas encore prête à être éditée");
+        router.replace("/dashboard/generate");
+        return;
+      }
+
+      const normalized: AdaptedData = {
+        nom_entreprise: gen.adapted_data.nom_entreprise ?? "",
+        titre_poste: gen.adapted_data.titre_poste ?? "",
+        resume_professionnel: gen.adapted_data.resume_professionnel ?? "",
+        competences: Array.isArray(gen.adapted_data.competences)
+          ? gen.adapted_data.competences
+          : [],
+        atouts: Array.isArray(gen.adapted_data.atouts)
+          ? gen.adapted_data.atouts
+          : [],
+        experiences: Array.isArray(gen.adapted_data.experiences)
+          ? gen.adapted_data.experiences.map((exp) => ({
+              title: exp.title ?? "",
+              company: exp.company ?? "",
+              location: exp.location ?? "",
+              dates: exp.dates ?? "",
+              bullets: Array.isArray(exp.bullets) ? exp.bullets : [],
+            }))
+          : [],
+        lettre_motivation: gen.adapted_data.lettre_motivation ?? "",
+      };
+      setData(normalized);
+      setInitialJson(JSON.stringify(normalized));
+
+      if (cvResult.status === "fulfilled") {
+        const nextCvUrl = URL.createObjectURL(cvResult.value);
+        if (cvUrlRef.current) URL.revokeObjectURL(cvUrlRef.current);
+        setCvUrl(nextCvUrl);
+      }
+      if (letterResult.status === "fulfilled") {
+        const nextLetterUrl = URL.createObjectURL(letterResult.value);
+        if (letterUrlRef.current) URL.revokeObjectURL(letterUrlRef.current);
+        setLetterUrl(nextLetterUrl);
+      }
+      if (cvResult.status === "rejected" && letterResult.status === "rejected") {
+        toast.error("Impossible de charger l'aperçu PDF");
+      }
+
+      setPreviewLoading(false);
+      setLoading(false);
     };
     run();
     return () => {
       cancelled = true;
     };
-  }, [id, loadPreview, router]);
+  }, [id, router]);
 
   // Cleanup blob URLs on unmount
   useEffect(() => {

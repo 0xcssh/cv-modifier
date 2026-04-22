@@ -36,12 +36,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    try {
-      const me = await api.getMe();
-      setUser(me);
-      setCredits(me.credits);
+    const [meResult, profileResult] = await Promise.allSettled([
+      api.getMe(),
+      api.getProfile(),
+    ]);
+
+    if (meResult.status === "fulfilled") {
+      setUser(meResult.value);
+      setCredits(meResult.value.credits);
       setIsAuthenticated(true);
-    } catch {
+    } else {
       if (!api.getToken()) {
         setIsAuthenticated(false);
         setUser(null);
@@ -51,13 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    try {
-      const p = await api.getProfile();
-      setProfile(p);
-    } catch {
-      setProfile(null);
-    }
-
+    setProfile(profileResult.status === "fulfilled" ? profileResult.value : null);
     setLoading(false);
   }, []);
 
