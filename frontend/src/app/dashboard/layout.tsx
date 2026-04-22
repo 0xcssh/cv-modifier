@@ -4,8 +4,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 import { useEffect, useState } from "react";
-import { Zap, Clock, User, LogOut, CreditCard, Crown, Menu, X } from "lucide-react";
+import { Zap, Clock, User, LogOut, CreditCard, Crown, Menu, X, Mail, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 const navItems = [
   { href: "/dashboard/generate", icon: Zap, label: "Générer" },
@@ -18,10 +20,24 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated, credits, loading, logout } = useAuth();
+  const { isAuthenticated, user, credits, loading, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [resendingVerify, setResendingVerify] = useState(false);
+
+  const handleResendVerify = async () => {
+    if (!user?.email || resendingVerify) return;
+    setResendingVerify(true);
+    try {
+      await api.requestVerifyToken(user.email);
+      toast.success("Email de vérification envoyé. Vérifiez votre boîte.");
+    } catch {
+      toast.error("Impossible d'envoyer l'email. Réessayez plus tard.");
+    } finally {
+      setResendingVerify(false);
+    }
+  };
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -153,6 +169,37 @@ export default function DashboardLayout({
 
       {/* Main content */}
       <main className="lg:ml-64">
+        {user && !user.is_verified && (
+          <div className="bg-amber-50 border-b border-amber-200 px-4 lg:px-8 py-3">
+            <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center gap-3">
+              <Mail className="w-5 h-5 text-amber-600 flex-shrink-0" />
+              <div className="flex-1 text-sm text-amber-900">
+                <span className="font-medium">Email non vérifié.</span>{" "}
+                Confirmez votre adresse{" "}
+                <span className="font-mono text-xs bg-amber-100 px-1.5 py-0.5 rounded">
+                  {user.email}
+                </span>{" "}
+                pour pouvoir générer des CV.
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleResendVerify}
+                disabled={resendingVerify}
+                className="border-amber-300 text-amber-900 hover:bg-amber-100"
+              >
+                {resendingVerify ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+                    Envoi...
+                  </>
+                ) : (
+                  "Renvoyer l'email"
+                )}
+              </Button>
+            </div>
+          </div>
+        )}
         <div className="max-w-5xl mx-auto px-4 py-6 lg:px-8 lg:py-8">
           {children}
         </div>

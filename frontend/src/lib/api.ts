@@ -96,6 +96,20 @@ class ApiClient {
     });
   }
 
+  async requestVerifyToken(email: string) {
+    return this.request<null>("/api/auth/request-verify-token", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  async verifyEmail(token: string) {
+    return this.request<UserData>("/api/auth/verify", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    });
+  }
+
   // Profile
   async getProfile() {
     return this.request<ProfileData>("/api/profile");
@@ -226,6 +240,8 @@ export interface UserData {
   email: string;
   credits: number;
   subscription_tier: string;
+  is_verified: boolean;
+  is_active: boolean;
 }
 
 export interface EducationData {
