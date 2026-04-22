@@ -47,6 +47,14 @@ Tu dois rester crédible — tu peux reformuler librement, réordonner, enrichir
 des compétences proches de celles existantes, mais jamais de compétences totalement
 déconnectées du profil.
 
+RÈGLE D'OR SUR LES CHIFFRES : n'invente JAMAIS de chiffres absolus (CA, montants en euros,
+effectifs managés, nombre de clients, volumes). N'utilise QUE les chiffres présents dans le
+profil original du candidat. Si aucun chiffre n'est fourni pour une expérience, reste
+qualitatif — il vaut mieux une bullet sans chiffre qu'une bullet avec un chiffre inventé.
+Les seules quantifications acceptables sans source sont des ordres de grandeur très modestes
+et plausibles pour le contexte (ex: "équipe pluridisciplinaire", "portefeuille clients BtoB"
+sans montant chiffré).
+
 {gender_rule}
 
 Tu réponds UNIQUEMENT en JSON valide. Pas de markdown, pas de commentaires, pas de texte autour."""
@@ -134,13 +142,18 @@ RÈGLES IMPÉRATIVES :
 
 4. TOUTES les expériences DOIVENT être reformulées activement pour coller à l'offre :
    - Chaque BULLET doit être réécrite pour créer un lien avec l'offre. Utilise le vocabulaire EXACT de l'offre.
-   - AJOUTE des détails crédibles et réalistes pour étoffer les bullets courtes.
-   - QUANTIFIE autant que possible avec des chiffres crédibles (budgets, pourcentages, volumes).
+   - Étoffe les bullets courtes en détaillant les MISSIONS, MÉTHODES et RESPONSABILITÉS (pas en inventant des chiffres).
+   - N'INVENTE JAMAIS de chiffres absolus (CA, montants €, effectifs, nombre de clients, ROAS, taux de conversion). Reprends uniquement ceux du profil original.
+   - Si le profil contient un chiffre, tu peux le reprendre tel quel. Sinon, reste qualitatif.
    - Règle d'or : chaque bullet doit contenir au moins un mot-clé de l'offre.
 
 5. ORDONNE les expériences et compétences par pertinence pour l'offre (la plus récente en premier).
 
-6. COMPÉTENCES : ajoute toutes les compétences mentionnées dans l'offre qui sont crédibles pour le profil.
+6. COMPÉTENCES : sélection rigoureuse et cohérente avec le RÔLE visé.
+   - PRIORITÉ 1 : reprends d'abord les compétences du profil original qui matchent l'offre, en les reformulant avec le vocabulaire EXACT de l'offre si besoin (ex: "Vente BtoB" → "Développement commercial BtoB" si l'offre le formule ainsi).
+   - PRIORITÉ 2 : ajoute des compétences de l'offre UNIQUEMENT si elles correspondent au CŒUR DE MÉTIER du poste visé ET sont crédibles au vu du parcours.
+   - FILTRE par fonction : pour un poste commercial/business, privilégie les compétences commerciales (prospection, négociation, cycle de vente, CRM, gestion de portefeuille, closing, account management). Ne liste PAS de compétences techniques profondes (cybersécurité, cloud, infrastructure, développement) même si elles apparaissent dans l'offre — elles décrivent l'environnement du poste, pas les compétences attendues du candidat. Inversement pour un poste technique, évite les compétences purement commerciales.
+   - Test de cohérence : avant d'ajouter une compétence, demande-toi "est-ce que cette compétence est attendue de MOI dans ce poste, ou décrit-elle juste le secteur/produit ?". Si c'est le secteur, ne l'ajoute pas aux compétences (mais tu peux la mentionner dans un bullet d'expérience ou le résumé comme connaissance de l'écosystème).
 
 7. ATOUTS : adapte les atouts aux qualités recherchées dans l'offre.
 
