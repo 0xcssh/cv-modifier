@@ -232,6 +232,20 @@ class ApiClient {
   async getMe() {
     return this.request<UserData>("/api/auth/me");
   }
+
+  // Billing
+  async createCheckoutSession(plan: "starter" | "pro" | "pack_10" | "pack_30") {
+    return this.request<{ url: string }>("/api/billing/checkout", {
+      method: "POST",
+      body: JSON.stringify({ plan }),
+    });
+  }
+
+  async createPortalSession() {
+    return this.request<{ url: string }>("/api/billing/portal", {
+      method: "POST",
+    });
+  }
 }
 
 // Types
@@ -240,6 +254,7 @@ export interface UserData {
   email: string;
   credits: number;
   subscription_tier: string;
+  subscription_current_period_end?: string | null;
   is_verified: boolean;
   is_active: boolean;
 }

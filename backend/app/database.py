@@ -25,6 +25,19 @@ async def get_db() -> AsyncSession:
 # Each entry: (table_name, column_name, "<column SQL including name, type, default>")
 _COLUMN_MIGRATIONS: list[tuple[str, str, str]] = [
     ("profiles", "cv_template", "cv_template VARCHAR(20) DEFAULT 'classic'"),
+    # Stripe billing columns (added after Phase 4)
+    ("users", "stripe_customer_id", "stripe_customer_id VARCHAR(80)"),
+    ("users", "stripe_subscription_id", "stripe_subscription_id VARCHAR(80)"),
+    (
+        "users",
+        "subscription_current_period_end",
+        "subscription_current_period_end TIMESTAMP WITH TIME ZONE",
+    ),
+    (
+        "credit_transactions",
+        "stripe_event_id",
+        "stripe_event_id VARCHAR(80)",
+    ),
 ]
 
 

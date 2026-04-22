@@ -70,6 +70,9 @@ class CreditTransaction(Base):
     generation_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("generations.id"), nullable=True
     )
+    stripe_event_id: Mapped[str | None] = mapped_column(
+        String(80), nullable=True, index=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

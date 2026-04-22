@@ -18,6 +18,16 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     subscription_expires_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    # Stripe billing
+    stripe_customer_id: Mapped[str | None] = mapped_column(
+        String(80), nullable=True, index=True
+    )
+    stripe_subscription_id: Mapped[str | None] = mapped_column(
+        String(80), nullable=True, index=True
+    )
+    subscription_current_period_end: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

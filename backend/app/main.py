@@ -39,7 +39,7 @@ _CSRF_PROTECTED_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
 # register, forgot/reset password) go through our own fetch()-based frontend
 # which attaches the header, and no legitimate third party should be posting
 # to them with user cookies attached.
-_CSRF_EXEMPT_PATHS = {"/health"}
+_CSRF_EXEMPT_PATHS = {"/health", "/api/billing/webhook"}
 
 
 @asynccontextmanager

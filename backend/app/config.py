@@ -43,6 +43,16 @@ class Settings(BaseSettings):
     resend_api_key: str = ""
     email_from: str = "CV Modifier <hello@cvmodifier.com>"
 
+    # Stripe
+    stripe_secret_key: str = ""
+    stripe_webhook_secret: str = ""
+    stripe_price_starter: str = ""  # price_...
+    stripe_price_pro: str = ""
+    stripe_price_pack_10: str = ""
+    stripe_price_pack_30: str = ""
+    stripe_checkout_success_url: str = ""  # e.g. https://cvmodifier.com/dashboard/upgrade?success=true
+    stripe_checkout_cancel_url: str = ""  # e.g. https://cvmodifier.com/dashboard/upgrade?cancel=true
+
     # Sentry (error monitoring). Leave sentry_dsn empty to disable.
     sentry_dsn: str = ""
     sentry_environment: str = ""  # e.g. "production", "development"
