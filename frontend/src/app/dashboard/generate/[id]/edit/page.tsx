@@ -289,18 +289,22 @@ export default function EditGenerationPage({
         <Button
           onClick={handleSave}
           disabled={saving || !isDirty}
-          className="bg-blue-600 hover:bg-blue-700 text-white h-9 px-4"
+          className="relative bg-blue-600 hover:bg-blue-700 text-white h-9 px-3 sm:px-4"
         >
           {saving ? (
             <>
-              <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
-              Enregistrement...
+              <Loader2 className="w-4 h-4 sm:mr-1.5 animate-spin" />
+              <span className="hidden sm:inline">Enregistrement...</span>
             </>
           ) : (
             <>
-              <Save className="w-4 h-4 mr-1.5" />
-              Enregistrer et regénérer
+              <Save className="w-4 h-4 sm:mr-1.5" />
+              <span className="hidden sm:inline">Enregistrer et regénérer</span>
+              <span className="sm:hidden">Enregistrer</span>
             </>
+          )}
+          {isDirty && !saving && (
+            <span className="sm:hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full border-2 border-white" />
           )}
         </Button>
       </div>
