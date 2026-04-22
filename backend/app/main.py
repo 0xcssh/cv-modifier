@@ -11,6 +11,25 @@ from app.config import settings
 from app.core.limiter import limiter
 from app.database import create_tables
 
+# Sentry init must run before `app = FastAPI(...)` so the integrations can
+# wrap FastAPI/Starlette's ASGI lifecycle correctly. No-op when DSN is empty.
+if settings.sentry_dsn:
+    import sentry_sdk
+    from sentry_sdk.integrations.fastapi import FastApiIntegration
+    from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+
+    sentry_sdk.init(
+        dsn=settings.sentry_dsn,
+        environment=settings.sentry_environment
+        or ("production" if not settings.debug else "development"),
+        traces_sample_rate=settings.sentry_traces_sample_rate,
+        send_default_pii=False,  # RGPD: don't send email/IP by default
+        integrations=[
+            FastApiIntegration(),
+            SqlalchemyIntegration(),
+        ],
+    )
+
 # Methods that should be CSRF-checked. Safe methods (GET/HEAD/OPTIONS/TRACE)
 # are skipped since they are not supposed to mutate state and CORS preflight
 # (OPTIONS) must be allowed through.

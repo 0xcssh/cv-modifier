@@ -220,11 +220,39 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-400 py-10">
-        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-white font-bold text-lg">
-            CV <span className="text-blue-400">Modifier</span>
+        <div className="max-w-6xl mx-auto px-4 flex flex-col gap-6 md:flex-row md:justify-between md:items-center">
+          <div className="flex flex-col items-center md:items-start gap-2">
+            <div className="text-white font-bold text-lg">
+              CV <span className="text-blue-400">Modifier</span>
+            </div>
+            <p className="text-sm">&copy; 2026 CV Modifier. Tous droits réservés.</p>
           </div>
-          <p className="text-sm">&copy; 2026 CV Modifier. Tous droits réservés.</p>
+          <nav
+            aria-label="Liens légaux"
+            className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm"
+          >
+            <Link href="/legal/mentions-legales" className="hover:text-white">
+              Mentions légales
+            </Link>
+            <span aria-hidden="true" className="text-slate-600">
+              ·
+            </span>
+            <Link href="/legal/cgu" className="hover:text-white">
+              CGU
+            </Link>
+            <span aria-hidden="true" className="text-slate-600">
+              ·
+            </span>
+            <Link href="/legal/confidentialite" className="hover:text-white">
+              Confidentialité
+            </Link>
+            <span aria-hidden="true" className="text-slate-600">
+              ·
+            </span>
+            <Link href="/legal/cookies" className="hover:text-white">
+              Cookies
+            </Link>
+          </nav>
         </div>
       </footer>
     </div>

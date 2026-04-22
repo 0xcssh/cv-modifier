@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 // Content Security Policy — enforced (not report-only).
 // - 'unsafe-inline' on script-src: required because Next.js runtime injects
@@ -23,7 +24,7 @@ const cspDirectives = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://cv-modifier-production.up.railway.app http://localhost:8000 https://*.r2.cloudflarestorage.com https://*.r2.dev",
+  "connect-src 'self' https://cv-modifier-production.up.railway.app http://localhost:8000 https://*.r2.cloudflarestorage.com https://*.r2.dev https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io",
   "frame-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
@@ -78,4 +79,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Wrap the Next config with Sentry's webpack plugin. It injects the client
+// SDK via sentry.client.config.ts and (when SENTRY_AUTH_TOKEN / SENTRY_ORG /
+// SENTRY_PROJECT are provided) uploads source maps so stack traces in the
+// Sentry UI are readable. Those env vars are optional: when unset, source
+// map upload is silently skipped — local dev builds keep working.
+export default withSentryConfig(nextConfig, {
+  silent: true, // don't pollute build output
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  disableLogger: true,
+});

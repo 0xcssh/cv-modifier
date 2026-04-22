@@ -2,6 +2,7 @@ import logging
 import re
 import uuid
 
+import sentry_sdk
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -219,6 +220,9 @@ async def run_generation_pipeline(
             generation.error_message = _sanitize_error(e)
             await db.commit()
             logger.exception(f"Generation {generation_id} failed")
+            # Send the FULL exception to Sentry — the sanitized message above
+            # is only for the client response. No-op if Sentry isn't init'd.
+            sentry_sdk.capture_exception(e)
 
             # Refund the credit atomically so a failed generation doesn't cost the user.
             try:

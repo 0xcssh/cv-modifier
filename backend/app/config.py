@@ -43,6 +43,11 @@ class Settings(BaseSettings):
     resend_api_key: str = ""
     email_from: str = "CV Modifier <hello@cvmodifier.com>"
 
+    # Sentry (error monitoring). Leave sentry_dsn empty to disable.
+    sentry_dsn: str = ""
+    sentry_environment: str = ""  # e.g. "production", "development"
+    sentry_traces_sample_rate: float = 0.1  # 10% perf sampling
+
     # PDF layout
     page_width: int = 210
     page_height: int = 297

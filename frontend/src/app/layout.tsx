@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { CookieConsent } from "@/components/cookie-consent";
 import { Providers } from "./providers";
 
 const inter = Inter({
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <Providers>{children}</Providers>
         <Toaster richColors position="top-right" />
+        <CookieConsent />
       </body>
     </html>
   );
