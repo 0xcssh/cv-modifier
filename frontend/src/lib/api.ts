@@ -240,6 +240,8 @@ export interface ExperienceData {
   sort_order?: number;
 }
 
+export type CvTemplateId = "classic" | "modern" | "minimalist" | "creative";
+
 export interface ProfileData {
   id: string;
   full_name: string;
@@ -256,6 +258,7 @@ export interface ProfileData {
   languages: string[];
   soft_skills: string[];
   custom_instructions?: string;
+  cv_template?: CvTemplateId;
   education: EducationData[];
   experiences: ExperienceData[];
 }
@@ -274,6 +277,7 @@ export interface ProfileCreateData {
   languages?: string[];
   soft_skills?: string[];
   custom_instructions?: string;
+  cv_template?: CvTemplateId;
   education?: EducationData[];
   experiences?: ExperienceData[];
 }

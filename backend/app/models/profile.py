@@ -38,6 +38,7 @@ class Profile(Base):
     gender: Mapped[str] = mapped_column(
         String(10), default="male"
     )  # male, female
+    cv_template: Mapped[str] = mapped_column(String(20), default="classic")
     skills: Mapped[list] = mapped_column(JSON, default=list)
     languages: Mapped[list] = mapped_column(JSON, default=list)
     soft_skills: Mapped[list] = mapped_column(JSON, default=list)

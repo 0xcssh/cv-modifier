@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { api, ProfileData, ProfileCreateData } from "@/lib/api";
+import { api, ProfileCreateData, CvTemplateId } from "@/lib/api";
 import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
-import { Upload, Save, Plus, X, Loader2, FileText, Camera } from "lucide-react";
+import { Upload, Save, Plus, X, Loader2, FileText, Camera, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { CV_TEMPLATES, DEFAULT_CV_TEMPLATE } from "@/lib/cv-templates";
 
 export default function ProfilePage() {
   const { profile, refreshProfile } = useAuth();
@@ -37,6 +38,8 @@ export default function ProfilePage() {
   const [newSkill, setNewSkill] = useState("");
   const [newLang, setNewLang] = useState("");
   const [newSoft, setNewSoft] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState<CvTemplateId>(DEFAULT_CV_TEMPLATE);
+  const [updatingTemplate, setUpdatingTemplate] = useState<CvTemplateId | null>(null);
 
   // Load photo on mount
   useEffect(() => {
@@ -73,6 +76,7 @@ export default function ProfilePage() {
         education: profile.education || [],
         experiences: profile.experiences || [],
       });
+      setSelectedTemplate(profile.cv_template || DEFAULT_CV_TEMPLATE);
     }
   }, [profile]);
 
@@ -206,6 +210,23 @@ export default function ProfilePage() {
     }));
   };
 
+  const handleSelectTemplate = async (templateId: CvTemplateId) => {
+    if (templateId === selectedTemplate || updatingTemplate) return;
+    const previous = selectedTemplate;
+    setSelectedTemplate(templateId);
+    setUpdatingTemplate(templateId);
+    try {
+      await api.updateProfile({ cv_template: templateId });
+      await refreshProfile();
+      toast.success("Modèle de CV mis à jour");
+    } catch (err: unknown) {
+      setSelectedTemplate(previous);
+      toast.error(err instanceof Error ? err.message : "Erreur lors de la mise à jour");
+    } finally {
+      setUpdatingTemplate(null);
+    }
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
@@ -285,6 +306,61 @@ export default function ProfilePage() {
                 </span>
               </label>
             </div>
+          </div>
+        </section>
+
+        {/* Modèle de CV */}
+        <section className="bg-white rounded-xl border border-slate-200 p-6">
+          <h2 className="font-semibold text-slate-900 mb-1">Modèle de CV</h2>
+          <p className="text-sm text-slate-500 mb-4">
+            Choisissez l&apos;apparence de vos CV générés.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {CV_TEMPLATES.map((tpl) => {
+              const isSelected = selectedTemplate === tpl.id;
+              const isUpdating = updatingTemplate === tpl.id;
+              return (
+                <button
+                  key={tpl.id}
+                  type="button"
+                  onClick={() => handleSelectTemplate(tpl.id)}
+                  disabled={!!updatingTemplate}
+                  className={`group relative text-left rounded-xl p-3 transition-all disabled:opacity-60 disabled:cursor-not-allowed ${
+                    isSelected
+                      ? "border-2 border-blue-600 bg-blue-50/30"
+                      : "border border-slate-200 hover:border-slate-400 bg-white"
+                  }`}
+                >
+                  {isSelected && (
+                    <Badge className="absolute top-2 right-2 z-10 bg-blue-600 hover:bg-blue-600 text-white gap-1 text-xs">
+                      <Check className="w-3 h-3" /> Sélectionné
+                    </Badge>
+                  )}
+                  <div
+                    className={`aspect-[3/4] rounded-lg overflow-hidden bg-gradient-to-br ${tpl.gradient} flex items-center justify-center relative`}
+                  >
+                    <span
+                      className={`text-lg font-bold text-center px-2 ${
+                        tpl.id === "minimalist" ? "text-slate-700" : "text-white"
+                      }`}
+                    >
+                      {tpl.name}
+                    </span>
+                    {isUpdating && (
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                        <Loader2 className="w-6 h-6 animate-spin text-white" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-3">
+                    <p className="font-semibold text-slate-900 text-sm">{tpl.name}</p>
+                    <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">
+                      {tpl.description}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </section>
 

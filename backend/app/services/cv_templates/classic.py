@@ -1,11 +1,10 @@
 import io
-from pathlib import Path
 
 from fpdf import FPDF
 
 from app.config import settings
+from app.services.cv_templates._shared import register_fonts
 
-FONTS_DIR = settings.fonts_dir
 LEFT_W = 65
 RIGHT_X = 75
 RIGHT_W = 125
@@ -19,16 +18,7 @@ class CvPDF(FPDF):
         super().__init__("P", "mm", "A4")
         self.set_auto_page_break(auto=False)
         self.add_page()
-        self._register_fonts()
-
-    def _register_fonts(self):
-        try:
-            self.add_font("Carlito", "", str(FONTS_DIR / "Carlito-Regular.ttf"), uni=True)
-            self.add_font("Carlito", "B", str(FONTS_DIR / "Carlito-Bold.ttf"), uni=True)
-            self.add_font("Carlito", "I", str(FONTS_DIR / "Carlito-Italic.ttf"), uni=True)
-            self.font_family_name = "Carlito"
-        except Exception:
-            self.font_family_name = "Helvetica"
+        self.font_family_name = register_fonts(self)
 
     def _draw_left_background(self):
         r, g, b = settings.left_col_color
@@ -69,38 +59,32 @@ class CvPDF(FPDF):
         return self.get_y() + 3
 
 
-def generate_cv_pdf(
+def generate(
     adapted: dict,
     profile_data: dict,
     photo_bytes: bytes | None = None,
 ) -> bytes:
-    """Generate a CV PDF and return it as bytes."""
     pdf = CvPDF()
     font = pdf.font_family_name
 
     # ===== LEFT COLUMN =====
     pdf._draw_left_background()
 
-    # Photo
     photo_x = MARGIN
     photo_y = 10
     if photo_bytes:
-        # Write photo to temp buffer for FPDF
         pdf.image(io.BytesIO(photo_bytes), x=photo_x, y=photo_y, w=PHOTO_SIZE, h=PHOTO_SIZE)
     y_after_photo = photo_y + PHOTO_SIZE + 4
 
-    # Name
     pdf.set_xy(MARGIN, y_after_photo)
     pdf._set_left_style(18, bold=True)
     pdf.cell(LEFT_W, 9, profile_data["full_name"], new_x="LMARGIN", new_y="NEXT")
 
-    # Title
     pdf.set_x(MARGIN)
     pdf._set_left_style(10)
     pdf.multi_cell(LEFT_W, 5, adapted["titre_poste"], new_x="LMARGIN", new_y="NEXT")
     y = pdf.get_y() + 5
 
-    # Contact
     y = pdf._section_header_left("CONTACT", y)
     contact_fields = ["email", "phone", "address", "age", "permis", "vehicule"]
     for field in contact_fields:
@@ -112,7 +96,6 @@ def generate_cv_pdf(
             y = pdf.get_y() + 1
     y += 3
 
-    # Competences
     y = pdf._section_header_left("COMPÉTENCES", y)
     for skill in adapted["competences"][:12]:
         pdf.set_xy(MARGIN, y)
@@ -121,7 +104,6 @@ def generate_cv_pdf(
         y = pdf.get_y() + 0.5
     y += 3
 
-    # Languages
     y = pdf._section_header_left("LANGUES", y)
     for lang in profile_data.get("languages", []):
         pdf.set_xy(MARGIN, y)
@@ -130,7 +112,6 @@ def generate_cv_pdf(
         y = pdf.get_y() + 0.5
     y += 3
 
-    # Atouts
     y = pdf._section_header_left("ATOUTS", y)
     for atout in adapted["atouts"][:6]:
         pdf.set_xy(MARGIN, y)
@@ -141,14 +122,12 @@ def generate_cv_pdf(
     # ===== RIGHT COLUMN =====
     y_right = 12
 
-    # Professional summary
     pdf.set_xy(RIGHT_X, y_right)
     pdf.set_font(font, "I", 9)
     pdf.set_text_color(80, 80, 80)
     pdf.multi_cell(RIGHT_W, 5, adapted["resume_professionnel"], new_x="LMARGIN", new_y="NEXT")
     y_right = pdf.get_y() + 5
 
-    # Experiences
     y_right = pdf._section_header_right("EXPÉRIENCES PROFESSIONNELLES", y_right)
 
     for exp in adapted["experiences"]:
@@ -177,7 +156,6 @@ def generate_cv_pdf(
 
         y_right += 3
 
-    # Education
     y_right = pdf._section_header_right("FORMATION", y_right)
 
     for edu in profile_data.get("education", []):

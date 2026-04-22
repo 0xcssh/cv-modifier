@@ -9,7 +9,7 @@ from app.database import async_session
 from app.models import CreditTransaction, Generation, Profile, User
 from app.services.ai_engine import generate_adapted_cv
 from app.services.cover_letter import generate_cover_letter_pdf
-from app.services.cv_generator import generate_cv_pdf
+from app.services.cv_templates import generate_cv_pdf
 from app.services.scraper import scrape_job_offer
 from app.services.storage import get_storage
 
@@ -40,6 +40,7 @@ def _profile_to_dict(profile: Profile) -> dict:
         "permis": profile.permis,
         "vehicule": profile.vehicule,
         "gender": profile.gender,
+        "cv_template": profile.cv_template,
         "skills": profile.skills or [],
         "languages": profile.languages or [],
         "soft_skills": profile.soft_skills or [],
@@ -130,7 +131,12 @@ async def run_generation_pipeline(
                 except FileNotFoundError:
                     pass
 
-            cv_bytes = generate_cv_pdf(adapted, profile_data, photo_bytes)
+            cv_bytes = generate_cv_pdf(
+                profile.cv_template or "classic",
+                adapted,
+                profile_data,
+                photo_bytes,
+            )
             letter_bytes = generate_cover_letter_pdf(
                 adapted["lettre_motivation"], profile_data, adapted
             )

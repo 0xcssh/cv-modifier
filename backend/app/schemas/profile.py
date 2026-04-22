@@ -1,5 +1,9 @@
 import uuid
+from typing import Literal
+
 from pydantic import BaseModel
+
+CvTemplateId = Literal["classic", "modern", "minimalist", "creative"]
 
 
 # --- Education ---
@@ -54,6 +58,7 @@ class ProfileBase(BaseModel):
     permis: str | None = None
     vehicule: str | None = None
     gender: str = "male"
+    cv_template: CvTemplateId = "classic"
     skills: list[str] = []
     languages: list[str] = []
     soft_skills: list[str] = []
@@ -75,6 +80,7 @@ class ProfileUpdate(BaseModel):
     permis: str | None = None
     vehicule: str | None = None
     gender: str | None = None
+    cv_template: CvTemplateId | None = None
     skills: list[str] | None = None
     languages: list[str] | None = None
     soft_skills: list[str] | None = None
