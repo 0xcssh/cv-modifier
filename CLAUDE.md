@@ -148,7 +148,11 @@ Tous définis dans `backend/app/services/email_service.py` :
 ## What's next
 - **Switch Stripe en mode LIVE** : recréer produits/webhook en live, remplacer env vars Railway par `sk_live_...`
 - Remplir les `[À COMPLÉTER]` dans pages légales (SIRET, siège, raison sociale, juridiction)
+- **Google Analytics 4 + Google Ads** (pour lancer des campagnes) :
+  1. Prérequis RGPD : upgrade cookie banner en 3 boutons (Accepter / Refuser / Personnaliser) + Consent Mode v2 (defaults `denied`, granted après accept)
+  2. Comptes Google (user) : créer property GA4 → `G-XXXXXXXX` ; créer compte Google Ads → `AW-XXXXXXXXX` ; créer 3 conversions dans Ads (sign_up, first_generation, purchase) ; linker GA4 ↔ Ads
+  3. Code : installer gtag via Next `<Script>`, fire events frontend (`sign_up`, `begin_checkout`), events server-side via Measurement Protocol (`purchase` depuis webhook Stripe, `first_generation` depuis pipeline), pixel remarketing Google Ads
+  4. Campagnes (user) : importer conversions GA4 dans Ads, activer Enhanced Conversions (email hashé), créer PMax ou Search avec goal = "Achat"
 - Google OAuth (signup 1-click)
-- Analytics (PostHog / Plausible) pour tracker conversion signup → paiement
 - Rate limiting edge (Cloudflare/Vercel) devant `/auth/*`
 - Script de retention (suppression comptes inactifs 24+ mois)
