@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
-import { Zap, Download, FileText, Loader2, AlertCircle, CheckCircle2, Crown } from "lucide-react";
+import { Zap, Download, FileText, Loader2, AlertCircle, CheckCircle2, Crown, Pencil } from "lucide-react";
 
 type Step = "input" | "generating" | "done" | "error" | "no-credits";
 
@@ -242,7 +242,15 @@ export default function GeneratePage() {
             </button>
           </div>
 
-          <div className="text-center mt-8">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
+            {generationId && (
+              <Link href={`/dashboard/generate/${generationId}/edit`}>
+                <Button variant="outline" className="border-slate-300">
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Éditer le CV
+                </Button>
+              </Link>
+            )}
             <Button onClick={reset} variant="outline">
               Générer un autre CV
             </Button>

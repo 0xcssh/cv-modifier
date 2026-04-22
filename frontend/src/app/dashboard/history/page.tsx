@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { api, GenerationData } from "@/lib/api";
 import { toast } from "sonner";
-import { Download, FileText, Trash2, Clock, Building2, Loader2 } from "lucide-react";
+import { Download, FileText, Pencil, Trash2, Clock, Building2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -119,6 +120,11 @@ export default function HistoryPage() {
 
               {gen.status === "completed" && (
                 <div className="flex items-center gap-1">
+                  <Link href={`/dashboard/generate/${gen.id}/edit`} title="Éditer">
+                    <Button variant="ghost" size="sm">
+                      <Pencil className="w-4 h-4 text-slate-600" />
+                    </Button>
+                  </Link>
                   <Button
                     variant="ghost"
                     size="sm"

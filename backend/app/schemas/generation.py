@@ -41,3 +41,25 @@ class GenerationDetail(GenerationRead):
     error_message: str | None = None
 
     model_config = {"from_attributes": True}
+
+
+class ExperienceUpdate(BaseModel):
+    title: str
+    company: str
+    location: str | None = None
+    dates: str | None = None
+    bullets: list[str] = []
+
+
+class AdaptedDataUpdate(BaseModel):
+    nom_entreprise: str
+    titre_poste: str
+    resume_professionnel: str
+    competences: list[str] = []
+    atouts: list[str] = []
+    experiences: list[ExperienceUpdate] = []
+    lettre_motivation: str
+
+
+class GenerationUpdate(BaseModel):
+    adapted_data: AdaptedDataUpdate

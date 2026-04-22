@@ -180,6 +180,13 @@ class ApiClient {
     return this.request<GenerationData[]>(`/api/generations?limit=${limit}`);
   }
 
+  async updateGeneration(id: string, payload: { adapted_data: AdaptedData }) {
+    return this.request<GenerationDetail>(`/api/generations/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  }
+
   async deleteGeneration(id: string) {
     return this.request<null>(`/api/generations/${id}`, { method: "DELETE" });
   }
@@ -295,9 +302,27 @@ export interface GenerationData {
   created_at?: string;
 }
 
+export interface AdaptedExperience {
+  title: string;
+  company: string;
+  location?: string;
+  dates?: string;
+  bullets: string[];
+}
+
+export interface AdaptedData {
+  nom_entreprise: string;
+  titre_poste: string;
+  resume_professionnel: string;
+  competences: string[];
+  atouts: string[];
+  experiences: AdaptedExperience[];
+  lettre_motivation: string;
+}
+
 export interface GenerationDetail extends GenerationData {
   job_text?: string;
-  adapted_data?: Record<string, unknown>;
+  adapted_data?: AdaptedData;
   cv_pdf_path?: string;
   cover_letter_pdf_path?: string;
   error_message?: string;

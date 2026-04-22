@@ -336,16 +336,14 @@ export default function ProfilePage() {
                       <Check className="w-3 h-3" /> Sélectionné
                     </Badge>
                   )}
-                  <div
-                    className={`aspect-[3/4] rounded-lg overflow-hidden bg-gradient-to-br ${tpl.gradient} flex items-center justify-center relative`}
-                  >
-                    <span
-                      className={`text-lg font-bold text-center px-2 ${
-                        tpl.id === "minimalist" ? "text-slate-700" : "text-white"
-                      }`}
-                    >
-                      {tpl.name}
-                    </span>
+                  <div className="aspect-[3/4] rounded-lg overflow-hidden bg-slate-50 relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/templates/${tpl.id}.png`}
+                      alt={`Aperçu du modèle ${tpl.name}`}
+                      className="w-full h-full object-cover object-top"
+                      loading="lazy"
+                    />
                     {isUpdating && (
                       <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                         <Loader2 className="w-6 h-6 animate-spin text-white" />
