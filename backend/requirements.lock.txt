@@ -37,6 +37,7 @@ certifi==2026.2.25
     #   httpcore
     #   httpx
     #   requests
+    #   sentry-sdk
 cffi==2.0.0
     # via
     #   argon2-cffi-bindings
@@ -67,6 +68,7 @@ fastapi==0.136.0
     # via
     #   cv-modifier-saas (pyproject.toml)
     #   fastapi-users
+    #   sentry-sdk
 fastapi-users==15.0.5
     # via
     #   cv-modifier-saas (pyproject.toml)
@@ -161,6 +163,8 @@ resend==2.29.0
     # via cv-modifier-saas (pyproject.toml)
 s3transfer==0.16.0
     # via boto3
+sentry-sdk==2.58.0
+    # via cv-modifier-saas (pyproject.toml)
 six==1.17.0
     # via python-dateutil
 slowapi==0.1.9
@@ -201,6 +205,7 @@ urllib3==2.6.3
     # via
     #   botocore
     #   requests
+    #   sentry-sdk
 uvicorn==0.45.0
     # via cv-modifier-saas (pyproject.toml)
 watchfiles==1.1.1
