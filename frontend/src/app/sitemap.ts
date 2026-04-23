@@ -1,8 +1,17 @@
 import type { MetadataRoute } from "next";
+import { getAllPosts } from "@/lib/blog-posts";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://cvmodifier.com";
   const now = new Date();
+
+  const blogPosts = getAllPosts().map((post) => ({
+    url: `${base}/blog/${post.slug}`,
+    lastModified: new Date(post.updatedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
   return [
     // Landing — priorité max
     { url: `${base}/`, lastModified: now, changeFrequency: "weekly", priority: 1.0 },
@@ -11,6 +20,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/cv-ats`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/creer-cv`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/lettre-motivation-ia`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    // Blog
+    { url: `${base}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    ...blogPosts,
     // Page institutionnelle
     { url: `${base}/a-propos`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     // Pages légales RGPD
