@@ -14,11 +14,12 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://cvmodifier.com"),
   title: {
-    default: "CV Modifier — Adaptez votre CV à chaque offre en 30 secondes",
+    default:
+      "CV Modifier — Adapter son CV à une offre d'emploi avec l'IA | Gratuit",
     template: "%s | CV Modifier",
   },
   description:
-    "Collez un lien d'offre d'emploi, obtenez un CV et une lettre de motivation parfaitement adaptés en 30 secondes grâce à l'IA. Optimisé ATS. 3 générations offertes.",
+    "Adaptez votre CV et lettre de motivation à chaque offre en 30s grâce à l'IA. ATS-compatible. 3 générations offertes sans carte bancaire.",
   applicationName: "CV Modifier",
   keywords: [
     "CV",

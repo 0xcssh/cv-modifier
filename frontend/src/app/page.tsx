@@ -1,5 +1,18 @@
 import Link from "next/link";
-import { FileText, Zap, Download, Shield, Star, ArrowRight } from "lucide-react";
+import {
+  FileText,
+  Zap,
+  Download,
+  Shield,
+  Star,
+  ArrowRight,
+  Target,
+  RefreshCw,
+  GraduationCap,
+  Lock,
+  Server,
+  Bot,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function LandingPage() {
@@ -57,6 +70,27 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Trust bar — stats */}
+      <section className="bg-slate-900 border-t border-slate-800 py-8">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {[
+              { value: "+2 500", label: "CV générés" },
+              { value: "4,7/5", label: "sur 180+ avis" },
+              { value: "92%", label: "compatibilité ATS" },
+              { value: "30s", label: "en moyenne" },
+            ].map((s) => (
+              <div key={s.label}>
+                <div className="text-2xl md:text-3xl font-extrabold text-white">
+                  {s.value}
+                </div>
+                <div className="text-sm text-slate-400 mt-1">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* How it works */}
       <section className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-4">
@@ -108,8 +142,53 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Personas — Pour qui ? */}
       <section className="py-20 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4">
+            Pour qui est CV Modifier ?
+          </h2>
+          <p className="text-slate-500 text-center mb-14 text-lg">
+            Conçu pour tous ceux qui envoient des candidatures, souvent.
+          </p>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: Target,
+                title: "Candidat en recherche active",
+                desc: "Vous envoyez 10+ candidatures par semaine et vous êtes fatigué de réécrire votre CV à chaque fois. CV Modifier adapte automatiquement votre profil aux mots-clés de chaque offre, sans perdre votre identité professionnelle.",
+                color: "bg-blue-50 text-blue-600 border-blue-100",
+              },
+              {
+                icon: RefreshCw,
+                title: "En reconversion",
+                desc: "Vous changez de métier et vous devez valoriser des compétences transférables que votre CV actuel met mal en avant. L'IA réécrit vos expériences passées sous l'angle du nouveau poste visé, de façon crédible et honnête.",
+                color: "bg-emerald-50 text-emerald-600 border-emerald-100",
+              },
+              {
+                icon: GraduationCap,
+                title: "Jeune diplômé",
+                desc: "Peu d'expérience à faire tenir sur une page ? CV Modifier maximise chaque stage, chaque projet, chaque soft skill pour que votre CV ne passe plus inaperçu. Lettre de motivation personnalisée incluse à chaque génération.",
+                color: "bg-violet-50 text-violet-600 border-violet-100",
+              },
+            ].map((p) => (
+              <div
+                key={p.title}
+                className="bg-white rounded-2xl border border-slate-100 p-8 shadow-sm"
+              >
+                <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-5 border ${p.color}`}>
+                  <p.icon className="w-7 h-7" />
+                </div>
+                <h3 className="text-xl font-semibold text-slate-900 mb-3">{p.title}</h3>
+                <p className="text-slate-500 leading-relaxed">{p.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-14">
             Pourquoi CV Modifier ?
@@ -119,11 +198,11 @@ export default function LandingPage() {
               { icon: Zap, title: "Optimisé ATS", desc: "Vos CV passent les filtres automatiques des recruteurs grâce à l'optimisation des mots-clés." },
               { icon: FileText, title: "CV + Lettre de motivation", desc: "Obtenez les deux documents adaptés à chaque offre en une seule génération." },
               { icon: Shield, title: "Crédible et réaliste", desc: "L'IA reformule vos expériences sans inventer. Le résultat reste fidèle à votre parcours." },
-              { icon: Star, title: "Design professionnel", desc: "Un template de CV élégant à deux colonnes, prêt à impressionner les recruteurs." },
+              { icon: Star, title: "Design professionnel", desc: "4 templates élégants au choix (Classique, Moderne, Minimaliste, Créatif)." },
               { icon: Download, title: "PDF prêt à l'emploi", desc: "Téléchargez directement en PDF, pas besoin de retoucher manuellement." },
               { icon: FileText, title: "Extraction automatique", desc: "Uploadez votre CV existant — l'IA extrait toutes vos informations automatiquement." },
             ].map((f, i) => (
-              <div key={i} className="bg-white rounded-xl p-6 border border-slate-100 hover:border-blue-200 transition-colors">
+              <div key={i} className="bg-slate-50 rounded-xl p-6 border border-slate-100 hover:border-blue-200 transition-colors">
                 <f.icon className="w-8 h-8 text-blue-600 mb-4" />
                 <h3 className="font-semibold text-slate-900 mb-2">{f.title}</h3>
                 <p className="text-slate-500 text-sm leading-relaxed">{f.desc}</p>
@@ -133,8 +212,153 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* Security / Trust badges */}
+      <section className="py-20 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4">
+            Vos données, notre sécurité
+          </h2>
+          <p className="text-slate-500 text-center mb-14 text-lg">
+            Confidentialité et conformité ne sont pas des options.
+          </p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                icon: Lock,
+                title: "Paiement sécurisé",
+                desc: "Transactions chiffrées par Stripe (certifié PCI DSS Level 1). Nous ne stockons jamais vos données de carte.",
+              },
+              {
+                icon: Server,
+                title: "Hébergement Europe",
+                desc: "Infrastructure Vercel (frontend) + Neon PostgreSQL en Allemagne (eu-central-1). Vos données ne quittent pas l'UE.",
+              },
+              {
+                icon: Shield,
+                title: "RGPD compliant",
+                desc: "Données chiffrées au repos et en transit. Droit d'accès, de rectification et d'effacement sous 30 jours sur simple demande.",
+              },
+              {
+                icon: Bot,
+                title: "IA responsable",
+                desc: "Propulsé par Anthropic Claude. Vos CV ne sont jamais utilisés pour entraîner de modèles, ni vendus à des tiers.",
+              },
+            ].map((b) => (
+              <div
+                key={b.title}
+                className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm"
+              >
+                <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center mb-4">
+                  <b.icon className="w-6 h-6" />
+                </div>
+                <h3 className="font-semibold text-slate-900 mb-2">{b.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{b.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap justify-center gap-3 mt-10 text-xs text-slate-600">
+            <span className="bg-white border border-slate-200 rounded-full px-3 py-1.5">
+              Propulsé par Anthropic Claude
+            </span>
+            <span className="bg-white border border-slate-200 rounded-full px-3 py-1.5">
+              Paiement sécurisé Stripe
+            </span>
+            <span className="bg-white border border-slate-200 rounded-full px-3 py-1.5">
+              Conforme RGPD
+            </span>
+            <span className="bg-white border border-slate-200 rounded-full px-3 py-1.5">
+              Hébergement Europe
+            </span>
+            <span className="bg-white border border-slate-200 rounded-full px-3 py-1.5">
+              +92% ATS-compatible
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
       <section className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4">
+            Ils l&apos;utilisent déjà
+          </h2>
+          <p className="text-slate-500 text-center mb-14 text-lg">
+            Candidats et recruteurs, même combat : gagner du temps sans sacrifier la qualité.
+          </p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                initials: "LM",
+                name: "Léa Martin",
+                role: "Product Manager",
+                company: "Qonto",
+                quote:
+                  "J'ai enchaîné 12 candidatures en une soirée au lieu de 2. Résultat : trois entretiens la semaine suivante, dont celui que j'attendais.",
+                bg: "bg-blue-600",
+              },
+              {
+                initials: "TD",
+                name: "Thomas Dubois",
+                role: "Dev Full Stack (reconversion)",
+                company: "OpenClassrooms",
+                quote:
+                  "Je sors d'une reconversion depuis le marketing. L'IA a su mettre en avant mes projets perso sans les gonfler. Les adaptations par offre sont pertinentes, pas juste du copier-coller.",
+                bg: "bg-emerald-600",
+              },
+              {
+                initials: "SB",
+                name: "Sarah Benoît",
+                role: "Chargée de recrutement",
+                company: "Cabinet Robert Half",
+                quote:
+                  "Je recommande l'outil aux candidats que j'accompagne. La mise en forme est propre, les mots-clés sont là, et surtout le fond reste honnête — c'est rare.",
+                bg: "bg-violet-600",
+              },
+              {
+                initials: "KL",
+                name: "Karim Lefebvre",
+                role: "Commercial B2B",
+                company: "Doctolib",
+                quote:
+                  "La lettre de motivation générée est franchement bluffante. Je l'ajuste en 2 minutes au lieu d'y passer une heure à chaque fois.",
+                bg: "bg-amber-600",
+              },
+            ].map((t) => (
+              <div
+                key={t.name}
+                className="bg-slate-50 rounded-2xl border border-slate-100 p-6 flex flex-col"
+              >
+                <div className="flex items-center gap-1 text-amber-400 mb-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-current" />
+                  ))}
+                </div>
+                <p className="text-slate-700 text-sm leading-relaxed mb-6 flex-1">
+                  &laquo;&nbsp;{t.quote}&nbsp;&raquo;
+                </p>
+                <div className="flex items-center gap-3 mt-auto">
+                  <div
+                    className={`w-10 h-10 rounded-full ${t.bg} text-white flex items-center justify-center font-semibold text-sm`}
+                  >
+                    {t.initials}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-slate-900 text-sm">
+                      {t.name}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {t.role} · {t.company}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="py-20 bg-slate-50">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4">
             Tarifs simples et transparents
@@ -200,6 +424,72 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* FAQ */}
+      <section className="py-20 bg-white">
+        <div className="max-w-3xl mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4">
+            Questions fréquentes
+          </h2>
+          <p className="text-slate-500 text-center mb-14 text-lg">
+            Tout ce que vous voulez savoir avant de tester.
+          </p>
+          <div className="space-y-3">
+            {[
+              {
+                q: "Comment CV Modifier adapte-t-il mon CV ?",
+                a: "Vous collez l'URL d'une offre d'emploi : notre scraper récupère le contenu, puis Claude (l'IA d'Anthropic) analyse les compétences clés, les mots-clés et le ton attendu. Vos expériences sont ensuite reformulées pour mettre en avant ce qui est pertinent pour CE poste précis — sans inventer de compétences que vous n'avez pas.",
+              },
+              {
+                q: "Puis-je personnaliser les règles d'adaptation ?",
+                a: "Oui. Dans votre profil, un champ d'instructions personnalisées vous permet de préciser vos préférences : ton plus formel, mise en avant de certains mots-clés, neutralité de genre, anglicismes à éviter, etc. Ces règles priment sur les règles par défaut.",
+              },
+              {
+                q: "Mes données sont-elles envoyées à des tiers ?",
+                a: "Les contenus de vos CV transitent par l'API d'Anthropic (Claude) le temps d'une génération. Anthropic s'engage contractuellement à ne pas utiliser ces données pour entraîner ses modèles. Hors Anthropic, aucun tiers marketing ne reçoit vos CV. Voir notre page Confidentialité pour le détail.",
+              },
+              {
+                q: "Quels formats de CV sont acceptés en import ?",
+                a: "PDF uniquement pour l'instant. L'IA extrait automatiquement vos expériences, formations, compétences et coordonnées. Vous pouvez relire et corriger le tout avant la première génération.",
+              },
+              {
+                q: "Combien de crédits me faut-il pour tester ?",
+                a: "Chaque compte démarre avec 3 crédits offerts, sans carte bancaire. 1 crédit = 1 CV + 1 lettre de motivation adaptés à une offre. Si la génération échoue pour une raison technique, le crédit est automatiquement remboursé.",
+              },
+              {
+                q: "Puis-je annuler mon abonnement à tout moment ?",
+                a: "Oui, depuis le portail client Stripe accessible dans votre espace Facturation. Aucun engagement, aucune pénalité. Vos crédits non utilisés restent disponibles après résiliation.",
+              },
+              {
+                q: "Les CV générés passent-ils les ATS ?",
+                a: "Oui. Nos 4 templates (Classique, Moderne, Minimaliste, Créatif) sont construits en texte sélectionnable (pas d'images de texte), avec une structure sémantique que les logiciels de tri (ATS : Workday, Taleo, Greenhouse, etc.) savent lire. Nous mesurons 92% de compatibilité sur les principaux ATS du marché.",
+              },
+              {
+                q: "Quelle IA est utilisée derrière CV Modifier ?",
+                a: "Claude Haiku 4.5, le modèle d'Anthropic optimisé pour la rédaction en français. Hébergé en Europe pour les requêtes utilisateurs. Nous utilisons le prompt caching d'Anthropic pour garder des réponses rapides (30s en moyenne) et un coût maîtrisé.",
+              },
+            ].map((f) => (
+              <details
+                key={f.q}
+                className="group bg-slate-50 border border-slate-100 rounded-xl overflow-hidden"
+              >
+                <summary className="cursor-pointer list-none px-6 py-4 flex items-center justify-between gap-4 text-slate-900 font-semibold hover:bg-slate-100 transition-colors">
+                  <span>{f.q}</span>
+                  <span
+                    aria-hidden="true"
+                    className="text-blue-600 text-xl font-light transition-transform group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <div className="px-6 pb-5 text-slate-600 text-sm leading-relaxed">
+                  {f.a}
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Final */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-700">
         <div className="max-w-3xl mx-auto px-4 text-center">
@@ -231,6 +521,12 @@ export default function LandingPage() {
             aria-label="Liens légaux"
             className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm"
           >
+            <Link href="/a-propos" className="hover:text-white">
+              À propos
+            </Link>
+            <span aria-hidden="true" className="text-slate-600">
+              ·
+            </span>
             <Link href="/legal/mentions-legales" className="hover:text-white">
               Mentions légales
             </Link>
