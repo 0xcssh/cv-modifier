@@ -406,13 +406,13 @@ export default function EditGenerationPage({
               {data.competences.map((s, i) => (
                 <span
                   key={`${s}-${i}`}
-                  className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-100 rounded-full px-3 py-1 text-xs"
+                  className="inline-flex items-start gap-1 bg-blue-50 text-blue-700 border border-blue-100 rounded-2xl px-3 py-1 text-xs max-w-full"
                 >
-                  {s}
+                  <span className="break-words">{s}</span>
                   <button
                     type="button"
                     onClick={() => removeChip("competences", i)}
-                    className="text-blue-500 hover:text-blue-800 cursor-pointer"
+                    className="text-blue-500 hover:text-blue-800 cursor-pointer flex-shrink-0 mt-0.5"
                     aria-label={`Retirer ${s}`}
                   >
                     <X className="w-3 h-3" />
@@ -458,13 +458,13 @@ export default function EditGenerationPage({
               {data.atouts.map((s, i) => (
                 <span
                   key={`${s}-${i}`}
-                  className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full px-3 py-1 text-xs"
+                  className="inline-flex items-start gap-1 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-2xl px-3 py-1 text-xs max-w-full"
                 >
-                  {s}
+                  <span className="break-words">{s}</span>
                   <button
                     type="button"
                     onClick={() => removeChip("atouts", i)}
-                    className="text-emerald-600 hover:text-emerald-900 cursor-pointer"
+                    className="text-emerald-600 hover:text-emerald-900 cursor-pointer flex-shrink-0 mt-0.5"
                     aria-label={`Retirer ${s}`}
                   >
                     <X className="w-3 h-3" />
