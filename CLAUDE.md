@@ -147,6 +147,7 @@ Tous définis dans `backend/app/services/email_service.py` :
 - Phase 10 ✓ SEO Sprint 1 (technique) : robots.ts, sitemap.ts, opengraph-image.tsx (dynamique via next/og), JSON-LD (Organization + WebSite + SoftwareApplication), llms.txt, proxy Next 16 qui noindex les previews *.vercel.app, lang="fr-FR", canonical apex, noindex sur /login/register/verify/forgot-password/reset-password, redirect www→apex 308
 - Phase 11 ✓ SEO Sprint 2 (contenu) : landing enrichie 520→1400 mots (trust bar, 3 personas, 4 badges, 4 témoignages, FAQ 8 Q), /a-propos créée, 4 pillar pages (/adapter-cv-offre-emploi, /cv-ats, /lettre-motivation-ia, /creer-cv) ~1500-2000 mots chacune avec FAQ et internal linking
 - Phase 12 ✓ SEO Sprint 3 (blog) : /blog + 5 articles MVP (1200-1500 mots chacun, design inspiré Legalstart — breadcrumbs, ligne auteur, sommaire inline, callouts bordure gauche colorée, sidebar sticky, FAQ <details>, articles liés). Images hero via Unsplash. Données dans `lib/blog-posts.ts`, rendu statique (generateStaticParams). Auteur unique "Équipe CV Modifier" pour la v1.
+- Phase 13 ✓ SEO Sprint 4 (programmatic) : /cv-par-metier + 20 pages métier (~650-800 mots chacune, contenu unique par métier — pas de template-fill). 7 catégories (Tech, Commerce, Marketing, RH, Finance, Santé, Management). Données dans `lib/cv-metiers.ts`. Chaque page : accroche exemple, compétences clés, outils spécifiques, KPIs métier, erreurs communes, entreprises qui recrutent (FR scale-ups + gros groupes), fourchette salaire, liens métiers connexes. Maillage interne depuis /creer-cv et /adapter-cv-offre-emploi.
 
 ## SEO notes
 - Canonical domain = apex (cvmodifier.com sans www). Vercel dashboard : cvmodifier.com = Production, www.cvmodifier.com = Redirect 308 permanent.
@@ -164,8 +165,8 @@ Tous définis dans `backend/app/services/email_service.py` :
   2. Comptes Google (user) : créer property GA4 → `G-XXXXXXXX` ; créer compte Google Ads → `AW-XXXXXXXXX` ; créer 3 conversions dans Ads (sign_up, first_generation, purchase) ; linker GA4 ↔ Ads
   3. Code : installer gtag via Next `<Script>`, fire events frontend (`sign_up`, `begin_checkout`), events server-side via Measurement Protocol (`purchase` depuis webhook Stripe, `first_generation` depuis pipeline), pixel remarketing Google Ads
   4. Campagnes (user) : importer conversions GA4 dans Ads, activer Enhanced Conversions (email hashé), créer PMax ou Search avec goal = "Achat"
-- **SEO Sprint 4 (programmatic)** : pages `/cv-par-metier/[slug]` (20-30 métiers) pour capter le long-tail transactionnel. Warning sub-skill `seo-programmatic` : au-delà de 30 pages, exiger 60%+ contenu unique par page pour éviter pénalité thin content Google.
-- **Extension blog** : 5-10 articles supplémentaires pour enrichir le blog existant (photo CV, CV par métier, soft skills 2026, CV junior, etc.)
+- **Extension blog** : 5-10 articles supplémentaires pour enrichir le blog existant (photo CV, CV junior, soft skills 2026, reconversion, CV anglais vs FR, etc.)
+- **Extension programmatic** : si on dépasse 20 métiers, rester sous 30 (seuil quality gate). Au-delà → exiger 60%+ contenu unique par page (warning sub-skill `seo-programmatic`) pour éviter pénalité thin content Google.
 - Google OAuth (signup 1-click)
 - Rate limiting edge (Cloudflare/Vercel) devant `/auth/*`
 - Script de retention (suppression comptes inactifs 24+ mois)

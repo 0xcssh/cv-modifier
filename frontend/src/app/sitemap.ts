@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/blog-posts";
+import { CV_METIERS } from "@/lib/cv-metiers";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://cvmodifier.com";
@@ -8,6 +9,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const blogPosts = getAllPosts().map((post) => ({
     url: `${base}/blog/${post.slug}`,
     lastModified: new Date(post.updatedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  const metiersPages = CV_METIERS.map((metier) => ({
+    url: `${base}/cv-par-metier/${metier.slug}`,
+    lastModified: now,
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
@@ -23,6 +31,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Blog
     { url: `${base}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
     ...blogPosts,
+    // CV par métier (programmatic)
+    { url: `${base}/cv-par-metier`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    ...metiersPages,
     // Page institutionnelle
     { url: `${base}/a-propos`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     // Pages légales RGPD

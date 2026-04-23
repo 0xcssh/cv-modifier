@@ -461,6 +461,42 @@ export default function AdapterCvOffreEmploiPage() {
           </Link>
         </aside>
 
+        {/* CV par métier */}
+        <section className="mt-16 border-t border-slate-100 pt-10">
+          <h2 className="text-xl font-bold text-slate-900 mb-2">
+            Adapter son CV selon son métier
+          </h2>
+          <p className="text-sm text-slate-500 mb-5">
+            Les bons mots-clés, KPIs et entreprises varient selon le poste visé.
+            Nos guides métier donnent le contexte de chaque profession.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+            {[
+              { slug: "developpeur-web", label: "CV développeur web" },
+              { slug: "commercial-b2b", label: "CV commercial B2B" },
+              { slug: "chef-de-projet", label: "CV chef de projet" },
+              { slug: "data-analyst", label: "CV data analyst" },
+              { slug: "infirmier", label: "CV infirmier·e" },
+              { slug: "comptable", label: "CV comptable" },
+            ].map((m) => (
+              <Link
+                key={m.slug}
+                href={`/cv-par-metier/${m.slug}`}
+                className="block rounded-lg border border-slate-200 px-4 py-3 text-sm font-medium text-slate-800 hover:border-blue-300 hover:bg-blue-50/50 transition-colors"
+              >
+                {m.label}
+              </Link>
+            ))}
+          </div>
+          <Link
+            href="/cv-par-metier"
+            className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700"
+          >
+            Voir les 20 métiers
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </section>
+
         {/* Related */}
         <section className="mt-16 border-t border-slate-100 pt-10">
           <h2 className="text-xl font-bold text-slate-900 mb-5">
