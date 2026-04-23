@@ -102,72 +102,76 @@ export default function HistoryPage() {
           {generations.map((gen) => (
             <div
               key={gen.id}
-              className="bg-white rounded-xl border border-slate-200 p-5 flex items-center gap-4 hover:border-slate-300 transition-colors"
+              className="bg-white rounded-xl border border-slate-200 p-5 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-4 hover:border-slate-300 transition-colors"
             >
-              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                <FileText className="w-5 h-5 text-blue-600" />
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <FileText className="w-5 h-5 text-blue-600" />
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-slate-900 truncate">
+                    {gen.job_title || "Sans titre"}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-400">
+                    {gen.company_name && (
+                      <>
+                        <Building2 className="w-3.5 h-3.5" />
+                        <span className="truncate">{gen.company_name}</span>
+                        <span>·</span>
+                      </>
+                    )}
+                    <span className="truncate">
+                      {gen.created_at
+                        ? new Date(gen.created_at).toLocaleDateString("fr-FR", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                        : ""}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex-shrink-0">{statusBadge(gen.status)}</div>
               </div>
 
-              <div className="flex-1 min-w-0">
-                <div className="font-medium text-slate-900 truncate">
-                  {gen.job_title || "Sans titre"}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-slate-400">
-                  {gen.company_name && (
-                    <>
-                      <Building2 className="w-3.5 h-3.5" />
-                      <span>{gen.company_name}</span>
-                      <span>·</span>
-                    </>
-                  )}
-                  <span>
-                    {gen.created_at
-                      ? new Date(gen.created_at).toLocaleDateString("fr-FR", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })
-                      : ""}
-                  </span>
-                </div>
-              </div>
-
-              {statusBadge(gen.status)}
-
-              {gen.status === "completed" && (
-                <div className="flex items-center gap-1">
-                  <Link href={`/dashboard/generate/${gen.id}/edit`} title="Éditer">
-                    <Button variant="ghost" size="sm">
-                      <Pencil className="w-4 h-4 text-slate-600" />
+              <div className="flex items-center gap-1 w-full sm:w-auto justify-end sm:justify-start">
+                {gen.status === "completed" && (
+                  <>
+                    <Link href={`/dashboard/generate/${gen.id}/edit`} title="Éditer">
+                      <Button variant="ghost" size="sm">
+                        <Pencil className="w-4 h-4 text-slate-600" />
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDownload(gen.id, "cv")}
+                      title="Télécharger le CV"
+                    >
+                      <Download className="w-4 h-4 text-blue-600" />
                     </Button>
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDownload(gen.id, "cv")}
-                    title="Télécharger le CV"
-                  >
-                    <Download className="w-4 h-4 text-blue-600" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDownload(gen.id, "letter")}
-                    title="Télécharger la lettre"
-                  >
-                    <FileText className="w-4 h-4 text-emerald-600" />
-                  </Button>
-                </div>
-              )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDownload(gen.id, "letter")}
+                      title="Télécharger la lettre"
+                    >
+                      <FileText className="w-4 h-4 text-emerald-600" />
+                    </Button>
+                  </>
+                )}
 
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDelete(gen.id)}
-                className="text-slate-400 hover:text-red-600"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleDelete(gen.id)}
+                  className="text-slate-400 hover:text-red-600"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           ))}
         </div>

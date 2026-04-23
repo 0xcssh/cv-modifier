@@ -176,7 +176,7 @@ export default function DashboardLayout({
               <div className="flex-1 text-sm text-amber-900">
                 <span className="font-medium">Email non vérifié.</span>{" "}
                 Confirmez votre adresse{" "}
-                <span className="font-mono text-xs bg-amber-100 px-1.5 py-0.5 rounded">
+                <span className="font-mono text-xs bg-amber-100 px-1.5 py-0.5 rounded break-all">
                   {user.email}
                 </span>{" "}
                 pour pouvoir générer des CV.
@@ -186,7 +186,7 @@ export default function DashboardLayout({
                 variant="outline"
                 onClick={handleResendVerify}
                 disabled={resendingVerify}
-                className="border-amber-300 text-amber-900 hover:bg-amber-100"
+                className="border-amber-300 text-amber-900 hover:bg-amber-100 w-full sm:w-auto"
               >
                 {resendingVerify ? (
                   <>

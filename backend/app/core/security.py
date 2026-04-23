@@ -54,11 +54,14 @@ async def get_user_manager(user_db=Depends(get_user_db)):
 
 
 # JWT auth via httpOnly cookie.
-# In prod (debug=False) we are cross-origin (Vercel <-> Railway), so the cookie MUST
-# be SameSite=None + Secure to be sent on cross-site requests. CSRF is mitigated
-# separately by the X-Requested-With header check in main.py (enforced via our
-# locked-down CORS allow_origin_regex).
-# In local dev (debug=True), same-origin lax + non-secure cookies keep things simple.
+# Requests are same-origin in both environments: in prod the browser hits
+# cvmodifier.com and Vercel rewrites /api/* to Railway (the browser never sees
+# the Railway hostname); in dev the frontend calls localhost:8000 directly
+# but we only need to survive the Lax same-site default. So SameSite=Lax is
+# correct everywhere, and dropping SameSite=None also means Safari ITP and
+# Chrome iOS no longer treat the cookie as third-party.
+# CSRF is mitigated separately by the X-Requested-With header check in
+# main.py (enforced via our locked-down CORS allow_origin_regex).
 _is_prod = not settings.debug
 
 cookie_transport = CookieTransport(
@@ -66,7 +69,7 @@ cookie_transport = CookieTransport(
     cookie_max_age=60 * 60 * 24,  # 24h
     cookie_secure=_is_prod,
     cookie_httponly=True,
-    cookie_samesite="none" if _is_prod else "lax",
+    cookie_samesite="lax",
     cookie_domain=None,
 )
 

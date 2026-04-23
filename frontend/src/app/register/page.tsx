@@ -91,6 +91,7 @@ export default function RegisterPage() {
               <Input
                 id="email"
                 type="email"
+                autoComplete="email"
                 placeholder="vous@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -103,6 +104,7 @@ export default function RegisterPage() {
               <Input
                 id="password"
                 type="password"
+                autoComplete="new-password"
                 placeholder="Minimum 8 caractères"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -115,6 +117,7 @@ export default function RegisterPage() {
               <Input
                 id="confirm"
                 type="password"
+                autoComplete="new-password"
                 placeholder="Retapez votre mot de passe"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}

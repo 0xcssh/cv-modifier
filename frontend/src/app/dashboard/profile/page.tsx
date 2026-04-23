@@ -237,12 +237,12 @@ export default function ProfilePage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Mon profil</h1>
           <p className="text-slate-500">Vos informations utilisées pour générer les CV.</p>
         </div>
-        <Button onClick={handleSave} disabled={loading} className="bg-blue-600 hover:bg-blue-700 text-white">
+        <Button onClick={handleSave} disabled={loading} className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto">
           {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
           Sauvegarder
         </Button>
@@ -250,8 +250,8 @@ export default function ProfilePage() {
 
       {/* Upload CV */}
       <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 mb-8">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+          <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
             <Upload className="w-6 h-6 text-white" />
           </div>
           <div className="flex-1">
@@ -260,9 +260,9 @@ export default function ProfilePage() {
               Uploadez un PDF et l&apos;IA extraira automatiquement vos informations.
             </p>
           </div>
-          <label className="cursor-pointer">
+          <label className="cursor-pointer w-full sm:w-auto">
             <input type="file" accept=".pdf" onChange={handleExtractCV} className="hidden" />
-            <span className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+            <span className="inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
               {extracting ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Extraction...</>
               ) : (
@@ -380,11 +380,11 @@ export default function ProfilePage() {
             </div>
             <div>
               <Label>Email</Label>
-              <Input value={form.email || ""} onChange={(e) => setForm({ ...form, email: e.target.value })} className="mt-1" />
+              <Input type="email" inputMode="email" autoComplete="email" value={form.email || ""} onChange={(e) => setForm({ ...form, email: e.target.value })} className="mt-1" />
             </div>
             <div>
               <Label>Téléphone</Label>
-              <Input value={form.phone || ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="mt-1" />
+              <Input type="tel" inputMode="tel" autoComplete="tel" value={form.phone || ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="mt-1" />
             </div>
             <div>
               <Label>Ville</Label>
@@ -396,7 +396,7 @@ export default function ProfilePage() {
             </div>
             <div>
               <Label>Âge</Label>
-              <Input value={form.age || ""} onChange={(e) => setForm({ ...form, age: e.target.value })} className="mt-1" />
+              <Input type="text" inputMode="numeric" value={form.age || ""} onChange={(e) => setForm({ ...form, age: e.target.value })} className="mt-1" />
             </div>
             <div>
               <Label>Permis</Label>

@@ -144,6 +144,9 @@ export default function GeneratePage() {
             Lien de l&apos;offre d&apos;emploi
           </label>
           <Input
+            type="url"
+            inputMode="url"
+            autoComplete="url"
             placeholder="https://www.indeed.fr/offre/..."
             value={url}
             onChange={(e) => setUrl(e.target.value)}
@@ -189,7 +192,7 @@ export default function GeneratePage() {
           <p className="text-slate-500 mb-4">
             L&apos;IA analyse l&apos;offre et adapte votre CV. Cela prend environ 15 secondes.
           </p>
-          <div className="flex items-center justify-center gap-6 text-sm text-slate-400">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-sm text-slate-400">
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Offre analysée
             </span>

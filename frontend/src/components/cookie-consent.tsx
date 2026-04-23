@@ -40,10 +40,11 @@ export function CookieConsent() {
     <div
       role="dialog"
       aria-label="Bandeau de consentement cookies"
-      className="fixed bottom-4 left-4 right-4 max-w-2xl mx-auto bg-slate-900 text-white rounded-xl shadow-xl p-4 z-50 border border-slate-800"
+      className="fixed bottom-4 left-4 right-4 max-w-2xl mx-auto bg-slate-900 text-white rounded-xl shadow-xl p-3 sm:p-4 z-50 border border-slate-800"
+      style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
     >
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-        <p className="text-sm leading-relaxed flex-1">
+        <p className="text-xs sm:text-sm leading-relaxed flex-1">
           Nous utilisons des cookies essentiels au fonctionnement du site
           (authentification). Aucun cookie publicitaire ou de suivi n&apos;est
           déposé sans votre consentement.

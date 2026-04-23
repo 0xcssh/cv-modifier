@@ -54,6 +54,7 @@ export default function EditGenerationPage({
   const [openExp, setOpenExp] = useState<number | null>(0);
   const [skillInput, setSkillInput] = useState("");
   const [atoutInput, setAtoutInput] = useState("");
+  const [showPreviewMobile, setShowPreviewMobile] = useState<boolean>(false);
 
   const cvUrlRef = useRef<string>("");
   const letterUrlRef = useRef<string>("");
@@ -292,7 +293,7 @@ export default function EditGenerationPage({
   return (
     <div className="-mx-4 lg:-mx-8 -my-6 lg:-my-8">
       {/* Top bar */}
-      <div className="sticky top-0 lg:top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200 px-4 lg:px-8 py-3 flex items-center gap-3">
+      <div className="sticky top-14 lg:top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 px-4 lg:px-8 py-3 flex items-center gap-3">
         <Link
           href="/dashboard/generate"
           className="flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900"
@@ -312,26 +313,45 @@ export default function EditGenerationPage({
             Modifications non enregistrées
           </span>
         )}
-        <Button
-          onClick={handleSave}
-          disabled={saving || !isDirty}
-          className="relative bg-blue-600 hover:bg-blue-700 text-white h-9 px-3 sm:px-4"
-        >
-          {saving ? (
-            <>
-              <Loader2 className="w-4 h-4 sm:mr-1.5 animate-spin" />
-              <span className="hidden sm:inline">Enregistrement...</span>
-            </>
-          ) : (
-            <>
-              <Save className="w-4 h-4 sm:mr-1.5" />
-              <span className="hidden sm:inline">Enregistrer et regénérer</span>
-              <span className="sm:hidden">Enregistrer</span>
-            </>
-          )}
+        <div className="flex flex-col items-end gap-0.5">
+          <Button
+            onClick={handleSave}
+            disabled={saving || !isDirty}
+            className="relative bg-blue-600 hover:bg-blue-700 text-white h-9 px-3 sm:px-4"
+          >
+            {saving ? (
+              <>
+                <Loader2 className="w-4 h-4 sm:mr-1.5 animate-spin" />
+                <span className="hidden sm:inline">Enregistrement...</span>
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">Enregistrer et regénérer</span>
+                <span className="sm:hidden">Enregistrer</span>
+              </>
+            )}
+            {isDirty && !saving && (
+              <span className="sm:hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full border-2 border-white" />
+            )}
+          </Button>
           {isDirty && !saving && (
-            <span className="sm:hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full border-2 border-white" />
+            <span className="sm:hidden text-[10px] leading-tight text-amber-600">
+              Non sauvegardé
+            </span>
           )}
+        </div>
+      </div>
+
+      {/* Mobile preview toggle */}
+      <div className="lg:hidden px-4 pt-4 flex justify-end">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setShowPreviewMobile((v) => !v)}
+        >
+          {showPreviewMobile ? "Masquer l'aperçu" : "Aperçu PDF"}
         </Button>
       </div>
 
@@ -604,13 +624,13 @@ export default function EditGenerationPage({
                                 <Textarea
                                   value={b}
                                   onChange={(e) => updateBullet(i, bi, e.target.value)}
-                                  rows={2}
+                                  rows={3}
                                   className="text-sm flex-1 min-h-[2.5rem]"
                                 />
                                 <Button
                                   type="button"
                                   variant="ghost"
-                                  size="icon-sm"
+                                  size="icon"
                                   onClick={() => removeBullet(i, bi)}
                                   className="text-slate-400 hover:text-red-600 flex-shrink-0"
                                   aria-label="Supprimer la bullet"
@@ -653,7 +673,11 @@ export default function EditGenerationPage({
         </div>
 
         {/* RIGHT: Preview */}
-        <div className="lg:sticky lg:top-20 lg:self-start">
+        <div
+          className={`lg:sticky lg:top-20 lg:self-start ${
+            showPreviewMobile ? "" : "hidden lg:block"
+          }`}
+        >
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="flex items-center border-b border-slate-200">
               <button
@@ -679,7 +703,7 @@ export default function EditGenerationPage({
                 Lettre
               </button>
             </div>
-            <div className="relative bg-slate-100" style={{ height: "calc(100vh - 8rem)" }}>
+            <div className="relative bg-slate-100 max-h-[70vh] h-[70vh] lg:max-h-none lg:h-[calc(100vh-8rem)]">
               {previewLoading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-10">
                   <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />

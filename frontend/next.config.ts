@@ -14,8 +14,10 @@ import { withSentryConfig } from "@sentry/nextjs";
 //   *.r2.cloudflarestorage.com, or a custom domain).
 // - frame-src 'self' blob: is required by the PDF preview iframe in
 //   dashboard/generate/[id]/edit which loads generated PDFs as blob URLs.
-// - connect-src lists both prod (Railway) and dev (localhost:8000) backend
-//   URLs plus R2 endpoints used by presigned uploads/downloads.
+// - connect-src only needs 'self' in prod because API calls go through the
+//   Vercel rewrite (/api/* -> Railway, but the browser sees cvmodifier.com).
+//   localhost:8000 kept for local dev, plus R2 endpoints used by presigned
+//   uploads/downloads.
 // - frame-ancestors 'none' is the modern replacement for X-Frame-Options,
 //   but we keep X-Frame-Options: DENY for older browsers (belt-and-braces).
 const cspDirectives = [
@@ -24,7 +26,7 @@ const cspDirectives = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://cv-modifier-production.up.railway.app http://localhost:8000 https://*.r2.cloudflarestorage.com https://*.r2.dev https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io",
+  "connect-src 'self' http://localhost:8000 https://*.r2.cloudflarestorage.com https://*.r2.dev https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io",
   "frame-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",

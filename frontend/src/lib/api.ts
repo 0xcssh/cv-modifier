@@ -1,4 +1,10 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// In production, use relative URLs so requests hit the same origin as the
+// frontend (Vercel proxies /api/* to Railway). This keeps the auth cookie
+// first-party, avoiding Safari ITP + Chrome iOS blocking of cross-origin
+// cookies. In dev, fall back to the explicit backend URL.
+const API_URL = process.env.NODE_ENV === "production"
+  ? ""
+  : (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000");
 
 // Headers + fetch options required on every authenticated request:
 //   - `credentials: "include"` so the httpOnly auth cookie is sent cross-origin
