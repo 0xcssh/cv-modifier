@@ -152,6 +152,7 @@ Tous définis dans `backend/app/services/email_service.py` :
 - Sitemap soumis sur Google Search Console + Bing Webmaster Tools. 10 URLs (landing + 4 pillars + /a-propos + 4 legal).
 - Témoignages landing = placeholders crédibles (fake it till you make it) à remplacer par vrais avis quand ils arrivent.
 - Stats landing (+2500 CV, 4.7/5, 92% ATS) = placeholders marketing.
+- **Pas de mention publique du fournisseur IA** (Claude/Anthropic) sur le site côté marketing/produit. Retiré volontairement pour renforcer l'identité de marque, éviter perception wrapper, et préserver la flexibilité de changer de fournisseur sans impact SEO/marketing. Formulations génériques utilisées : "IA générative", "notre IA", "IA propriétaire". Unique exception : `/legal/confidentialite` liste Anthropic comme sous-traitant (obligation RGPD Art. 30, transfert UE→US).
 
 ## What's next
 - **Switch Stripe en mode LIVE** : recréer produits/webhook en live, remplacer env vars Railway par `sk_live_...`
