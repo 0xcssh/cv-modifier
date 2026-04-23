@@ -3,9 +3,10 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Conditions Générales d'Utilisation — CV Modifier",
+  title: "Conditions Générales d'Utilisation",
   description:
     "Conditions générales d'utilisation du service CV Modifier : inscription, crédits, responsabilités et droit applicable.",
+  alternates: { canonical: "/legal/cgu" },
 };
 
 function TBD({ children }: { children: React.ReactNode }) {

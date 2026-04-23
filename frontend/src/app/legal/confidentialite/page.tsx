@@ -3,9 +3,10 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Politique de confidentialité — CV Modifier",
+  title: "Politique de confidentialité",
   description:
     "Politique de confidentialité et de protection des données personnelles de CV Modifier, conforme au RGPD.",
+  alternates: { canonical: "/legal/confidentialite" },
 };
 
 function TBD({ children }: { children: React.ReactNode }) {

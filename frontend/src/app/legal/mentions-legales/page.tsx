@@ -3,9 +3,10 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Mentions légales — CV Modifier",
+  title: "Mentions légales",
   description:
     "Mentions légales de CV Modifier : éditeur, contact, hébergement et propriété intellectuelle.",
+  alternates: { canonical: "/legal/mentions-legales" },
 };
 
 function TBD({ children }: { children: React.ReactNode }) {

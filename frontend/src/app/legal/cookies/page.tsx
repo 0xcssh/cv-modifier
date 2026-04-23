@@ -3,9 +3,10 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Politique cookies — CV Modifier",
+  title: "Politique cookies",
   description:
     "Politique de gestion des cookies utilisés sur CV Modifier : cookies essentiels, cookies analytiques et préférences.",
+  alternates: { canonical: "/legal/cookies" },
 };
 
 export default function CookiesPage() {

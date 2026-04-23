@@ -1,0 +1,35 @@
+# CV Modifier
+
+> SaaS francophone qui adapte automatiquement CV et lettres de motivation à chaque offre d'emploi grâce à l'IA Claude. Marché B2C, candidats francophones en recherche d'emploi.
+
+## Produit
+
+- [Page d'accueil](https://cvmodifier.com): présentation produit, fonctionnalités, tarifs.
+- [Inscription](https://cvmodifier.com/register): 3 générations offertes sans carte bancaire.
+
+## Fonctionnalités principales
+
+- Extraction automatique du CV existant (PDF) par IA
+- Adaptation CV + lettre de motivation à une offre d'emploi (URL collée)
+- 4 templates PDF professionnels (Classique, Moderne, Minimaliste, Créatif)
+- Optimisation ATS (mots-clés recruteurs)
+- Édition post-génération
+
+## Tarifs
+
+- Gratuit: 3 générations offertes
+- Starter: 9,99€/mois pour 20 générations
+- Pro: 19,99€/mois pour 50 générations
+- Pack 10: 4,99€ sans abonnement (10 générations)
+- Pack 30: 12,99€ sans abonnement (30 générations)
+
+## Légal
+
+- [Mentions légales](https://cvmodifier.com/legal/mentions-legales)
+- [CGU](https://cvmodifier.com/legal/cgu)
+- [Confidentialité RGPD](https://cvmodifier.com/legal/confidentialite)
+- [Cookies](https://cvmodifier.com/legal/cookies)
+
+## Contact
+
+- Email: hello@cvmodifier.com

@@ -79,6 +79,18 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Force www.cvmodifier.com → cvmodifier.com (apex = canonical target).
+  // Code-level safety net in case Vercel's domain redirect config drifts.
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.cvmodifier.com" }],
+        destination: "https://cvmodifier.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 // Wrap the Next config with Sentry's webpack plugin. It injects the client

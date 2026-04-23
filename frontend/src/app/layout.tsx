@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsent } from "@/components/cookie-consent";
+import { JsonLd } from "@/components/json-ld";
 import { Providers } from "./providers";
 
 const inter = Inter({
@@ -11,9 +12,60 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "CV Modifier — Adaptez votre CV en 30 secondes",
+  metadataBase: new URL("https://cvmodifier.com"),
+  title: {
+    default: "CV Modifier — Adaptez votre CV à chaque offre en 30 secondes",
+    template: "%s | CV Modifier",
+  },
   description:
-    "Collez une offre d'emploi, obtenez un CV et une lettre de motivation parfaitement adaptés. Propulsé par l'IA.",
+    "Collez un lien d'offre d'emploi, obtenez un CV et une lettre de motivation parfaitement adaptés en 30 secondes grâce à l'IA. Optimisé ATS. 3 générations offertes.",
+  applicationName: "CV Modifier",
+  keywords: [
+    "CV",
+    "adapter CV",
+    "cv offre emploi",
+    "lettre de motivation IA",
+    "cv ATS",
+    "candidature",
+    "générateur CV IA",
+    "modèle CV",
+  ],
+  authors: [{ name: "CV Modifier" }],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "fr_FR",
+    url: "https://cvmodifier.com",
+    siteName: "CV Modifier",
+    title: "CV Modifier — Adaptez votre CV à chaque offre en 30 secondes",
+    description:
+      "CV + lettre de motivation parfaitement adaptés à chaque offre grâce à l'IA Claude. Optimisé ATS. 3 générations offertes sans carte bancaire.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "CV Modifier — Adaptez votre CV en 30 secondes",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CV Modifier — Adaptez votre CV en 30 secondes",
+    description:
+      "CV + lettre de motivation adaptés par l'IA à chaque offre d'emploi.",
+    images: ["/opengraph-image"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -22,8 +74,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${inter.variable} h-full antialiased`}>
+    <html lang="fr-FR" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">
+        <JsonLd />
         <Providers>{children}</Providers>
         <Toaster richColors position="top-right" />
         <CookieConsent />
