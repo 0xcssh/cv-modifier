@@ -9,7 +9,6 @@ const organization = {
   logo: `${SITE_URL}/logo.png`,
   email: "hello@cvmodifier.com",
   areaServed: ["FR", "BE", "CH", "LU", "CA"],
-  inLanguage: "fr-FR",
 };
 
 const website = {
