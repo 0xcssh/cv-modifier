@@ -32,7 +32,7 @@ const softwareApplication = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "Application SaaS qui adapte CV et lettres de motivation à chaque offre d'emploi grâce à l'IA Claude. Extraction automatique, 4 templates PDF, optimisation ATS.",
+    "Application SaaS qui adapte CV et lettres de motivation à chaque offre d'emploi grâce à l'IA générative. Extraction automatique, 4 templates PDF, optimisation ATS.",
   inLanguage: "fr-FR",
   publisher: { "@id": `${SITE_URL}/#organization` },
   offers: [

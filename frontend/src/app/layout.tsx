@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     siteName: "CV Modifier",
     title: "CV Modifier — Adaptez votre CV à chaque offre en 30 secondes",
     description:
-      "CV + lettre de motivation parfaitement adaptés à chaque offre grâce à l'IA Claude. Optimisé ATS. 3 générations offertes sans carte bancaire.",
+      "CV + lettre de motivation parfaitement adaptés à chaque offre grâce à l'IA générative. Optimisé ATS. 3 générations offertes sans carte bancaire.",
     images: [
       {
         url: "/opengraph-image",

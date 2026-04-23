@@ -379,15 +379,15 @@ export default function LettreMotivationIaPage() {
             sur l&apos;entreprise (extrait du scrape de l&apos;offre).
           </p>
           <p className="mb-4">
-            <strong>2. Claude Haiku 4.5 + règles d&apos;adaptation
-            strictes</strong> — le modèle Claude (Anthropic) est moins sujet
-            aux tics GPT (« C&apos;est avec un vif enthousiasme… ») quand il
-            est bien prompté. Le system prompt contient une blacklist de
-            tournures interdites et une obligation de phrases courtes.
+            <strong>2. IA générative + règles d&apos;adaptation
+            strictes</strong> — notre moteur IA est moins sujet aux tics
+            génériques (« C&apos;est avec un vif enthousiasme… ») quand il est
+            bien prompté. Le system prompt contient une blacklist de tournures
+            interdites et une obligation de phrases courtes.
           </p>
           <p className="mb-4">
-            <strong>3. Prompt caching Anthropic</strong> — le prompt système
-            et vos données de profil sont cachés côté modèle (
+            <strong>3. Prompt caching</strong> — le prompt système et vos
+            données de profil sont mis en cache côté modèle (
             <code className="text-sm bg-slate-100 px-1.5 py-0.5 rounded">
               cache_control: ephemeral
             </code>

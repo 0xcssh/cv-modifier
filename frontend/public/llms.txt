@@ -1,6 +1,6 @@
 # CV Modifier
 
-> SaaS francophone qui adapte automatiquement CV et lettres de motivation à chaque offre d'emploi grâce à l'IA Claude. Marché B2C, candidats francophones en recherche d'emploi.
+> SaaS francophone qui adapte automatiquement CV et lettres de motivation à chaque offre d'emploi grâce à l'IA générative. Marché B2C, candidats francophones en recherche d'emploi.
 
 ## Produit
 

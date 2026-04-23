@@ -49,9 +49,9 @@ export default function CguPage() {
                 cvmodifier.com. Le Service permet aux utilisateurs
                 d&apos;adapter automatiquement leur CV et leur lettre de
                 motivation à des offres d&apos;emploi, à l&apos;aide
-                d&apos;une intelligence artificielle fournie par Anthropic
-                (modèle Claude). L&apos;utilisation du Service implique
-                l&apos;acceptation sans réserve des présentes CGU.
+                d&apos;une intelligence artificielle générative.
+                L&apos;utilisation du Service implique l&apos;acceptation
+                sans réserve des présentes CGU.
               </p>
             </section>
 

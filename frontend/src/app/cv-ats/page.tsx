@@ -459,7 +459,7 @@ export default function CvAtsPage() {
               <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
               <span>
                 <strong>Mots-clés de l&apos;offre</strong> injectés
-                automatiquement par l&apos;IA Claude dans le titre,
+                automatiquement par notre IA dans le titre,
                 l&apos;accroche et les compétences.
               </span>
             </li>

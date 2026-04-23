@@ -241,7 +241,7 @@ export default function LandingPage() {
               {
                 icon: Bot,
                 title: "IA responsable",
-                desc: "Propulsé par Anthropic Claude. Vos CV ne sont jamais utilisés pour entraîner de modèles, ni vendus à des tiers.",
+                desc: "Vos CV ne sont jamais utilisés pour entraîner l'IA, ni vendus à des tiers. Contenus supprimés une fois la génération terminée.",
               },
             ].map((b) => (
               <div
@@ -258,7 +258,7 @@ export default function LandingPage() {
           </div>
           <div className="flex flex-wrap justify-center gap-3 mt-10 text-xs text-slate-600">
             <span className="bg-white border border-slate-200 rounded-full px-3 py-1.5">
-              Propulsé par Anthropic Claude
+              IA générative de pointe
             </span>
             <span className="bg-white border border-slate-200 rounded-full px-3 py-1.5">
               Paiement sécurisé Stripe
@@ -437,7 +437,7 @@ export default function LandingPage() {
             {[
               {
                 q: "Comment CV Modifier adapte-t-il mon CV ?",
-                a: "Vous collez l'URL d'une offre d'emploi : notre scraper récupère le contenu, puis Claude (l'IA d'Anthropic) analyse les compétences clés, les mots-clés et le ton attendu. Vos expériences sont ensuite reformulées pour mettre en avant ce qui est pertinent pour CE poste précis — sans inventer de compétences que vous n'avez pas.",
+                a: "Vous collez l'URL d'une offre d'emploi : notre scraper récupère le contenu, puis notre IA analyse les compétences clés, les mots-clés et le ton attendu. Vos expériences sont ensuite reformulées pour mettre en avant ce qui est pertinent pour CE poste précis — sans inventer de compétences que vous n'avez pas.",
               },
               {
                 q: "Puis-je personnaliser les règles d'adaptation ?",
@@ -445,7 +445,7 @@ export default function LandingPage() {
               },
               {
                 q: "Mes données sont-elles envoyées à des tiers ?",
-                a: "Les contenus de vos CV transitent par l'API d'Anthropic (Claude) le temps d'une génération. Anthropic s'engage contractuellement à ne pas utiliser ces données pour entraîner ses modèles. Hors Anthropic, aucun tiers marketing ne reçoit vos CV. Voir notre page Confidentialité pour le détail.",
+                a: "Les contenus de vos CV transitent par notre fournisseur IA le temps d'une génération, avec engagement contractuel de ne pas les utiliser pour entraîner les modèles. Aucun tiers marketing ne reçoit vos CV. La liste complète de nos sous-traitants figure sur notre page Confidentialité.",
               },
               {
                 q: "Quels formats de CV sont acceptés en import ?",
@@ -465,7 +465,7 @@ export default function LandingPage() {
               },
               {
                 q: "Quelle IA est utilisée derrière CV Modifier ?",
-                a: "Claude Haiku 4.5, le modèle d'Anthropic optimisé pour la rédaction en français. Hébergé en Europe pour les requêtes utilisateurs. Nous utilisons le prompt caching d'Anthropic pour garder des réponses rapides (30s en moyenne) et un coût maîtrisé.",
+                a: "CV Modifier utilise une IA générative de pointe. Nous sélectionnons le modèle qui offre le meilleur rapport qualité/coût pour l'adaptation de CV en français. Nous ne communiquons pas publiquement notre fournisseur actuel pour préserver notre flexibilité technique. La liste détaillée de nos sous-traitants figure sur notre page Confidentialité (obligation RGPD).",
               },
             ].map((f) => (
               <details

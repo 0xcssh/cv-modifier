@@ -366,7 +366,7 @@ export default function AdapterCvOffreEmploiPage() {
             CV Modifier automatise exactement la méthode décrite plus haut.
             Vous uploadez votre CV une fois (l&apos;IA extrait automatiquement
             vos expériences, compétences, formations), puis vous collez
-            l&apos;URL d&apos;une offre. L&apos;IA Claude adapte le titre,
+            l&apos;URL d&apos;une offre. Notre IA adapte le titre,
             l&apos;accroche, réordonne les bullets, met en avant les
             compétences pertinentes, et génère une lettre de motivation
             cohérente. Le tout en 30 secondes, au format PDF prêt à envoyer.

@@ -128,11 +128,11 @@ export default function AProposPage() {
               <ul className="space-y-3 list-disc pl-6">
                 <li>
                   <strong className="text-slate-900">
-                    Anthropic Claude Haiku 4.5
+                    IA générative de dernière génération
                   </strong>{" "}
-                  — le modèle d&apos;IA qui reformule vos expériences. Nous avons
-                  retenu Claude pour sa rigueur en français et son faible taux
-                  d&apos;hallucination : l&apos;IA ne s&apos;autorise pas à
+                  — un LLM propriétaire retenu pour sa rigueur en français et
+                  son faible taux d&apos;hallucination, couplé à un prompt
+                  engineering maison : l&apos;IA ne s&apos;autorise pas à
                   inventer des compétences que vous n&apos;avez pas.
                 </li>
                 <li>
@@ -156,7 +156,7 @@ export default function AProposPage() {
                   — base de données Neon PostgreSQL à Francfort, frontend Vercel
                   avec edge europe, stockage Cloudflare R2. Vos données ne
                   transitent jamais par des serveurs hors UE, hors passage
-                  éclair par l&apos;API d&apos;Anthropic le temps d&apos;une
+                  éclair par notre fournisseur IA le temps d&apos;une
                   génération.
                 </li>
                 <li>
