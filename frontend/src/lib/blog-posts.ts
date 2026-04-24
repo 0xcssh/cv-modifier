@@ -1086,8 +1086,1119 @@ const post5: BlogPost = {
   ],
 };
 
+// -----------------------------------------------------------------------
+// Article 6 — Faut-il mettre une photo sur son CV en 2026 ?
+// -----------------------------------------------------------------------
+const post6: BlogPost = {
+  slug: "photo-cv-2026",
+  title: "Faut-il mettre une photo sur son CV en 2026 ? (guide)",
+  excerpt:
+    "Photo ou pas photo sur un CV français en 2026 ? Les règles ont changé. Voici ce que disent le Défenseur des droits, les recruteurs et les ATS — avec la décision concrète à prendre par profil.",
+  category: "Méthode",
+  readTime: 6,
+  publishedAt: "2026-03-05T09:00:00.000Z",
+  updatedAt: "2026-04-18T09:00:00.000Z",
+  author: DEFAULT_AUTHOR,
+  heroImage: UNSPLASH("photo-1494790108377-be9c29b29330"),
+  heroAlt: "Portrait professionnel d'une candidate en tenue formelle devant un mur clair",
+  keywords: [
+    "photo CV",
+    "photo CV obligatoire",
+    "photo CV 2026",
+    "discrimination CV",
+    "CV anonyme",
+    "photo professionnelle CV",
+    "CV international",
+  ],
+  tocHeadings: [
+    { id: "etat-des-lieux", label: "Photo sur CV : état des lieux en France" },
+    { id: "que-dit-la-loi", label: "Ce que dit la loi et le Défenseur des droits" },
+    { id: "pour-contre", label: "Les arguments pour et contre" },
+    { id: "par-profil", label: "La décision par profil (junior, expérimenté, cadre)" },
+    { id: "international", label: "Et si vous candidatez à l'étranger ?" },
+    { id: "si-vous-mettez", label: "Si vous décidez de mettre une photo : les règles" },
+    { id: "alternatives", label: "Les alternatives à la photo classique" },
+  ],
+  content: [
+    {
+      type: "paragraph",
+      text: "C'est une des questions les plus posées sur les forums carrière : doit-on encore mettre une photo sur son CV en France en 2026 ? Réponse courte : non, plus du tout obligatoire, et de moins en moins recommandée. Réponse longue : ça dépend du poste, du secteur et du pays. Voici le cadre complet pour décider en connaissance de cause — sans le flou habituel.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "etat-des-lieux",
+      text: "Photo sur CV : état des lieux en France",
+    },
+    {
+      type: "paragraph",
+      text: "La France reste un des rares pays d'Europe occidentale où la photo sur CV est encore culturellement courante. Selon un sondage APEC publié en 2023, environ 55% des cadres français mettent encore une photo sur leur CV, contre moins de 5% au Royaume-Uni ou aux États-Unis. Mais cette proportion baisse chaque année — elle était de 75% en 2015. Les services RH des grandes entreprises recommandent de plus en plus à leurs managers d'anonymiser les candidatures pour limiter les biais inconscients.",
+    },
+    {
+      type: "paragraph",
+      text: "Autrement dit : la photo n'est plus la norme, elle devient une exception. Et quand une photo exceptionnelle apparaît sur un CV, elle attire l'attention — pour de bonnes ou de mauvaises raisons. La question n'est donc plus « faut-il en mettre une » mais « est-ce que ma photo m'aide ou me dessert ? ».",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "que-dit-la-loi",
+      text: "Ce que dit la loi et le Défenseur des droits",
+    },
+    {
+      type: "paragraph",
+      text: "La photo sur CV n'est et n'a jamais été obligatoire en droit français. Le Code du travail (art. L1132-1) interdit toute discrimination à l'embauche fondée sur l'apparence physique, l'origine, l'âge ou le sexe. Le Défenseur des droits, dans ses recommandations publiques, préconise explicitement de ne pas inclure de photo sur son CV pour éviter les discriminations inconscientes. Source : <a href=\"https://www.defenseurdesdroits.fr\" class=\"text-blue-600 hover:underline font-medium\">defenseurdesdroits.fr</a>.",
+    },
+    {
+      type: "paragraph",
+      text: "Côté recruteur, afficher une photo expose l'entreprise à des accusations de discrimination si la candidature est écartée. Plusieurs grands groupes (BNP Paribas, L'Oréal, la Ville de Paris) ont lancé des programmes de CV anonymes depuis 2015. En clair : demander une photo n'est pas une pratique légalement encadrée, et ne pas en mettre ne vous disqualifie pas — sauf exception explicite mentionnée dans l'offre.",
+    },
+    {
+      type: "callout",
+      variant: "info",
+      title: "Exceptions légales où la photo se justifie",
+      text: "Les métiers où l'apparence fait partie intrinsèque du poste peuvent légalement exiger une photo : mannequinat, comédien, hôte/hôtesse d'accueil premium. Pour tout le reste, la photo n'a aucun lien avec la performance attendue.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "pour-contre",
+      text: "Les arguments pour et contre",
+    },
+    {
+      type: "paragraph",
+      text: "Les arguments se sont inversés ces dernières années. Voici le match tel qu'il se présente en 2026 :",
+    },
+    {
+      type: "list",
+      style: "bullet",
+      items: [
+        "Pour la photo : crée une connexion humaine rapide, aide à être mémorisé dans une short-list longue, montre une image professionnelle soignée, attendue culturellement dans certains secteurs traditionnels (banque, notariat, luxe, hôtellerie haut de gamme).",
+        "Contre la photo : expose à des biais inconscients (âge, origine, apparence), illisible pour les ATS, inutile pour les postes techniques (dev, data, ingénierie), bannie à l'international, peut donner un air daté si la qualité n'est pas pro, prend 3-4 cm² que vous pourriez utiliser pour du contenu.",
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "En 2026, le rapport coût/bénéfice est clair pour une majorité de profils : retirer la photo minimise les risques sans perte réelle. La photo n'a jamais fait gagner un entretien à un candidat compétent ; une mauvaise photo, en revanche, a fait en perdre beaucoup.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "par-profil",
+      text: "La décision par profil (junior, expérimenté, cadre)",
+    },
+    {
+      type: "paragraph",
+      text: "Notre recommandation concrète, par type de profil et secteur :",
+    },
+    {
+      type: "list",
+      style: "bullet",
+      items: [
+        "Junior / premier emploi : pas de photo. Votre CV est déjà court, vous ne voulez pas que le recruteur vous juge d'abord sur votre apparence de 22 ans. Concentrez l'espace sur vos stages et projets.",
+        "Expérimenté tech (dev, data, product, design) : pas de photo. Le secteur ne l'attend pas et certains recruteurs la prennent comme un signal négatif (manque de culture du métier).",
+        "Commercial / business / marketing : photo optionnelle. Si vous en mettez une, elle doit être très pro — costume/chemise, sourire sobre, fond neutre. Une photo trop décontractée nuit plus qu'elle n'aide.",
+        "Cadre dirigeant / secteur conseil : photo acceptée, presque attendue. Mais professionnelle (portrait corporate), pas un selfie ou une photo de vacances recadrée.",
+        "Luxe, hôtellerie, accueil premium : photo recommandée, avec les codes du secteur.",
+        "Public et para-public : de plus en plus sans photo, surtout concours et CV anonymes internes.",
+      ],
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "international",
+      text: "Et si vous candidatez à l'étranger ?",
+    },
+    {
+      type: "paragraph",
+      text: "Si vous candidatez au Royaume-Uni, aux États-Unis, au Canada, en Australie ou en Irlande : JAMAIS de photo. C'est une faute professionnelle qui peut disqualifier votre dossier automatiquement, parce que cela expose l'entreprise à des risques juridiques. En Allemagne, Suisse et Autriche, la photo est encore culturellement acceptée mais plus obligatoire — la tendance est la même qu'en France. Au Japon, en Chine et en Corée du Sud, la photo reste quasi obligatoire sur le CV local (履歴書 / résumé avec photo ID).",
+    },
+    {
+      type: "callout",
+      variant: "warning",
+      title: "Double CV si vous candidatez international et France",
+      text: "Si vous ciblez les deux marchés, maintenez deux versions du CV : une française (avec ou sans photo selon votre choix) et une anglaise sans photo. Ne jamais envoyer la version française avec photo à une entreprise anglo-saxonne, même si elle a une filiale en France.",
+    },
+    {
+      type: "cta",
+      title: "CV sans photo mais avec impact visuel",
+      text: "Nos 4 templates CV sont conçus pour marquer sans photo — mise en page claire, hiérarchie visuelle, compatibilité ATS garantie. Générez un CV adapté à chaque offre en 30 secondes.",
+      ctaLabel: "Essayer gratuitement",
+      ctaHref: "/register",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "si-vous-mettez",
+      text: "Si vous décidez de mettre une photo : les règles",
+    },
+    {
+      type: "paragraph",
+      text: "Si malgré tout vous faites le choix de mettre une photo, respectez ces règles non négociables — une mauvaise photo dessert plus que pas de photo :",
+    },
+    {
+      type: "list",
+      style: "numbered",
+      items: [
+        "Photo prise par un photographe pro ou dans un cabinet de portrait. Pas de selfie, pas de recadrage d'une photo de mariage, pas de photo Instagram filtrée.",
+        "Portrait cadré buste et tête, fond neutre (blanc, gris clair, bleu pâle). Pas de paysage, pas de photo de voyage.",
+        "Tenue cohérente avec le poste visé : chemise ou tenue sobre pour un cadre, plus décontracté pour un profil créatif mais jamais de t-shirt.",
+        "Sourire naturel, regard direct. Pas de lunettes de soleil, pas de chapeau.",
+        "Qualité HD, bien éclairée, photo récente (moins de 3 ans).",
+        "Format : petit (3x4 cm environ), en haut à droite ou gauche du CV. Jamais une photo qui prend 15% de la page.",
+      ],
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "alternatives",
+      text: "Les alternatives à la photo classique",
+    },
+    {
+      type: "paragraph",
+      text: "Si vous voulez apporter une touche visuelle sans photo, plusieurs options marchent bien en 2026 : un lien vers un portfolio (pour les profils créa), un lien vers une vidéo de présentation de 60 secondes (de plus en plus commun en commerce et communication), une photo de profil soignée sur LinkedIn en renvoyant simplement au profil, ou un logo personnel minimaliste avec vos initiales.",
+    },
+    {
+      type: "paragraph",
+      text: "L'idée : la photo n'est qu'un outil parmi d'autres pour humaniser votre candidature. Les recruteurs qui veulent voir votre visage iront de toute façon sur LinkedIn. Autant garder le CV propre, ATS-friendly, et réserver la dimension humaine au premier entretien. Pour aller plus loin sur la structure globale d'un CV efficace, voyez notre guide <a href=\"/cv-ats\" class=\"text-blue-600 hover:underline font-medium\">CV ATS : passer les filtres en 2026</a>.",
+    },
+  ],
+  faq: [
+    {
+      q: "Peut-on être refusé parce qu'on n'a pas mis de photo sur son CV ?",
+      a: "Non. Aucune loi ne l'impose, et un recruteur ne peut pas légalement refuser un CV pour cette raison. Si une offre impose la photo, vérifiez que c'est légitime (métiers de l'apparence) ; sinon, c'est un signal que vous pouvez fuir cet employeur.",
+    },
+    {
+      q: "La photo LinkedIn peut-elle servir de photo de CV ?",
+      a: "Oui si elle est de qualité pro, récente et cohérente avec votre candidature. Beaucoup de générateurs de CV (dont CV Modifier) permettent d'importer votre photo LinkedIn directement. Assurez-vous juste qu'elle reste récente — une photo de 2019 sur un CV 2026 fait amateur.",
+    },
+    {
+      q: "Un CV avec photo passe-t-il les ATS ?",
+      a: "Les ATS modernes ignorent la photo sans poser de problème — ils extraient simplement le texte et laissent la photo de côté. Le vrai risque concerne les mises en page où la photo casse l'ordre de lecture du texte (colonnes asymétriques). Placez la photo en haut, hors de toute colonne, ou supprimez-la.",
+    },
+    {
+      q: "Les photos générées par IA sont-elles acceptables sur un CV ?",
+      a: "Non. Utiliser une photo générée par IA ou artificiellement retouchée (modification du visage, vieillissement/rajeunissement) sur un CV relève de la fraude. Un recruteur qui vous rencontre en entretien et ne vous reconnaît pas passera à la candidature suivante. Une photo pro classique reste la seule option acceptable.",
+    },
+    {
+      q: "Vaut-il mieux pas de photo ou une photo moyenne ?",
+      a: "Sans hésiter : pas de photo. Une photo moyenne (flou, mal éclairée, sélfie) envoie un signal de négligence qui dessert plus que l'absence de photo. Pour mettre une photo, il faut qu'elle soit clairement professionnelle — sinon on s'abstient.",
+    },
+  ],
+  relatedSlugs: [
+    "10-erreurs-cv-ats",
+    "cv-anglais-vs-francais",
+  ],
+};
+
+// -----------------------------------------------------------------------
+// Article 7 — CV junior sans expérience : comment le remplir crédiblement
+// -----------------------------------------------------------------------
+const post7: BlogPost = {
+  slug: "cv-junior-sans-experience",
+  title: "CV junior sans expérience : comment le remplir crédiblement",
+  excerpt:
+    "Jeune diplômé, alternance ratée, premier emploi : voici comment construire un CV junior qui tient sur une page sans expérience pro solide — sans broder, sans faire amateur.",
+  category: "Méthode",
+  readTime: 6,
+  publishedAt: "2026-03-15T09:00:00.000Z",
+  updatedAt: "2026-04-20T09:00:00.000Z",
+  author: DEFAULT_AUTHOR,
+  heroImage: UNSPLASH("photo-1523240795612-9a054b0db644"),
+  heroAlt: "Jeune étudiante travaillant sur son ordinateur dans une bibliothèque",
+  keywords: [
+    "CV junior",
+    "CV sans expérience",
+    "CV jeune diplômé",
+    "CV premier emploi",
+    "CV étudiant",
+    "projets CV",
+    "stages CV",
+    "alternance CV",
+  ],
+  tocHeadings: [
+    { id: "le-probleme", label: "Le vrai problème du CV junior" },
+    { id: "structure", label: "La structure adaptée pour un CV junior" },
+    { id: "projets-scolaires", label: "Valoriser projets scolaires et associatifs" },
+    { id: "stages", label: "Bien traiter les stages et jobs d'été" },
+    { id: "competences", label: "Compétences : ce qui compte vraiment" },
+    { id: "accroche", label: "L'accroche qui compense le manque d'expérience" },
+    { id: "erreurs", label: "Les erreurs qui font amateur" },
+  ],
+  content: [
+    {
+      type: "paragraph",
+      text: "Premier emploi, jeune diplômé, stage raté, césure : tous les candidats juniors se retrouvent un jour face à la page blanche du CV avec ce vertige — « qu'est-ce que je mets, je n'ai rien fait ». La vérité, c'est que vous avez fait beaucoup plus que vous ne le pensez. Le problème n'est pas le contenu, c'est la mise en scène. Voici comment construire un CV junior qui tient sur une page, convertit en entretien, et ne fait pas amateur — sans rien inventer.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "le-probleme",
+      text: "Le vrai problème du CV junior",
+    },
+    {
+      type: "paragraph",
+      text: "Selon une enquête France Travail de 2024, le taux d'emploi des jeunes diplômés 18 mois après leur sortie d'études est d'environ 75% — mais avec de grandes disparités selon les filières. Source : <a href=\"https://statistiques.francetravail.org\" class=\"text-blue-600 hover:underline font-medium\">statistiques.francetravail.org</a>. Le vrai problème du CV junior n'est pas l'absence d'expérience : c'est l'incapacité à valoriser ce qui a été fait. Les recruteurs savent qu'un candidat de 22 ans n'a pas 5 ans d'expérience en management. Ils cherchent autre chose : la capacité à apprendre, la curiosité, des projets concrets terminés, et la maturité de présenter tout ça clairement.",
+    },
+    {
+      type: "paragraph",
+      text: "Un CV junior raté, c'est généralement un CV qui essaie de masquer le manque d'expérience par des formulations vagues (« forte capacité d'adaptation »), des listes de soft skills génériques, ou un design chargé qui masque le vide. Un bon CV junior, au contraire, assume le niveau de séniorité et met en avant les preuves tangibles qu'on peut montrer.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "structure",
+      text: "La structure adaptée pour un CV junior",
+    },
+    {
+      type: "paragraph",
+      text: "La structure classique Expérience → Formation → Compétences ne fonctionne pas pour un junior, parce qu'elle met en premier la section la plus faible. Voici l'ordre qui marche mieux quand on a peu ou pas d'expérience pro :",
+    },
+    {
+      type: "list",
+      style: "numbered",
+      items: [
+        "En-tête + accroche courte (3-4 lignes, cf. section dédiée).",
+        "Formation en premier : diplôme, école, année, mentions ou spécialisations pertinentes. C'est votre actif principal.",
+        "Projets académiques, perso, associatifs : 3-5 projets décrits avec contexte, actions, résultat concret.",
+        "Stages et jobs : même courts, décrits avec précision (contexte entreprise, missions, outils, résultat).",
+        "Compétences : outils, langues (niveau CECRL), méthodologies. Sobre et ciblé.",
+        "Centres d'intérêt (optionnel) : 2-3 lignes max, uniquement si ça ajoute du contexte sur votre personnalité.",
+      ],
+    },
+    {
+      type: "callout",
+      variant: "tip",
+      title: "Formation détaillée = espace bien rempli",
+      text: "Sur un CV junior, la section Formation peut légitimement faire 10-15% de la page : diplôme, école, années, mention, cours majeurs pertinents pour le poste (3-4 modules), mémoire/projet de fin d'études, classement éventuel. Ne la bâclez pas en 2 lignes sous prétexte de modestie.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "projets-scolaires",
+      text: "Valoriser projets scolaires et associatifs",
+    },
+    {
+      type: "paragraph",
+      text: "C'est la section clé du CV junior, et c'est aussi celle qui est le plus mal faite. Un projet scolaire bien présenté a autant de valeur qu'un stage pour un recruteur. Pour chaque projet, format type :",
+    },
+    {
+      type: "list",
+      style: "bullet",
+      items: [
+        "Titre du projet + contexte (cours, équipe, durée). Exemple : « Projet de fin d'études — développement d'une app de covoiturage — équipe de 4, 4 mois ».",
+        "Votre rôle précis dans l'équipe : « responsable backend » > « ai travaillé sur le projet ».",
+        "Actions concrètes + outils : « développement d'une API REST en Node.js, intégration Stripe pour les paiements, déploiement sur Vercel ».",
+        "Résultat mesurable : « application fonctionnelle présentée devant jury, note 17/20 » ou « 50 utilisateurs beta recrutés en 3 semaines ».",
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "Appliquez la même logique aux engagements associatifs : président du BDE, trésorier d'une asso, chef de projet d'un gala étudiant. Ces expériences sont considérées par les recruteurs comme du management léger, de la gestion de projet, ou de la gestion budgétaire selon les cas. Bien présentées, elles valent autant qu'un premier stage court.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "stages",
+      text: "Bien traiter les stages et jobs d'été",
+    },
+    {
+      type: "paragraph",
+      text: "Un stage de 2 mois mal présenté fait amateur ; un stage de 2 mois bien présenté fait sérieux. La différence tient dans 4 détails :",
+    },
+    {
+      type: "list",
+      style: "numbered",
+      items: [
+        "Le contexte entreprise : nom, secteur, taille. « Stage chez Acme (PME 45 personnes, distribution B2B d'équipement pro) » > « Stage chez Acme ».",
+        "Les missions hiérarchisées : 3-4 bullets du plus important au moins important. Pas une liste de 10 tâches de 5 minutes.",
+        "Les outils utilisés : CRM, Excel avancé, SQL, Photoshop. Même 5 jours à utiliser un outil, ça compte — vous l'avez vu en contexte réel.",
+        "Un résultat tangible : « amélioration du tableau de suivi qui a servi pendant 6 mois après mon départ », « présentation d'une étude interne au CODIR ». Un stagiaire qui livre quelque chose de réutilisable fait toujours impression.",
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "Pour les jobs d'été (serveur, caissier, animateur, jobs étudiants), idem : ne les bradez pas. Ils montrent la capacité à travailler en équipe, gérer un rush, prendre une responsabilité opérationnelle. Formulez-les comme des expériences à part entière, pas en annexe.",
+    },
+    {
+      type: "cta",
+      title: "Un CV junior qui ne fait pas amateur",
+      text: "CV Modifier adapte votre CV à chaque offre en valorisant vos projets et stages avec le vocabulaire attendu par les recruteurs juniors. 3 générations offertes, sans carte bancaire.",
+      ctaLabel: "Essayer gratuitement",
+      ctaHref: "/register",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "competences",
+      text: "Compétences : ce qui compte vraiment",
+    },
+    {
+      type: "paragraph",
+      text: "Sur un CV junior, la section compétences est souvent bâclée ou au contraire gonflée artificiellement. Trois règles simples :",
+    },
+    {
+      type: "list",
+      style: "bullet",
+      items: [
+        "Outils concrets avant tout : les logiciels, langages, frameworks que vous avez réellement utilisés. Mieux vaut 5 outils maîtrisés que 15 survolés.",
+        "Langues : niveau CECRL standardisé (A2, B1, B2, C1, C2). Pas de « niveau scolaire » ou « bon niveau » — ça n'a aucune valeur pour le recruteur.",
+        "Pas de soft skills génériques isolées : « rigoureux, curieux, autonome » en liste nue fait toujours amateur. Intégrez-les dans vos expériences (« Autonomie sur un projet de 4 mois avec livrable final présenté au jury »).",
+      ],
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "accroche",
+      text: "L'accroche qui compense le manque d'expérience",
+    },
+    {
+      type: "paragraph",
+      text: "L'accroche (le petit paragraphe en haut du CV) compte encore plus pour un junior que pour un senior. Elle permet au recruteur de se faire un avis en 10 secondes et justifie votre positionnement. Formule qui marche :",
+    },
+    {
+      type: "paragraph",
+      text: "« [Diplôme] en [spécialité] — recherche [type de poste : alternance, CDI, stage] en [secteur ou métier précis]. Expérience de [X mois/projets] dans [compétence clé]. Intéressé par [domaine très précis : SaaS B2B, conseil stratégie, data science]. Disponible [date]. »",
+    },
+    {
+      type: "paragraph",
+      text: "Cette accroche compense l'absence d'expérience parce qu'elle montre 3 choses : vous savez précisément ce que vous cherchez, vous positionnez votre diplôme dans un contexte pro, et vous donnez au recruteur les infos pratiques (type de contrat, disponibilité) sans qu'il ait à les chercher.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "erreurs",
+      text: "Les erreurs qui font amateur",
+    },
+    {
+      type: "list",
+      style: "bullet",
+      items: [
+        "CV qui essaie de tenir sur 2 pages à 22 ans : faites une page dense et bien remplie, c'est plus pro qu'une double page à moitié vide.",
+        "Des dizaines de soft skills listées en vrac. Les recruteurs zappent cette section systématiquement chez les juniors.",
+        "Stages présentés en une ligne : « Stage marketing, Acme, 2024 ». C'est du gâchis — c'est votre seule expérience pro et vous ne la racontez pas.",
+        "Centres d'intérêt génériques : « lecture, voyage, sport ». Soit vous êtes précis (« trail longue distance — semi-marathon en 1h30 »), soit vous supprimez la section.",
+        "Photo de voyage recadrée : aucune photo vaut mieux qu'une photo amateur. Voyez notre article dédié photo de CV.",
+        "Zéro lien : pas de LinkedIn, pas de GitHub (pour un profil tech), pas de portfolio (pour un créatif). Le recruteur se demande ce que vous cachez.",
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "Un CV junior bien fait fait mieux qu'un CV senior bâclé. Le niveau d'expérience, ça se voit — et ça se comprend. Ce que les recruteurs ne pardonnent pas chez un junior, c'est la flemme de mise en forme et la broderie creuse. Pour aller plus loin sur la façon de formuler vos expériences avec des chiffres et des verbes d'action, voyez notre guide <a href=\"/adapter-cv-offre-emploi\" class=\"text-blue-600 hover:underline font-medium\">adapter son CV à une offre d'emploi</a>.",
+    },
+  ],
+  faq: [
+    {
+      q: "Je n'ai aucun stage ni expérience pro, que faire ?",
+      a: "Valorisez les projets scolaires et personnels. Un projet de fin d'études substantiel, un mémoire qui a impliqué du travail terrain, un projet associatif que vous avez piloté — tout ça compte. Si vous avez vraiment zéro de zéro, passez un weekend à construire un projet concret (site perso, app, mission de bénévolat) avant de lancer vos candidatures.",
+    },
+    {
+      q: "Dois-je mettre mes notes et mentions sur le CV ?",
+      a: "Oui pour un junior, dans la section Formation. Mention, rang de sortie, moyenne générale si elle est flatteuse. Vos notes sont souvent votre meilleur signal de performance quand vous n'avez pas d'expérience pro à montrer. Les recruteurs de cabinets conseil et finance les regardent de près.",
+    },
+    {
+      q: "Faut-il mettre ses jobs étudiants (serveur, babysitting) ?",
+      a: "Oui si vous avez peu d'expérience et si le job a duré au moins 2 mois. Ça montre votre capacité à tenir un engagement, gérer un stress opérationnel, travailler en équipe. Évitez juste de mettre un job de 3 jours pour remplir.",
+    },
+    {
+      q: "Combien de pages pour un CV junior ?",
+      a: "Une page, point. Même si vous avez fait 3 stages, un semestre à l'étranger et 2 projets perso — tout doit tenir sur une seule page bien dense. Un junior sur 2 pages fait l'effet inverse de ce qu'il cherche : manque de synthèse.",
+    },
+    {
+      q: "Puis-je mentionner mon BAC si je suis bac+5 ?",
+      a: "Non, sauf si c'est un bac avec mention très bien dans une voie sélective (S, prépa, bac pro) ET que vous êtes junior. Pour un bac+5 en poste depuis 2 ans, le bac disparaît du CV. Gardez Formation synthétique : diplômes pertinents seulement.",
+    },
+  ],
+  relatedSlugs: [
+    "cv-developpeur-2026",
+    "10-erreurs-cv-ats",
+  ],
+};
+
+// -----------------------------------------------------------------------
+// Article 8 — Soft skills sur un CV en 2026 : lesquelles mettre, comment les prouver
+// -----------------------------------------------------------------------
+const post8: BlogPost = {
+  slug: "soft-skills-cv-2026",
+  title: "Soft skills sur un CV en 2026 : lesquelles mettre, comment les prouver",
+  excerpt:
+    "« Rigoureux, autonome, esprit d'équipe » ne veulent plus rien dire. Voici les soft skills qui pèsent en 2026, comment les prouver concrètement, et celles à éviter absolument.",
+  category: "Méthode",
+  readTime: 6,
+  publishedAt: "2026-03-22T09:00:00.000Z",
+  updatedAt: "2026-04-18T09:00:00.000Z",
+  author: DEFAULT_AUTHOR,
+  heroImage: UNSPLASH("photo-1552664730-d307ca884978"),
+  heroAlt: "Réunion d'équipe autour d'une table de travail avec ordinateurs portables",
+  keywords: [
+    "soft skills CV",
+    "compétences comportementales",
+    "savoir-être CV",
+    "soft skills 2026",
+    "leadership CV",
+    "communication CV",
+    "adaptabilité CV",
+  ],
+  tocHeadings: [
+    { id: "pourquoi-changent", label: "Pourquoi les soft skills pèsent plus qu'avant" },
+    { id: "top-5", label: "Le top 5 des soft skills recherchées en 2026" },
+    { id: "a-eviter", label: "Les soft skills qui ne veulent plus rien dire" },
+    { id: "comment-prouver", label: "Comment prouver une soft skill (au lieu de la lister)" },
+    { id: "ou-les-placer", label: "Où placer les soft skills dans le CV" },
+    { id: "entretien", label: "Préparer l'entretien : les STAR stories" },
+  ],
+  content: [
+    {
+      type: "paragraph",
+      text: "Les soft skills, ces « compétences comportementales » que tout le monde liste en bas de CV, sont devenues le terrain le plus piégé du recrutement en 2026. D'un côté, les études APEC montrent qu'elles pèsent de plus en plus dans les décisions finales des recruteurs. De l'autre, les CV qui listent « rigueur, autonomie, esprit d'équipe » en vrac sont ignorés par tous les recruteurs sérieux. Voici comment identifier les soft skills qui comptent vraiment, et comment les prouver au lieu de les proclamer.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "pourquoi-changent",
+      text: "Pourquoi les soft skills pèsent plus qu'avant",
+    },
+    {
+      type: "paragraph",
+      text: "Deux tendances convergentes expliquent l'importance croissante des soft skills en 2026. Première tendance : l'IA générative absorbe de plus en plus de tâches techniques (rédaction, analyse basique, code de routine), rendant les qualités proprement humaines — jugement, communication, collaboration — plus différenciantes. Selon le rapport Future of Jobs 2023 du World Economic Forum, les compétences cognitives analytiques, la créativité et la résilience sont en tête des compétences en demande. Source : <a href=\"https://www.weforum.org/publications/the-future-of-jobs-report-2023/\" class=\"text-blue-600 hover:underline font-medium\">weforum.org</a>.",
+    },
+    {
+      type: "paragraph",
+      text: "Deuxième tendance : les hiring managers recrutent de plus en plus sur potentiel d'évolution (peut-il grandir avec l'équipe ?) plutôt que sur compétences immédiates (sait-il faire exactement X aujourd'hui ?). Les soft skills sont le meilleur proxy de ce potentiel. Conséquence pratique : les recruteurs passent de plus en plus de temps à explorer les soft skills en entretien — et à les vérifier sur le CV en amont.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "top-5",
+      text: "Le top 5 des soft skills recherchées en 2026",
+    },
+    {
+      type: "paragraph",
+      text: "D'après les études APEC et les annonces d'emploi cadres analysées sur l'année 2024-2025, cinq soft skills émergent clairement comme les plus demandées, tous secteurs confondus :",
+    },
+    {
+      type: "list",
+      style: "numbered",
+      items: [
+        "Capacité d'apprentissage rapide : dans un contexte où les outils changent tous les 18 mois (IA générative, no-code, stacks logicielles), la capacité à monter en compétence seul est la soft skill n°1. Preuve : certifications récentes, projets perso récents, changement de stack réussi.",
+        "Communication écrite : email clair, doc synthétique, Slack pro. Surprenant en 2026 mais plus critique que jamais, parce que le travail distribué la rend centrale. Preuve : un article de blog publié, un post LinkedIn qui a bien performé, une doc technique écrite.",
+        "Collaboration transverse : travailler avec d'autres équipes (dev × produit, commercial × ops), sans autorité hiérarchique. Essentiel dans les organisations matricielles actuelles. Preuve : un projet mené avec au moins 3 équipes, avec résultat.",
+        "Résolution de problèmes complexes : capacité à décomposer un problème mal défini, proposer plusieurs options, choisir. Les recruteurs testent ça en entretien par cas pratiques. Preuve : un cas où vous avez débloqué une situation ambiguë, raconté en mode STAR.",
+        "Adaptabilité / résilience : non pas au sens « je m'adapte à tout » mais au sens précis : gérer le changement de plan, l'incertitude, les priorités qui bougent. Preuve : un projet qui a pivoté en cours de route et que vous avez su reconduire.",
+      ],
+    },
+    {
+      type: "callout",
+      variant: "info",
+      title: "Leadership : soft skill à la carte",
+      text: "Le « leadership » est souvent listé en top 5 mais c'est une soft skill très contextuelle — elle ne veut rien dire en soi. Précisez toujours : leadership d'influence (sans autorité), leadership opérationnel (une équipe de N personnes), leadership stratégique (vision long terme). Sans précision, ça sonne creux.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "a-eviter",
+      text: "Les soft skills qui ne veulent plus rien dire",
+    },
+    {
+      type: "paragraph",
+      text: "Certaines formulations sont tellement usées qu'elles ont un effet inverse en 2026 : les voir sur un CV déclenche un léger rejet (« encore un qui met les mots sans les prouver »). À bannir :",
+    },
+    {
+      type: "list",
+      style: "bullet",
+      items: [
+        "« Rigoureux » : tout le monde se dit rigoureux. Preuve ou silence.",
+        "« Autonome » : idem. Le recruteur cherche une preuve factuelle : quel projet mené seul, de A à Z ?",
+        "« Esprit d'équipe » : à remplacer par des exemples précis de collaboration.",
+        "« Dynamique » : vide de sens. Datée des années 2000.",
+        "« Bon relationnel » : idem. Préférer « communication client en B2B » si c'est votre vraie compétence.",
+        "« Capacité d'adaptation » : trop générique. Spécifiez à quoi : changement de techno, de contexte, de culture d'entreprise.",
+        "« Polyvalent » : signale souvent l'absence de spécialité claire. À ne mettre que si c'est justifié par un parcours qui croise plusieurs métiers.",
+      ],
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "comment-prouver",
+      text: "Comment prouver une soft skill (au lieu de la lister)",
+    },
+    {
+      type: "paragraph",
+      text: "La règle d'or : une soft skill listée nue ne compte pas. Seule une soft skill preuvée compte. Trois façons concrètes de prouver :",
+    },
+    {
+      type: "list",
+      style: "numbered",
+      items: [
+        "Dans une description d'expérience, citez la soft skill + son contexte : « Pilotage d'un projet transverse impliquant 4 équipes (produit, tech, marketing, ops) pendant 6 mois — gestion des priorités contradictoires, livraison respectée à J-0. »",
+        "Chiffrez quand possible : « Formation accélérée sur Next.js en 3 semaines, déploiement d'un premier feature en production dans le mois suivant. » C'est plus parlant que « capacité d'apprentissage rapide ».",
+        "Utilisez un résultat externe tangible : recommandation LinkedIn d'un manager, recommandation sur le CV (« Recommandation : voir Jean Dupont, ex-manager Acme — contact sur demande »), prix, publication, certification.",
+      ],
+    },
+    {
+      type: "callout",
+      variant: "tip",
+      title: "La méthode 3 minutes",
+      text: "Pour chaque soft skill que vous voulez mettre en avant, demandez-vous : si un recruteur me demandait « racontez-moi un exemple concret en 3 minutes » — est-ce que j'ai l'exemple prêt ? Si oui, mettez-la. Si non, enlevez-la. C'est le seul filtre qui marche.",
+    },
+    {
+      type: "cta",
+      title: "Un CV qui prouve les soft skills au lieu de les lister",
+      text: "CV Modifier intègre les soft skills directement dans vos expériences avec le bon vocabulaire métier, plutôt que de les lister en vrac. Testez gratuitement.",
+      ctaLabel: "Essayer gratuitement",
+      ctaHref: "/adapter-cv-offre-emploi",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "ou-les-placer",
+      text: "Où placer les soft skills dans le CV",
+    },
+    {
+      type: "paragraph",
+      text: "Mauvaise idée : une section « Soft skills » en bas du CV avec 6 mots listés. Bonne idée : les répartir à 3 endroits stratégiques.",
+    },
+    {
+      type: "list",
+      style: "bullet",
+      items: [
+        "Dans l'accroche du CV (2-3 lignes en haut), citez la soft skill distinctive avec son contexte. Exemple : « Product manager, 6 ans d'expérience en scale-up SaaS B2B. Reconnu pour la collaboration tech × produit et la capacité à décomposer des problèmes ambigus en roadmap livrable. »",
+        "Dans les descriptions d'expériences, sous forme de contexte ou de résultat. « Pilotage d'un chantier transverse Q3 2024 impliquant 3 équipes — gestion des arbitrages et livraison en fenêtre fixe. »",
+        "Dans une mini-section « Compétences » (3-5 lignes max), avec format concret : « Communication écrite (auteur de 12 articles de blog tech cumulant 50k vues), collaboration transverse, résolution de problèmes produits. »",
+      ],
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "entretien",
+      text: "Préparer l'entretien : les STAR stories",
+    },
+    {
+      type: "paragraph",
+      text: "Les soft skills sur le CV ne servent à rien si vous ne pouvez pas les défendre en entretien. Les recruteurs utilisent la méthode STAR (Situation, Tâche, Action, Résultat) pour évaluer les soft skills. Préparez 4 à 6 STAR stories courtes (3 minutes chacune) qui illustrent vos soft skills clés. Pour chaque soft skill que vous mettez sur le CV, ayez au moins une STAR story prête.",
+    },
+    {
+      type: "paragraph",
+      text: "Exemple de structure : « Chez [employeur], en Q2 2024, on avait un projet bloqué parce que deux équipes étaient en désaccord sur l'architecture. J'ai pris l'initiative d'organiser un atelier de 2h avec les deux tech leads et la PM pour poser les contraintes de chacun. On est sorti de l'atelier avec une décision claire, on a débloqué le projet en 48h. » C'est une STAR story — et c'est la vraie preuve de « collaboration transverse ».",
+    },
+    {
+      type: "paragraph",
+      text: "En 2026, les soft skills sont devenues un terrain concurrentiel comme un autre : elles se prouvent, elles se chiffrent, elles se racontent. Le candidat qui arrive encore avec une liste de soft skills en bas de CV en 2026 paraît un candidat des années 2010. Pour aller plus loin sur la structure globale d'un CV efficace, voyez notre guide <a href=\"/creer-cv\" class=\"text-blue-600 hover:underline font-medium\">créer un CV</a>.",
+    },
+  ],
+  faq: [
+    {
+      q: "Faut-il une section dédiée « Soft skills » sur le CV ?",
+      a: "Non, évitez une section listée. Les soft skills bien placées se retrouvent dans l'accroche, dans les descriptions d'expériences, et éventuellement dans une mini-section Compétences très concrète. Une liste nue « rigueur, autonomie, esprit d'équipe » ne fait que signaler que vous ne savez pas où les placer.",
+    },
+    {
+      q: "Les soft skills en anglais passent-elles mieux sur un CV français ?",
+      a: "Pas forcément. « Ownership », « critical thinking », « problem solving » sont acceptés dans la tech et le digital, mais sonnent prétentieux dans des secteurs plus classiques (banque, industrie, administration). Adaptez au contexte. Et ne mélangez pas français et anglais dans la même liste — c'est perçu comme du franglais d'école de commerce.",
+    },
+    {
+      q: "Les tests de personnalité (MBTI, DISC) ont-ils leur place sur un CV ?",
+      a: "Non. Ces tests ne sont pas reconnus scientifiquement et ils catégorisent de façon trop rigide. Si un employeur en a fait passer un et vous a classé « ENTJ » ou « Dominant », gardez ça pour vous. Aucun recruteur sérieux ne prend de décision sur ces bases.",
+    },
+    {
+      q: "Un manager attend-il les mêmes soft skills qu'un IC (individual contributor) ?",
+      a: "Non. Pour un manager, le leadership, le feedback, la capacité à recruter et la gestion de la performance pèsent lourd. Pour un IC, la maîtrise technique, la résolution de problèmes et la capacité à s'auto-diriger sont prioritaires. Un CV de manager qui ne parle que de code, ou inversement, signale une mauvaise lecture du poste.",
+    },
+    {
+      q: "L'IA peut-elle remplacer les soft skills humaines dans 5 ans ?",
+      a: "Non, c'est même l'inverse. Plus les tâches techniques sont absorbées par l'IA, plus les soft skills humaines — jugement, empathie, négociation, leadership — deviennent différenciantes. Les études McKinsey et WEF convergent sur ce point. Investir dans ses soft skills en 2026, c'est préparer la décennie.",
+    },
+  ],
+  relatedSlugs: [
+    "lettre-motivation-ia-credible",
+    "cv-reconversion-professionnelle",
+  ],
+};
+
+// -----------------------------------------------------------------------
+// Article 9 — CV de reconversion : valoriser des compétences transférables
+// -----------------------------------------------------------------------
+const post9: BlogPost = {
+  slug: "cv-reconversion-professionnelle",
+  title: "CV de reconversion : valoriser des compétences transférables",
+  excerpt:
+    "Changer de métier après 5, 10 ou 15 ans : comment construire un CV de reconversion qui convainc, même sans expérience directe dans le nouveau métier.",
+  category: "Métier",
+  readTime: 7,
+  publishedAt: "2026-04-01T09:00:00.000Z",
+  updatedAt: "2026-04-22T09:00:00.000Z",
+  author: DEFAULT_AUTHOR,
+  heroImage: UNSPLASH("photo-1522202176988-66273c2fd55f"),
+  heroAlt: "Personnes en reconversion professionnelle dans un atelier collaboratif",
+  keywords: [
+    "CV reconversion",
+    "reconversion professionnelle",
+    "compétences transférables",
+    "CV changement métier",
+    "CPF reconversion",
+    "CV second métier",
+    "career switch",
+  ],
+  tocHeadings: [
+    { id: "enjeu", label: "L'enjeu d'un CV de reconversion en 2026" },
+    { id: "structure", label: "La structure gagnante : CV par compétences" },
+    { id: "transferables", label: "Identifier vos compétences transférables" },
+    { id: "accroche", label: "L'accroche qui donne le sens de la reconversion" },
+    { id: "formations", label: "Valoriser formations et certifications récentes" },
+    { id: "projets", label: "Les projets de transition : stages, freelance, perso" },
+    { id: "erreurs", label: "Les 5 erreurs fatales en reconversion" },
+  ],
+  content: [
+    {
+      type: "paragraph",
+      text: "Selon les chiffres France Travail, environ 1 actif sur 5 envisage ou amorce une reconversion professionnelle sur une période de 5 ans. Source : <a href=\"https://www.francetravail.org\" class=\"text-blue-600 hover:underline font-medium\">francetravail.org</a>. Pourtant, le CV de reconversion reste l'un des plus difficiles à rédiger : comment convaincre un recruteur que vos 10 ans d'expérience dans un métier A sont pertinents pour un métier B totalement différent ? Voici la méthode concrète pour construire un CV qui fait sens — sans masquer votre passé ni le mettre en avant au mauvais endroit.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "enjeu",
+      text: "L'enjeu d'un CV de reconversion en 2026",
+    },
+    {
+      type: "paragraph",
+      text: "Un CV de reconversion doit répondre à une question silencieuse du recruteur : « pourquoi vous, alors qu'on a des candidats qui ont déjà fait ce métier ? ». La réponse ne peut pas être « parce que je veux changer » — personne ne recrute pour faire plaisir. Elle doit être : « mon parcours précédent m'a donné des compétences qui sont exactement ce dont vous avez besoin, et j'ai déjà commencé à me spécialiser concrètement dans le nouveau métier ».",
+    },
+    {
+      type: "paragraph",
+      text: "Le double risque d'un CV de reconversion mal fait : (1) sembler surqualifié pour un poste junior dans le nouveau métier (« il va se lasser et partir »), (2) sembler sous-qualifié face à des candidats expérimentés (« il ne connaît pas le métier »). Le bon CV de reconversion navigue entre ces deux écueils en mettant en avant les compétences transférables et les preuves récentes de spécialisation.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "structure",
+      text: "La structure gagnante : CV par compétences",
+    },
+    {
+      type: "paragraph",
+      text: "Pour une reconversion, la structure chronologique classique (expériences du plus récent au plus ancien) n'est souvent pas la meilleure. Elle met en premier votre dernier job dans l'ancien métier — ce que le recruteur ne cherche pas. Préférez un CV hybride ou « par compétences » :",
+    },
+    {
+      type: "list",
+      style: "numbered",
+      items: [
+        "En-tête + accroche claire (titre du poste VISÉ, pas le dernier poste occupé).",
+        "Section « Compétences clés » regroupées par thème pertinent pour le nouveau métier. Chaque compétence est illustrée par 1-2 expériences concrètes (avec dates).",
+        "Formations et certifications récentes liées à la reconversion, mises en avant.",
+        "Projets de transition : stages, freelance, projets perso, bénévolat — tout ce qui touche au nouveau métier.",
+        "Parcours professionnel (plus synthétique que dans un CV classique) : entreprises, fonctions, dates. Les détails vont dans la section compétences.",
+        "Formation initiale en bas, brève.",
+      ],
+    },
+    {
+      type: "callout",
+      variant: "tip",
+      title: "Le titre du CV, c'est le nouveau métier",
+      text: "Votre CV doit ouvrir sur le titre du poste que vous visez, PAS sur votre dernier poste. « Analyste data — reconversion depuis finance (6 ans) » est mille fois plus clair que « Contrôleur de gestion » en titre. Le recruteur sait en 2 secondes que vous ciblez un autre métier.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "transferables",
+      text: "Identifier vos compétences transférables",
+    },
+    {
+      type: "paragraph",
+      text: "Les compétences transférables sont les compétences qui comptent dans le nouveau métier et que vous avez acquises dans l'ancien. Exercice concret : listez 10 compétences de votre métier actuel, puis demandez-vous pour chacune « est-ce que ça compte dans le métier cible ? ». Quelques exemples de passerelles courantes :",
+    },
+    {
+      type: "list",
+      style: "bullet",
+      items: [
+        "Enseignant → formateur en entreprise : pédagogie, ingénierie pédagogique, gestion de groupe, évaluation, production de supports.",
+        "Commercial → product manager : compréhension client, priorisation, communication, négociation des trade-offs.",
+        "Infirmier → RH / coaching : écoute, gestion du stress, communication difficile, confidentialité, organisation.",
+        "Contrôleur de gestion → data analyst : modélisation, rigueur analytique, Excel avancé, SQL, dashboarding.",
+        "Journaliste → content marketing : écriture, angle éditorial, recherche, respect des délais, référencement.",
+        "Militaire → chef de projet / ops : leadership, gestion de crise, logistique, process, culture du résultat.",
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "Ne forcez pas les passerelles qui n'existent pas. Si vous passez de boulangerie à data science, le lien n'est pas évident et il vaut mieux miser sur les formations et projets récents que sur des compétences transférables artificielles. Le recruteur sent le pont fabriqué de toutes pièces.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "accroche",
+      text: "L'accroche qui donne le sens de la reconversion",
+    },
+    {
+      type: "paragraph",
+      text: "C'est le paragraphe le plus important de votre CV de reconversion. Il doit répondre à 3 questions en 3-4 lignes : qui êtes-vous (passé), où allez-vous (cible), pourquoi ça fait sens (bridge). Format qui fonctionne :",
+    },
+    {
+      type: "paragraph",
+      text: "« [Titre du poste visé] — Reconversion depuis [ancien métier, X années d'expérience]. [Compétences transférables clés adaptées au nouveau métier]. Formation [certif récente] validée en [date]. Objectif : [projection concrète : type d'entreprise, taille, secteur]. »",
+    },
+    {
+      type: "paragraph",
+      text: "Exemple concret pour une reconversion commercial → product manager : « Product Manager junior — Reconversion depuis le commerce (7 ans en SaaS B2B). Expérience terrain client, compréhension des cycles d'achat enterprise, capacité à prioriser des besoins contradictoires. Formation Product Management validée à l'IPM School en 2025. Cherche une scale-up SaaS B2B pour appliquer la compréhension client à la construction de produit. »",
+    },
+    {
+      type: "cta",
+      title: "Un CV de reconversion qui raconte le bon pont",
+      text: "CV Modifier adapte votre CV à chaque offre en mettant en avant vos compétences transférables pour le métier cible. 3 générations offertes pour tester.",
+      ctaLabel: "Essayer gratuitement",
+      ctaHref: "/register",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "formations",
+      text: "Valoriser formations et certifications récentes",
+    },
+    {
+      type: "paragraph",
+      text: "Les formations récentes liées au nouveau métier sont le signal de crédibilité n°1 d'un CV de reconversion. Elles montrent que vous ne venez pas juste avec une envie mais avec un investissement concret (temps, argent, énergie). À mettre en avant :",
+    },
+    {
+      type: "list",
+      style: "bullet",
+      items: [
+        "Formations longues reconnues : bootcamp (Le Wagon, 42, Ironhack, OpenClassrooms formations diplômantes), mastère spécialisé, CAP/BP/BTS en reconversion via CPF.",
+        "Certifications métier : AWS, GCP, Scrum, PMP, Google Ads, HubSpot, Product Management (Product School).",
+        "MOOCs sérieux terminés avec projet : Coursera, edX, spécialisations de 4-6 mois — à condition d'avoir livré un projet concret en fin.",
+        "Formations courtes spécialisées : 1-2 semaines dans un cabinet réputé, à mentionner si pertinent.",
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "Attention à ne pas surgonfler : 3 semaines sur Udemy à regarder des vidéos ne sont pas une formation. Mentionnez seulement ce que vous pouvez défendre en entretien (« j'ai fait ce projet, j'ai codé ça, j'ai livré ça »).",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "projets",
+      text: "Les projets de transition : stages, freelance, perso",
+    },
+    {
+      type: "paragraph",
+      text: "Entre votre ancien métier et votre nouveau poste visé, il y a souvent un sas : stages, missions freelance courtes, projets perso, bénévolat. C'est LE contenu qui fait la différence sur un CV de reconversion. Trois formats qui marchent :",
+    },
+    {
+      type: "list",
+      style: "numbered",
+      items: [
+        "Stage en entreprise dans le nouveau métier, même court (1-3 mois). En reconversion, un stage à 30 ou 40 ans n'est pas ridicule — c'est le signe d'un engagement concret. Utilisez votre réseau pour en trouver un pendant ou après votre formation.",
+        "Mission freelance / bénévolat : refaire le site d'une asso, tenir le marketing digital d'un petit commerce, faire du pro bono pour une startup de votre réseau. Tout compte, tant que c'est concret et raconté avec résultat.",
+        "Projet perso en ligne : un portfolio, un GitHub, un blog, une app publiée. Le recruteur peut cliquer, voir, juger. Rien ne remplace ça pour une reconversion tech.",
+      ],
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "erreurs",
+      text: "Les 5 erreurs fatales en reconversion",
+    },
+    {
+      type: "list",
+      style: "numbered",
+      items: [
+        "Garder l'ancien titre comme titre du CV : « Contrôleur de gestion » en tête alors que vous postulez data analyst. Le recruteur ne fait pas le pont à votre place.",
+        "Lister toutes les expériences passées au même niveau de détail : un recruteur qui cherche un product manager junior n'a pas besoin de lire 3 paragraphes sur votre job de commercial en 2015.",
+        "Masquer la reconversion : cacher les dates, éviter de nommer les anciens métiers. Ça crée de la suspicion. Mieux vaut assumer clairement et expliquer le sens.",
+        "Pas de formation ni de projet récent dans le nouveau métier : vous demandez au recruteur de vous croire sur parole. Ça ne marche pas.",
+        "Ton défaitiste ou plaintif dans l'accroche (« Suite à un burn-out / à une envie d'ailleurs, j'ai décidé de… »). Restez factuel et orienté avenir.",
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "Une bonne reconversion se prépare 12 à 18 mois avant la première candidature. Le CV n'est que la vitrine finale. Pour les compétences transférables spécifiques à votre nouveau métier cible, voyez notre page <a href=\"/cv-par-metier\" class=\"text-blue-600 hover:underline font-medium\">CV par métier</a> qui détaille les attendus par profession.",
+    },
+  ],
+  faq: [
+    {
+      q: "Faut-il expliquer le motif de la reconversion en lettre de motivation ?",
+      a: "Oui, en 2-3 phrases maximum, et de façon positive (pull factor, pas push factor). « J'ai découvert le produit en tant que client et j'ai voulu passer de l'autre côté » convertit mieux que « J'ai fait un burn-out dans mon ancien métier ». Le recruteur veut voir un projet, pas une fuite.",
+    },
+    {
+      q: "Mon âge peut-il me pénaliser dans une reconversion ?",
+      a: "La discrimination à l'âge est interdite (Code du travail, art. L1132-1), mais elle existe en pratique. Compensez en montrant votre énergie (formations récentes terminées, projets livrés, portfolio actif), et positionnez-vous clairement sur le niveau junior/médior du nouveau métier — sans faire dans le senior déguisé en junior.",
+    },
+    {
+      q: "Puis-je postuler à un poste senior dans le nouveau métier si j'étais senior dans l'ancien ?",
+      a: "Rarement. Sauf si le nouveau poste valorise massivement vos compétences transférables (ex: ancien commercial senior qui devient Head of Sales d'une startup où son expertise sectorielle pèse). Dans la majorité des cas, viser un poste junior ou médior est plus réaliste — et plus crédible.",
+    },
+    {
+      q: "Dois-je mentionner que j'ai utilisé mon CPF pour ma formation ?",
+      a: "Non, ça n'apporte rien. Le recruteur veut savoir quelle formation vous avez faite et ce qu'elle prouve, pas comment elle a été financée. Mentionnez le nom de la formation, l'organisme, la durée, le projet final. Le mode de financement est confidentiel et sans intérêt recruteur.",
+    },
+    {
+      q: "Combien de pages pour un CV de reconversion ?",
+      a: "2 pages maximum, souvent 1 page bien dense si vous avez peu d'expérience dans le nouveau métier. Compressez les expériences anciennes en une ligne par poste si besoin, et laissez de la place à vos compétences transférables, formations récentes et projets de transition.",
+    },
+  ],
+  relatedSlugs: [
+    "cv-junior-sans-experience",
+    "soft-skills-cv-2026",
+  ],
+};
+
+// -----------------------------------------------------------------------
+// Article 10 — CV en anglais vs français : les vraies différences à connaître
+// -----------------------------------------------------------------------
+const post10: BlogPost = {
+  slug: "cv-anglais-vs-francais",
+  title: "CV en anglais vs français : les vraies différences à connaître",
+  excerpt:
+    "Traduire son CV français en anglais ne suffit pas. Voici les 8 vraies différences structurelles entre un CV français et un resume anglo-saxon — à appliquer avant toute candidature internationale.",
+  category: "Méthode",
+  readTime: 7,
+  publishedAt: "2026-04-10T09:00:00.000Z",
+  updatedAt: "2026-04-22T09:00:00.000Z",
+  author: DEFAULT_AUTHOR,
+  heroImage: UNSPLASH("photo-1521737604893-d14cc237f11d"),
+  heroAlt: "Candidate en entretien professionnel avec documents en anglais",
+  keywords: [
+    "CV anglais",
+    "resume anglais",
+    "CV américain",
+    "CV britannique",
+    "traduction CV anglais",
+    "CV international",
+    "cover letter",
+    "CV UK vs US",
+  ],
+  tocHeadings: [
+    { id: "resume-vs-cv", label: "Resume, CV, curriculum : de quoi on parle ?" },
+    { id: "format", label: "Format et longueur : la règle 1 page" },
+    { id: "photo-personal", label: "Photo et infos personnelles : à bannir" },
+    { id: "summary", label: "Le summary : votre pitch en 3 lignes" },
+    { id: "experience", label: "Les expériences : verbes d'action et chiffres" },
+    { id: "vocabulaire", label: "Le vocabulaire piège (faux amis)" },
+    { id: "uk-vs-us", label: "UK vs US : les petites différences qui comptent" },
+    { id: "cover-letter", label: "La cover letter : quand la mettre, comment la rédiger" },
+  ],
+  content: [
+    {
+      type: "paragraph",
+      text: "Traduire votre CV français en anglais avec DeepL et l'envoyer à Londres ou New York : c'est l'erreur n°1 des candidats qui se lancent à l'international. Un resume anglo-saxon n'est pas un CV français traduit. La structure, la longueur, le vocabulaire et les règles culturelles sont différentes. Voici les 8 vraies différences à intégrer avant d'envoyer la moindre candidature.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "resume-vs-cv",
+      text: "Resume, CV, curriculum : de quoi on parle ?",
+    },
+    {
+      type: "paragraph",
+      text: "Petite mise au point lexicale : aux États-Unis, on parle de « resume » (prononcé rézumé) pour un document court orienté candidature. Le mot « CV » existe aussi mais désigne surtout le document long académique (dans le contexte universitaire, médecine, recherche). Au Royaume-Uni, on parle de « CV » au quotidien — équivalent au resume américain. Dans le reste du monde anglophone (Canada, Australie, Irlande), « resume » et « CV » sont largement interchangeables avec une préférence pour « resume » chez les recruteurs privés.",
+    },
+    {
+      type: "paragraph",
+      text: "Dans cet article, on parle indifféremment du document court de candidature — qu'on l'appelle resume (US) ou CV (UK). La différence pratique tient surtout à la longueur (voir section suivante).",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "format",
+      text: "Format et longueur : la règle 1 page",
+    },
+    {
+      type: "paragraph",
+      text: "Différence n°1, et la plus brutale : aux États-Unis, le resume tient sur 1 seule page, quelle que soit l'expérience. Même avec 20 ans de carrière. C'est une règle quasi sacrée dans le recrutement privé, et un CV de 2 pages d'un candidat non-anglophone sera perçu comme « incapable de synthétiser ». Au Royaume-Uni, la norme est 2 pages maximum. En Irlande et Australie, 2 pages également tolérées.",
+    },
+    {
+      type: "callout",
+      variant: "warning",
+      title: "Exception : l'academic CV",
+      text: "Seuls les CV académiques (chercheurs, professeurs, médecins) peuvent dépasser 2 pages. Ils font souvent 5-10 pages avec publications, thèses, bourses, conférences. Pour toute candidature dans le privé, restez dans la règle 1 page (US) / 2 pages (UK).",
+    },
+    {
+      type: "paragraph",
+      text: "Format pratique : Letter (8.5x11 pouces) pour les États-Unis, A4 pour le Royaume-Uni et l'Europe. Un resume envoyé en A4 aux États-Unis est imprimé avec des marges bizarres, ce qui fait amateur. Si vous ciblez les US, configurez Letter dans votre outil de CV.",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "photo-personal",
+      text: "Photo et infos personnelles : à bannir",
+    },
+    {
+      type: "paragraph",
+      text: "Différence n°2, souvent mal comprise : AUCUNE photo, AUCUNE info personnelle sensible sur un resume anglo-saxon. À supprimer systématiquement de votre version française :",
+    },
+    {
+      type: "list",
+      style: "bullet",
+      items: [
+        "Photo : interdite en pratique. Expose l'entreprise à un risque de discrimination. Un recruteur qui reçoit un CV avec photo peut le supprimer sans même le lire.",
+        "Date de naissance : à retirer absolument. Illegal to ask in most US states, et source de biais d'âge. Vous gardez juste les années d'expérience implicitement.",
+        "État civil (marié(e), célibataire) : inutile et mal vu. Aucun rapport avec la performance pro.",
+        "Nationalité : à mentionner uniquement si ça affecte votre autorisation à travailler (« US Citizen », « UK Work Visa — Tier 2 », « EU Citizen with full UK working rights »).",
+        "Numéro de sécu ou équivalent : jamais.",
+        "Adresse complète : optionnelle. Mentionnez juste la ville + pays (« London, UK » ou « Remote — Paris based »). Pas besoin du 15 rue Machin.",
+      ],
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "summary",
+      text: "Le summary : votre pitch en 3 lignes",
+    },
+    {
+      type: "paragraph",
+      text: "Différence n°3 : le summary. C'est un petit paragraphe de 3-4 lignes placé juste après votre nom et vos coordonnées. Équivalent de l'accroche française, mais plus systématique dans le resume anglo-saxon — presque obligatoire. Il remplace l'ancien « Objective » (désuet en 2026 sauf pour les juniors).",
+    },
+    {
+      type: "paragraph",
+      text: "Format type qui fonctionne : « [Seniority] [Role] with [X] years of experience in [industry]. Specialized in [specific expertise]. Proven track record of [quantified achievement]. Looking for [next career step, type of company]. »",
+    },
+    {
+      type: "paragraph",
+      text: "Exemple : « Senior Product Manager with 7 years of experience in B2B SaaS. Specialized in enterprise onboarding and user activation. Proven track record of shipping features that moved activation rates by 15%+ at two different startups. Looking for a Head of Product role in a Series B+ startup. »",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "experience",
+      text: "Les expériences : verbes d'action et chiffres",
+    },
+    {
+      type: "paragraph",
+      text: "Différence n°4 : le style des descriptions d'expérience. Un resume anglo-saxon privilégie les bullets qui commencent par un verbe d'action au passé simple + chiffre + impact. Pas de paragraphes descriptifs.",
+    },
+    {
+      type: "list",
+      style: "bullet",
+      items: [
+        "Mauvais (style français traduit) : « In charge of the commercial development of the enterprise segment. »",
+        "Bon (style resume) : « Led $4M+ ARR expansion in the enterprise segment (FY2024), closing 3 deals > $200k. »",
+      ],
+    },
+    {
+      type: "paragraph",
+      text: "Les verbes d'action standard : Led, Built, Launched, Scaled, Reduced, Increased, Designed, Delivered, Negotiated, Managed, Owned. Évitez « Responsible for » — trop passif. Commencez chaque bullet par un verbe d'action fort et enchaînez sur un chiffre quand possible.",
+    },
+    {
+      type: "callout",
+      variant: "tip",
+      title: "La règle des 3-5 bullets par poste",
+      text: "Aux US comme au UK, chaque poste se décrit en 3 à 5 bullets — pas plus. Le format « 10 bullets par poste » qu'on voit parfois en France est perçu comme un manque de priorisation. Gardez seulement ce qui est significatif.",
+    },
+    {
+      type: "cta",
+      title: "Votre CV traduit et adapté au format anglo-saxon",
+      text: "CV Modifier propose des templates compatibles format US/UK avec le bon vocabulaire sales/tech/product. Essayez gratuitement.",
+      ctaLabel: "Essayer gratuitement",
+      ctaHref: "/register",
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "vocabulaire",
+      text: "Le vocabulaire piège (faux amis)",
+    },
+    {
+      type: "paragraph",
+      text: "Différence n°5 : plusieurs termes français traduits directement sonnent faux ou faux sens en anglais. Les pièges classiques :",
+    },
+    {
+      type: "list",
+      style: "bullet",
+      items: [
+        "« Experience professionnelle » → « Professional experience » fonctionne, mais on préfère simplement « Experience ».",
+        "« Formation » → ne pas traduire par « Formation ». Utilisez « Education » pour les diplômes, « Training » / « Certifications » pour les formations courtes.",
+        "« Stage » → « Internship ». Jamais « Stage » (qui signifie « étape »).",
+        "« CDI / CDD » → pas de traduction directe. Écrivez « Full-time permanent » ou précisez juste les dates.",
+        "« Alternance » → « Apprenticeship » (UK) ou « Work-study program » (US).",
+        "« Chef de projet » → « Project Manager ». Pas « Chief of Project » (qui n'existe pas).",
+        "« Responsable » → « Manager » ou « Head of » selon le niveau. « Responsible » est un adjectif, pas un titre.",
+        "« Maîtrise » pour un diplôme → « Master's degree ». Pas « Mastery ».",
+      ],
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "uk-vs-us",
+      text: "UK vs US : les petites différences qui comptent",
+    },
+    {
+      type: "paragraph",
+      text: "Si vous candidatez dans les deux zones, quelques ajustements micro à connaître :",
+    },
+    {
+      type: "list",
+      style: "bullet",
+      items: [
+        "Orthographe : « organization » (US) vs « organisation » (UK), « center » (US) vs « centre » (UK), « color » (US) vs « colour » (UK). Choisissez une variante et soyez cohérent.",
+        "Dates : format US « MM/DD/YYYY », format UK « DD/MM/YYYY ». Dans un resume, préférez le format mois + année en toutes lettres (« March 2024 ») pour éviter toute ambiguïté.",
+        "Longueur : 1 page (US strict) vs 2 pages (UK tolère).",
+        "GPA / mentions : les recruteurs US regardent la GPA (ex: 3.8/4.0) pour les juniors. Les UK regardent la mention (« First Class Honours », « 2:1 »).",
+        "« References » : au UK, on écrit souvent « References available on request » en bas. Aux US, on ne met rien — les références sont demandées séparément si besoin.",
+      ],
+    },
+    {
+      type: "heading",
+      level: 2,
+      id: "cover-letter",
+      text: "La cover letter : quand la mettre, comment la rédiger",
+    },
+    {
+      type: "paragraph",
+      text: "Différence n°6 : la cover letter. Au Royaume-Uni, elle est attendue pour la majorité des candidatures qualifiées. Aux États-Unis, c'est plus variable : certaines entreprises (banques d'affaires, cabinets de conseil, postes senior) en exigent une, d'autres (tech, startups, tous postes juniors) ne la regardent même pas.",
+    },
+    {
+      type: "paragraph",
+      text: "Format qui fonctionne : 3 paragraphes, 15-20 lignes total, même structure Vous/Moi/Nous que la lettre de motivation française, mais plus direct. Pas de « It is with great interest… » (cliché), démarrez par « I am applying for [role] because [concrete reason]. ». Signez par votre nom complet.",
+    },
+    {
+      type: "paragraph",
+      text: "La différence clé : une cover letter anglo-saxonne est encore plus orientée faits concrets et chiffres qu'une lettre de motivation française. Pas de formules de politesse élaborées. Pas d'effet de style. Clarté, concision, orientation résultat. Pour creuser la structure générale d'une lettre de motivation efficace, voyez notre page <a href=\"/lettre-motivation-ia\" class=\"text-blue-600 hover:underline font-medium\">lettre de motivation par IA</a>.",
+    },
+    {
+      type: "paragraph",
+      text: "Conclusion : un resume anglo-saxon n'est pas un CV français traduit, c'est un document à part entière avec ses propres codes. Investir 2-3 heures à le refaire correctement (et pas juste à le traduire) est ce qui fait la différence entre 0 réponse et des entretiens. Pour aller plus loin sur les différences culturelles et la compatibilité ATS, voyez aussi notre guide <a href=\"/cv-ats\" class=\"text-blue-600 hover:underline font-medium\">CV ATS : passer les filtres en 2026</a>.",
+    },
+  ],
+  faq: [
+    {
+      q: "Dois-je faire traduire mon CV par un traducteur professionnel ?",
+      a: "Pas forcément — un bon traducteur coûte cher et ne connaît pas votre métier. Préférez écrire votre resume directement en anglais en vous appuyant sur des exemples de resumes natifs de votre secteur (LinkedIn search sur des profils anglo-saxons). Faites relire le résultat par un natif, idéalement de votre secteur. C'est plus efficace que de partir d'une traduction.",
+    },
+    {
+      q: "Le niveau d'anglais sur le CV : comment l'indiquer ?",
+      a: "Pour un CV en anglais : ne mentionnez pas votre niveau d'anglais explicitement, sauf si vous êtes natif (« Native English speaker »). Sinon, le simple fait que votre CV soit en anglais correct prouve votre niveau. Mentionnez plutôt vos autres langues avec niveau CEFR (« French: Native », « Spanish: B2 »).",
+    },
+    {
+      q: "Puis-je mentionner mes « soft skills » sur un resume ?",
+      a: "Oui, mais avec les mêmes règles qu'en français : jamais en liste nue. Intégrez-les dans vos bullets d'expériences (« Led a cross-functional team of 6 engineers and designers »). Les recruteurs anglo-saxons sont encore plus allergiques aux soft skills claim sans preuve que les français.",
+    },
+    {
+      q: "Les recruteurs UK/US utilisent-ils les mêmes ATS que la France ?",
+      a: "En grande partie oui : Workday, Greenhouse, Lever, iCIMS sont des ATS américains dominants dans les deux zones. Les règles de compatibilité ATS (pas de tableaux, pas de colonnes complexes, polices standard) s'appliquent à l'identique. Un CV ATS-safe en France l'est aussi à l'international.",
+    },
+    {
+      q: "Dois-je adapter mon CV à chaque offre en anglais aussi ?",
+      a: "Oui, encore plus qu'en français. Le marché anglo-saxon est plus compétitif et les recruteurs attendent un resume taillé au poste. Adaptez le summary, réordonnez les bullets des expériences pour mettre en premier ceux qui matchent l'offre, intégrez les mots-clés spécifiques. CV Modifier peut le faire automatiquement pour les deux langues.",
+    },
+    {
+      q: "Est-ce que LinkedIn doit être en anglais si mon CV l'est ?",
+      a: "Oui. Un CV en anglais et un LinkedIn uniquement en français crée une dissonance qui interroge les recruteurs internationaux. La bonne pratique : LinkedIn en anglais si vous ciblez l'international, avec éventuellement une section en français en bas (« À propos » dupliquée) pour conserver votre visibilité sur le marché français.",
+    },
+  ],
+  relatedSlugs: [
+    "photo-cv-2026",
+    "10-erreurs-cv-ats",
+  ],
+};
+
 // Ordered list of all posts — newest first for the index page.
-export const BLOG_POSTS: BlogPost[] = [post1, post2, post3, post4, post5];
+export const BLOG_POSTS: BlogPost[] = [
+  post1,
+  post2,
+  post3,
+  post4,
+  post5,
+  post6,
+  post7,
+  post8,
+  post9,
+  post10,
+];
 
 export function getAllPosts(): BlogPost[] {
   // Sort by publishedAt descending.
