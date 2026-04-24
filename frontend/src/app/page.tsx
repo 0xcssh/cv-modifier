@@ -450,6 +450,12 @@ export default function LandingPage() {
             <span aria-hidden="true" className="text-slate-600">
               ·
             </span>
+            <Link href="/blog" className="hover:text-white">
+              Blog
+            </Link>
+            <span aria-hidden="true" className="text-slate-600">
+              ·
+            </span>
             <Link href="/legal/mentions-legales" className="hover:text-white">
               Mentions légales
             </Link>
