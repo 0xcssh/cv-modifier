@@ -132,8 +132,12 @@ function UpgradeContent() {
     try {
       const { url } = await api.createCheckoutSession(plan);
       window.location.href = url;
-    } catch {
-      toast.error("Impossible de démarrer le paiement");
+    } catch (err) {
+      const message =
+        err instanceof Error && err.message
+          ? err.message
+          : "Impossible de démarrer le paiement";
+      toast.error(message);
       setLoading(null);
     }
   };

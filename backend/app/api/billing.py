@@ -146,24 +146,50 @@ async def create_checkout_session(
             f"Price ID manquant pour le plan '{payload.plan}'.",
         )
 
-    # Retrieve or create Stripe customer
-    customer_id = user.stripe_customer_id
-    if not customer_id:
-        try:
-            customer = stripe.Customer.create(
-                email=user.email,
-                metadata={"user_id": str(user.id)},
-            )
-        except stripe.StripeError as exc:
-            logger.exception("Stripe Customer.create failed")
-            raise HTTPException(500, "Erreur Stripe, réessayez plus tard.") from exc
-        customer_id = customer.id
+    async def _resolve_customer_id() -> str:
+        """Return a valid live-mode stripe customer_id for this user.
+
+        Creates one if missing, and re-creates if the stored id points to
+        a customer that doesn't exist in the current Stripe mode (typical
+        after a test→live key switch: old stripe_customer_id values point
+        at test-only customers and Stripe returns "No such customer").
+        """
+        cid = user.stripe_customer_id
+        if cid:
+            try:
+                stripe.Customer.retrieve(cid)
+                return cid
+            except stripe.InvalidRequestError as exc:
+                if "No such customer" in str(exc):
+                    logger.info(
+                        "Stale stripe_customer_id %s for user %s — "
+                        "recreating in current Stripe mode",
+                        cid,
+                        user.id,
+                    )
+                    cid = None
+                else:
+                    raise
+        # Create fresh.
+        customer = stripe.Customer.create(
+            email=user.email,
+            metadata={"user_id": str(user.id)},
+        )
         await db.execute(
             update(User)
             .where(User.id == user.id)
-            .values(stripe_customer_id=customer_id)
+            .values(stripe_customer_id=customer.id)
         )
         await db.commit()
+        return customer.id
+
+    try:
+        customer_id = await _resolve_customer_id()
+    except stripe.StripeError as exc:
+        logger.exception("Stripe customer resolution failed")
+        raise HTTPException(
+            500, f"Erreur Stripe (customer) : {str(exc)[:200]}"
+        ) from exc
 
     success_url = (
         settings.stripe_checkout_success_url
@@ -187,7 +213,11 @@ async def create_checkout_session(
         )
     except stripe.StripeError as exc:
         logger.exception("Stripe checkout.Session.create failed")
-        raise HTTPException(500, "Erreur Stripe, réessayez plus tard.") from exc
+        # Surface the Stripe message (truncated) so the frontend can show
+        # something actionable instead of the generic toast.
+        raise HTTPException(
+            500, f"Erreur Stripe (checkout) : {str(exc)[:200]}"
+        ) from exc
 
     return CheckoutResponse(url=session.url)
 
@@ -220,7 +250,9 @@ async def create_portal_session(
         )
     except stripe.StripeError as exc:
         logger.exception("Stripe billing_portal.Session.create failed")
-        raise HTTPException(500, "Erreur Stripe, réessayez plus tard.") from exc
+        raise HTTPException(
+            500, f"Erreur Stripe (portal) : {str(exc)[:200]}"
+        ) from exc
 
     return PortalResponse(url=portal.url)
 
