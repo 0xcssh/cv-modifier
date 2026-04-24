@@ -143,7 +143,7 @@ Tous définis dans `backend/app/services/email_service.py` :
 - Phase 6 ✓ Sécurité (2 sprints : JWT cookies, CSRF, is_verified, rate limit, SSRF, upload hardening, error sanitize, Dockerfile non-root, prompt caching Haiku 4.5)
 - Phase 7 ✓ Emails transactionnels complets (Resend verified)
 - Phase 8 ✓ Pages légales RGPD + cookie consent + Sentry + tests backend critiques
-- Phase 9 ✓ Stripe billing end-to-end (Checkout + Customer Portal + webhook) en mode TEST
+- Phase 9 ✓ Stripe billing end-to-end (Checkout + Customer Portal + webhook) **en mode LIVE** (bascule 2026-04-24, pricing aligné 30/100 cr au même moment)
 - Phase 10 ✓ SEO Sprint 1 (technique) : robots.ts, sitemap.ts, opengraph-image.tsx (dynamique via next/og), JSON-LD (Organization + WebSite + SoftwareApplication), llms.txt, proxy Next 16 qui noindex les previews *.vercel.app, lang="fr-FR", canonical apex, noindex sur /login/register/verify/forgot-password/reset-password, redirect www→apex 308
 - Phase 11 ✓ SEO Sprint 2 (contenu) : landing enrichie 520→1400 mots (trust bar, 3 personas, 4 badges, 4 témoignages, FAQ 8 Q), /a-propos créée, 4 pillar pages (/adapter-cv-offre-emploi, /cv-ats, /lettre-motivation-ia, /creer-cv) ~1500-2000 mots chacune avec FAQ et internal linking
 - Phase 12 ✓ SEO Sprint 3 (blog) : /blog + 5 articles MVP (1200-1500 mots chacun, design inspiré Legalstart — breadcrumbs, ligne auteur, sommaire inline, callouts bordure gauche colorée, sidebar sticky, FAQ <details>, articles liés). Images hero via Unsplash. Données dans `lib/blog-posts.ts`, rendu statique (generateStaticParams). Auteur unique "Équipe CV Modifier" pour la v1.
@@ -157,7 +157,6 @@ Tous définis dans `backend/app/services/email_service.py` :
 - **Pas de mention publique du fournisseur IA** (Claude/Anthropic) sur le site côté marketing/produit. Retiré volontairement pour renforcer l'identité de marque, éviter perception wrapper, et préserver la flexibilité de changer de fournisseur sans impact SEO/marketing. Formulations génériques utilisées : "IA générative", "notre IA", "IA propriétaire". Unique exception : `/legal/confidentialite` liste Anthropic comme sous-traitant (obligation RGPD Art. 30, transfert UE→US).
 
 ## What's next
-- **Switch Stripe en mode LIVE** : recréer produits/webhook en live, remplacer env vars Railway par `sk_live_...`
 - Remplir les `[À COMPLÉTER]` dans pages légales (SIRET, siège, raison sociale, juridiction)
 - Compléter /a-propos avec bio fondateur + photo + LinkedIn
 - **Google Analytics 4 + Google Ads** (pour lancer des campagnes) :
