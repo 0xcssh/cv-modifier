@@ -10,7 +10,7 @@ interface AuthState {
   loading: boolean;
   credits: number;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, referralCode?: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -60,8 +60,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await loadUser();
   };
 
-  const register = async (email: string, password: string) => {
-    await api.register(email, password);
+  const register = async (email: string, password: string, referralCode?: string) => {
+    await api.register(email, password, referralCode);
     await api.login(email, password);
     await loadUser();
   };

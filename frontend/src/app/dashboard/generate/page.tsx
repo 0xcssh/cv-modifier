@@ -9,6 +9,7 @@ import { api, CSRF_HEADER } from "@/lib/api";
 import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
 import { Zap, Download, FileText, Loader2, AlertCircle, CheckCircle2, Crown, Pencil, Mail } from "lucide-react";
+import { ReferralCard } from "@/components/referral-card";
 
 type Step =
   | "input"
@@ -219,6 +220,15 @@ export default function GeneratePage() {
               <><Zap className="w-4 h-4 mr-2" /> Générer mon CV</>
             )}
           </Button>
+        </div>
+      )}
+
+      {/* Referral card — shown alongside the input step, out of the user's
+          primary attention but visible when they're thinking "how do I get
+          more credits". */}
+      {step === "input" && (
+        <div className="mt-6">
+          <ReferralCard variant="compact" />
         </div>
       )}
 

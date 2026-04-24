@@ -6,7 +6,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/auth-context";
-import { Check, Crown, Loader2, Settings, Sparkles } from "lucide-react";
+import { Check, Crown, Loader2, Settings, Sparkles, Gift } from "lucide-react";
+import { ReferralCard } from "@/components/referral-card";
 
 type Plan = "starter" | "pro" | "pack_10" | "pack_30";
 
@@ -289,9 +290,17 @@ function UpgradeContent() {
           Packs à l&apos;unité
         </h2>
       </div>
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
+      <div className="grid md:grid-cols-2 gap-6 mb-12">
         {PACKS.map(renderCard)}
       </div>
+
+      <div className="flex items-center gap-2 mb-4">
+        <Gift className="w-5 h-5 text-emerald-600" />
+        <h2 className="text-lg font-semibold text-slate-900">
+          Ou gratuitement via parrainage
+        </h2>
+      </div>
+      <ReferralCard variant="wide" />
 
       <p className="text-xs text-slate-400 text-center mt-8">
         Paiements sécurisés par Stripe. Annulation possible à tout moment.

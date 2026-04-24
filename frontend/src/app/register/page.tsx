@@ -1,21 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
 
-export default function RegisterPage() {
+// useSearchParams() opt-outs the route from static prerender unless wrapped
+// in <Suspense>. We keep the page statically renderable + hydrate with the
+// query param on the client.
+function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const { register, isAuthenticated, loading: authLoading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // ?ref=ABC123 → active le bonus filleul. On normalise en upper-case côté
+  // client pour afficher un code propre ; le backend gère lui-même les
+  // espaces et la casse.
+  const rawRef = searchParams.get("ref") ?? "";
+  const referralCode = rawRef.trim().toUpperCase().slice(0, 10) || undefined;
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -35,8 +45,12 @@ export default function RegisterPage() {
     }
     setLoading(true);
     try {
-      await register(email, password);
-      toast.success("Compte créé ! 3 générations offertes.");
+      await register(email, password, referralCode);
+      toast.success(
+        referralCode
+          ? "Compte créé ! 4 générations offertes (3 + 1 bonus parrainage)."
+          : "Compte créé ! 3 générations offertes.",
+      );
       router.push("/dashboard/generate");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Erreur lors de l'inscription");
@@ -84,6 +98,26 @@ export default function RegisterPage() {
               Se connecter
             </Link>
           </p>
+
+          {referralCode && (
+            <div className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 mb-6">
+              <div className="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center justify-center shrink-0">
+                <Gift className="w-4 h-4" />
+              </div>
+              <div className="text-sm">
+                <p className="font-semibold text-slate-900">
+                  +1 crédit bonus activé
+                </p>
+                <p className="text-slate-600">
+                  Tu as été invité via le lien{" "}
+                  <span className="font-mono text-xs bg-white border border-emerald-200 rounded px-1.5 py-0.5">
+                    {referralCode}
+                  </span>{" "}
+                  — 4 générations offertes au lieu de 3.
+                </p>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
@@ -139,5 +173,13 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+      <RegisterForm />
+    </Suspense>
   );
 }

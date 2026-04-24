@@ -53,11 +53,20 @@ class ApiClient {
   }
 
   // Auth
-  async register(email: string, password: string) {
-    return this.request<{ id: string; email: string }>("/api/auth/register", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-    });
+  async register(email: string, password: string, referralCode?: string) {
+    // Referral code is passed via query string so it's consumed by
+    // UserManager.on_after_register without conflicting with fastapi-users'
+    // schema validation on the body.
+    const qs = referralCode
+      ? `?ref=${encodeURIComponent(referralCode)}`
+      : "";
+    return this.request<{ id: string; email: string }>(
+      `/api/auth/register${qs}`,
+      {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      },
+    );
   }
 
   async login(email: string, password: string) {
@@ -239,6 +248,11 @@ class ApiClient {
     return this.request<UserData>("/api/auth/me");
   }
 
+  // Referral program
+  async getMyReferralInfo() {
+    return this.request<ReferralInfo>("/api/referrals/me");
+  }
+
   // Billing
   async createCheckoutSession(plan: "starter" | "pro" | "pack_10" | "pack_30") {
     return this.request<{ url: string }>("/api/billing/checkout", {
@@ -374,6 +388,21 @@ export interface ScrapeResult {
   method: string;
   success: boolean;
   error?: string;
+}
+
+export interface ReferralStats {
+  total_referred: number;
+  pending: number;
+  rewarded: number;
+  credits_earned: number;
+}
+
+export interface ReferralInfo {
+  code: string;
+  share_url: string;
+  reward_referrer: number;
+  reward_referee: number;
+  stats: ReferralStats;
 }
 
 export const api = new ApiClient();
