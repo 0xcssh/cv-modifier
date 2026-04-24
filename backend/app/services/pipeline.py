@@ -201,6 +201,17 @@ async def run_generation_pipeline(
                 f"Generation {generation_id} completed: {adapted.get('titre_poste', '?')} @ {adapted.get('nom_entreprise', '?')}"
             )
 
+            # Referral reward — if this was the referee's first successful
+            # generation and they have a pending Referral row, grant +3 credits
+            # to the referrer. Idempotent; skipped if already granted.
+            try:
+                from app.services.referrals import maybe_grant_referrer_reward
+                await maybe_grant_referrer_reward(db, user_id)
+            except Exception:
+                logger.exception(
+                    "Referral reward grant failed for referee=%s", user_id
+                )
+
             # Credit-level notifications — fire-and-forget, failures must not block the pipeline.
             try:
                 await db.refresh(user, ["credits"])

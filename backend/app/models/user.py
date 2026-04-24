@@ -28,6 +28,12 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     subscription_current_period_end: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    # Referral program — short unique code the user can share. Populated on
+    # first insert (see UserManager.on_after_register) and backfilled for
+    # pre-existing users by the startup backfill in database.py.
+    referral_code: Mapped[str | None] = mapped_column(
+        String(10), unique=True, index=True, nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

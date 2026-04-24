@@ -8,18 +8,23 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-engine = create_async_engine(
-    settings.database_url,
-    echo=settings.debug,
+# SQLite (dev + tests in-memory) n'accepte pas pool_size/max_overflow/pool_recycle.
+# On applique ces réglages uniquement pour PostgreSQL/Neon en prod.
+_is_postgres = "postgres" in settings.database_url
+_engine_kwargs: dict = dict(echo=settings.debug)
+if _is_postgres:
     # Neon ferme les connexions inactives après quelques minutes. pool_pre_ping
     # envoie un SELECT 1 avant checkout pour jeter une connexion morte au
     # lieu de la donner au requêtant. pool_recycle force la recréation après
     # 30 min, en filet de sécurité.
-    pool_pre_ping=True,
-    pool_recycle=1800,
-    pool_size=5,
-    max_overflow=10,
-)
+    _engine_kwargs.update(
+        pool_pre_ping=True,
+        pool_recycle=1800,
+        pool_size=5,
+        max_overflow=10,
+    )
+
+engine = create_async_engine(settings.database_url, **_engine_kwargs)
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
@@ -49,6 +54,9 @@ _COLUMN_MIGRATIONS: list[tuple[str, str, str]] = [
         "stripe_event_id",
         "stripe_event_id VARCHAR(80)",
     ),
+    # Referral program (Phase 13). Added as NULL to keep migration atomic —
+    # the startup backfill below populates values for pre-existing users.
+    ("users", "referral_code", "referral_code VARCHAR(10)"),
 ]
 
 
@@ -74,6 +82,45 @@ def _apply_column_migrations(sync_conn) -> None:
             logger.warning("Could not add column %s.%s: %s", table, column, exc)
 
 
+def _backfill_referral_codes(sync_conn) -> None:
+    """Give every existing user a referral_code. Run once on startup.
+
+    Idempotent: rows that already have a code are skipped. Uses retry on the
+    tiny chance of collision (alphabet^6 = ~1B combos).
+    """
+    try:
+        cols = _existing_columns(sync_conn, "users")
+        if "referral_code" not in cols:
+            return
+        result = sync_conn.execute(
+            text("SELECT id FROM users WHERE referral_code IS NULL")
+        )
+        rows = result.fetchall()
+        if not rows:
+            return
+        from app.models.referral import generate_referral_code
+
+        for (user_id,) in rows:
+            for _ in range(5):
+                code = generate_referral_code()
+                try:
+                    sync_conn.execute(
+                        text(
+                            "UPDATE users SET referral_code = :c WHERE id = :u"
+                        ),
+                        {"c": code, "u": user_id},
+                    )
+                    break
+                except Exception as exc:
+                    msg = str(exc).lower()
+                    if "unique" in msg or "duplicate" in msg:
+                        continue
+                    raise
+        logger.info("Backfilled referral_code for %d users", len(rows))
+    except Exception:  # pragma: no cover - defensive, startup must not block
+        logger.exception("Referral code backfill failed (ignored)")
+
+
 async def create_tables():
     # Import all models so Base.metadata knows about them
     import app.models  # noqa: F401
@@ -81,3 +128,4 @@ async def create_tables():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         await conn.run_sync(_apply_column_migrations)
+        await conn.run_sync(_backfill_referral_codes)

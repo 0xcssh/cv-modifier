@@ -143,6 +143,13 @@ def send_low_credits_email(to: str, credits_left: int) -> None:
         <p>Pour continuer à générer des CV adaptés à chaque offre, rechargez votre compte dès maintenant.</p>
         <a href="{settings.frontend_url}/dashboard/upgrade" class="btn">Recharger mes crédits</a>
         <p class="muted">Un crédit = 1 CV + 1 lettre de motivation adaptés par l'IA.</p>
+        <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0" />
+        <p style="font-size:14px;color:#475569">
+          <strong>Astuce</strong> : gagnez 3 crédits gratuits en parrainant un ami.
+          Votre lien de parrainage personnel est dans votre dashboard
+          (<a href="{settings.frontend_url}/dashboard/generate">onglet Générer</a>).
+          Votre ami reçoit +1 crédit bonus à l'inscription.
+        </p>
         """,
         "Crédits bientôt épuisés",
     )
@@ -157,10 +164,38 @@ def send_no_credits_email(to: str) -> None:
         <p>Ne ratez pas votre prochaine opportunité — rechargez votre compte en quelques secondes :</p>
         <a href="{settings.frontend_url}/dashboard/upgrade" class="btn">Recharger mes crédits</a>
         <p class="muted">Vos anciens CV générés restent accessibles dans votre historique.</p>
+        <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0" />
+        <p style="font-size:14px;color:#475569">
+          <strong>Ou gagnez 3 crédits par ami parrainé</strong> — votre lien
+          personnel est disponible sur votre
+          <a href="{settings.frontend_url}/dashboard/generate">dashboard</a>.
+          Pas d'engagement, juste du bouche-à-oreille.
+        </p>
         """,
         "Crédits épuisés",
     )
     _send(to, "Vos crédits sont épuisés — rechargez pour continuer", html)
+
+
+def send_referral_reward_email(to: str, credits_granted: int) -> None:
+    """Sent to the referrer when their referee completes their first generation."""
+    html = _wrap(
+        f"""
+        <h1>+{credits_granted} crédits offerts 🎁</h1>
+        <p>
+          Un ami que vous avez parrainé vient de générer son premier CV sur
+          CV Modifier. Bonne nouvelle : vos {credits_granted} crédits de
+          récompense viennent d'être crédités sur votre compte.
+        </p>
+        <a href="{settings.frontend_url}/dashboard/generate" class="btn">Utiliser mes crédits</a>
+        <p class="muted">
+          Continuez à partager votre lien — aucune limite sur le nombre
+          d'amis parrainés.
+        </p>
+        """,
+        "Récompense de parrainage",
+    )
+    _send(to, f"+{credits_granted} crédits offerts — merci du parrainage", html)
 
 
 def send_monthly_recap_email(
