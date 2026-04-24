@@ -8,13 +8,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { api, CSRF_HEADER } from "@/lib/api";
 import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
-import { Zap, Download, FileText, Loader2, AlertCircle, CheckCircle2, Crown, Pencil } from "lucide-react";
+import { Zap, Download, FileText, Loader2, AlertCircle, CheckCircle2, Crown, Pencil, Mail } from "lucide-react";
 
-type Step = "input" | "generating" | "done" | "error" | "no-credits";
+type Step =
+  | "input"
+  | "generating"
+  | "done"
+  | "error"
+  | "no-credits"
+  | "email-not-verified";
 
 export default function GeneratePage() {
-  const { credits, refreshUser } = useAuth();
+  const { user, credits, refreshUser } = useAuth();
   const [step, setStep] = useState<Step>("input");
+  const [resendingVerification, setResendingVerification] = useState(false);
   const [url, setUrl] = useState("");
   const [jobText, setJobText] = useState("");
   const [generationId, setGenerationId] = useState<string | null>(null);
@@ -30,6 +37,13 @@ export default function GeneratePage() {
   }, []);
 
   const handleScrapeAndGenerate = async () => {
+    // Short-circuit unverified users before we scrape or consume a credit.
+    // Backend also enforces this (returns 403 "EMAIL_NOT_VERIFIED").
+    if (user && !user.is_verified) {
+      setStep("email-not-verified");
+      return;
+    }
+
     if (!url.trim() && !jobText.trim()) {
       toast.error("Collez un lien ou le texte de l'offre");
       return;
@@ -90,8 +104,32 @@ export default function GeneratePage() {
         }
       }, 2000);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Erreur");
+      const message = err instanceof Error ? err.message : "Erreur";
+      // Backend marker (see backend/app/api/generations.py). We also guard on
+      // the client above, but keep this fallback for a stale user context.
+      if (message === "EMAIL_NOT_VERIFIED") {
+        setStep("email-not-verified");
+        return;
+      }
+      setError(message);
       setStep("error");
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!user?.email) return;
+    setResendingVerification(true);
+    try {
+      await api.requestVerifyToken(user.email);
+      toast.success(
+        `Email envoyé à ${user.email}. Pense à vérifier tes spams.`,
+      );
+    } catch {
+      toast.error(
+        "Impossible d'envoyer l'email. Réessaie dans quelques minutes.",
+      );
+    } finally {
+      setResendingVerification(false);
     }
   };
 
@@ -284,6 +322,49 @@ export default function GeneratePage() {
               </Button>
             </Link>
             <Button variant="outline" onClick={reset}>
+              Retour
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Step: Email not verified */}
+      {step === "email-not-verified" && (
+        <div className="bg-white rounded-2xl border border-amber-200 p-8 shadow-sm text-center">
+          <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Mail className="w-8 h-8 text-amber-600" />
+          </div>
+          <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            Confirme d&apos;abord ton email
+          </h3>
+          <p className="text-slate-500 mb-2">
+            Un email de vérification a été envoyé à{" "}
+            <span className="font-medium text-slate-700">
+              {user?.email ?? "ton adresse"}
+            </span>{" "}
+            lors de ton inscription. Clique sur le lien qu&apos;il contient pour
+            activer ton compte et lancer ta première génération.
+          </p>
+          <p className="text-slate-400 text-sm mb-6">
+            Pense à vérifier tes spams. Tu peux aussi renvoyer l&apos;email
+            ci-dessous.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button
+              onClick={handleResendVerification}
+              disabled={resendingVerification || !user?.email}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              {resendingVerification ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Envoi en cours…
+                </>
+              ) : (
+                "Renvoyer l'email de vérification"
+              )}
+            </Button>
+            <Button onClick={reset} variant="outline">
               Retour
             </Button>
           </div>

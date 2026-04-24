@@ -6,7 +6,7 @@ from fastapi.responses import Response
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.security import current_active_user, current_verified_user
+from app.core.security import current_active_user
 from app.database import get_db
 import re
 
@@ -49,10 +49,15 @@ async def create_generation(
     request: Request,
     payload: GenerationRequest,
     background_tasks: BackgroundTasks,
-    user: User = Depends(current_verified_user),
+    user: User = Depends(current_active_user),
     db: AsyncSession = Depends(get_db),
 ):
     """Start a new CV generation. Runs in background. Requires verified email."""
+    if not user.is_verified:
+        # Explicit machine-readable code so the frontend can render a dedicated
+        # "confirm your email" UI (resend button) instead of a generic error.
+        raise HTTPException(403, "EMAIL_NOT_VERIFIED")
+
     if not payload.job_url and not payload.job_text:
         raise HTTPException(400, "Fournissez une URL ou le texte de l'offre.")
 
