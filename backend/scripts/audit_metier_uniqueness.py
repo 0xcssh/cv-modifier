@@ -24,6 +24,10 @@ from dataclasses import dataclass
 from html.parser import HTMLParser
 from typing import Iterable
 
+# Force UTF-8 on Windows consoles (cp1252 chokes on box-drawing chars).
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
+
 # ──────────────────────────────────────────────────────────────────────
 # Config
 MAX_OVERLAP = 0.35  # fail if any pair > this
@@ -31,12 +35,23 @@ MIN_WORDS = 700     # fail if any page has fewer rendered words than this
 NGRAM = 8           # Jaccard n-gram size (rolling 8-word window)
 
 METIERS = [
+    # Tech
     "developpeur-web", "data-analyst", "designer-ux-ui", "product-manager",
-    "devops", "commercial-b2b", "business-developer", "ingenieur-commercial",
-    "account-manager", "charge-marketing-digital", "community-manager",
-    "seo-manager", "charge-recrutement", "customer-success", "comptable",
-    "controleur-gestion", "infirmier", "aide-soignant", "chef-de-projet",
-    "consultant",
+    "devops", "data-engineer", "sre-devops",
+    # Commerce
+    "commercial-b2b", "business-developer", "ingenieur-commercial",
+    "account-manager", "responsable-commercial",
+    # Marketing
+    "charge-marketing-digital", "community-manager", "seo-manager",
+    "brand-manager", "content-manager", "directeur-artistique",
+    # RH
+    "charge-recrutement", "customer-success", "hrbp",
+    # Finance
+    "comptable", "controleur-gestion", "auditeur-financier",
+    # Santé
+    "infirmier", "aide-soignant", "pharmacien-officine",
+    # Management
+    "chef-de-projet", "consultant", "scrum-master",
 ]
 
 UA = {
