@@ -64,12 +64,12 @@ router = APIRouter(prefix="/billing", tags=["billing"])
 _PLANS: dict[str, dict[str, Any]] = {
     "starter": {
         "mode": "subscription",
-        "credits": 20,
+        "credits": 30,
         "price_attr": "stripe_price_starter",
     },
     "pro": {
         "mode": "subscription",
-        "credits": 50,
+        "credits": 100,
         "price_attr": "stripe_price_pro",
     },
     "pack_10": {

@@ -128,7 +128,7 @@ Tous définis dans `backend/app/services/email_service.py` :
 - Récapitulatif mensuel (script manuel `scripts/send_monthly_recaps.py`)
 
 ## Billing Stripe
-- 4 plans : Starter 9.99€/mois (20 cr), Pro 19.99€/mois (50 cr), Pack 10 (4.99€), Pack 30 (12.99€)
+- 4 plans : Starter 9.99€/mois (30 cr), Pro 19.99€/mois (100 cr), Pack 10 (4.99€), Pack 30 (12.99€). Marge brute ~91-96 % (coût marginal par gen ≈ 1,8 ¢ avec Haiku 4.5 + prompt caching).
 - Checkout Session hébergée Stripe (PCI scope = 0). Customer Portal pour gérer l'abo.
 - Webhook sur `/api/billing/webhook` — signé, idempotent via table `stripe_events` (PK event_id).
 - Events traités : `checkout.session.completed`, `invoice.payment_succeeded`, `customer.subscription.updated`, `customer.subscription.deleted`.

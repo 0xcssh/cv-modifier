@@ -329,7 +329,7 @@ async def test_webhook_invoice_payment_succeeded_grants_subscription_credits(
         row = (
             await s.execute(select(User).where(User.id == user.id))
         ).scalar_one()
-        assert row.credits == 20  # Starter grants 20
+        assert row.credits == 30  # Starter grants 30
         assert row.subscription_tier == "starter"
         assert row.subscription_current_period_end is not None
 
@@ -342,7 +342,7 @@ async def test_webhook_invoice_payment_succeeded_grants_subscription_credits(
         ).scalars().all()
         assert len(txs) == 1
         assert txs[0].reason == "subscription_renewal"
-        assert txs[0].amount == 20
+        assert txs[0].amount == 30
 
 
 @pytest.mark.asyncio

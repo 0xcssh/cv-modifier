@@ -19,8 +19,8 @@
 ## Tarifs
 
 - Gratuit: 3 générations offertes
-- Starter: 9,99€/mois pour 20 générations
-- Pro: 19,99€/mois pour 50 générations
+- Starter: 9,99€/mois pour 30 générations
+- Pro: 19,99€/mois pour 100 générations
 - Pack 10: 4,99€ sans abonnement (10 générations)
 - Pack 30: 12,99€ sans abonnement (30 générations)
 

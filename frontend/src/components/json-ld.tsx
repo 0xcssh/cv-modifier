@@ -48,14 +48,14 @@ const softwareApplication = {
       name: "Starter",
       price: "9.99",
       priceCurrency: "EUR",
-      description: "20 générations par mois",
+      description: "30 générations par mois",
     },
     {
       "@type": "Offer",
       name: "Pro",
       price: "19.99",
       priceCurrency: "EUR",
-      description: "50 générations par mois",
+      description: "100 générations par mois",
     },
     {
       "@type": "Offer",
