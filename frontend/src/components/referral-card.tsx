@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Copy, Gift, Check, Users, Loader2 } from "lucide-react";
+import { Copy, Gift, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { api, type ReferralInfo } from "@/lib/api";
 
@@ -117,36 +117,6 @@ export function ReferralCard({ variant = "compact" }: Props) {
         </div>
       </div>
 
-      <div className="mt-4 flex items-center gap-2 text-sm text-slate-600">
-        <Users className="w-4 h-4 text-slate-400" />
-        <span>
-          <strong className="text-slate-900">{info.stats.total_referred}</strong>{" "}
-          ami{info.stats.total_referred !== 1 ? "s" : ""} parrainé
-          {info.stats.total_referred !== 1 ? "s" : ""}
-          {info.stats.rewarded > 0 && (
-            <>
-              {" · "}
-              <strong className="text-slate-900">
-                {info.stats.credits_earned}
-              </strong>{" "}
-              crédit{info.stats.credits_earned !== 1 ? "s" : ""} gagné
-              {info.stats.credits_earned !== 1 ? "s" : ""}
-            </>
-          )}
-          {info.stats.pending > 0 && (
-            <span className="text-slate-500">
-              {" · "}
-              {info.stats.pending} en attente de la 1re génération
-            </span>
-          )}
-        </span>
-      </div>
-
-      <p className="mt-4 text-xs text-slate-500 leading-relaxed">
-        Tes crédits tombent dès que ton ami confirme son email et génère son
-        premier CV. Pas de limite sur le nombre d&apos;amis — auto-parrainage
-        bloqué.
-      </p>
     </div>
   );
 }
