@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { JsonLdScript } from "@/components/json-ld-script";
+import { breadcrumbLd } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Mentions légales",
@@ -153,6 +155,12 @@ export default function MentionsLegalesPage() {
           </footer>
         </article>
       </div>
+      <JsonLdScript
+        data={breadcrumbLd([
+          { name: "Accueil", url: "/" },
+          { name: "Mentions légales", url: "/legal/mentions-legales" },
+        ])}
+      />
     </div>
   );
 }

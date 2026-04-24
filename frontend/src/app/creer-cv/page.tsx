@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { JsonLdScript } from "@/components/json-ld-script";
+import { breadcrumbLd, faqPageLd, type FaqItem } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Créer un CV en 2026 : guide complet et modèles gratuits",
@@ -15,6 +17,38 @@ export const metadata: Metadata = {
     type: "article",
   },
 };
+
+const FAQ_ITEMS: FaqItem[] = [
+  {
+    q: "Faut-il mettre une photo sur son CV en 2026 ?",
+    a: "En France, plutôt oui (60-70 % des offres l'attendent culturellement). À l'international (US, UK, Canada anglophone), non — c'est même un signal de non-professionnalisme. Si vous mettez une photo, prenez-en une faite par un photographe, pas un selfie.",
+  },
+  {
+    q: "Combien de pages maximum ?",
+    a: "Moins de 10 ans d'expérience = 1 page, stricte. 10 à 20 ans = 2 pages max. 20+ ans = 2 pages max, format exécutif. Jamais 3 pages, peu importe votre profil.",
+  },
+  {
+    q: "En quelle langue rédiger mon CV ?",
+    a: "Langue de l'offre. Offre en français = CV en français. Offre en anglais (fréquent dans la tech / finance / consulting, même pour un poste en France) = CV en anglais. Si l'entreprise est internationale et que vous avez un doute, deux versions (FR + EN) ne font pas de mal.",
+  },
+  {
+    q: "Puis-je mettre une expérience de 2 mois ?",
+    a: "Oui, à condition qu'elle soit pertinente (stage, CDD, mission). Pour une expérience très courte où vous êtes parti rapidement, c'est au cas par cas : la cacher peut paraître suspect si ça crée un trou, la mettre peut amener des questions gênantes en entretien.",
+  },
+  {
+    q: "Mon CV doit-il être différent pour chaque candidature ?",
+    a: "Oui, dans la limite du raisonnable. Vous gardez une version master avec toutes vos infos, puis vous adaptez titre, accroche, mots-clés pour chaque offre. Voir notre guide pour adapter son CV à une offre d'emploi.",
+  },
+  {
+    q: "Faut-il mettre des liens cliquables (LinkedIn, GitHub) ?",
+    a: "Oui, absolument. Rendez-les cliquables dans le PDF (la plupart des éditeurs le font par défaut quand vous tapez une URL). Les recruteurs cliquent vraiment sur le LinkedIn depuis le PDF — c'est devenu un réflexe pour vérifier que le CV correspond au profil public.",
+  },
+];
+
+const BREADCRUMB = [
+  { name: "Accueil", url: "/" },
+  { name: "Créer un CV", url: "/creer-cv" },
+];
 
 export default function CreerCvPage() {
   return (
@@ -508,32 +542,7 @@ export default function CreerCvPage() {
             Questions fréquentes
           </h2>
           <div className="space-y-4">
-            {[
-              {
-                q: "Faut-il mettre une photo sur son CV en 2026 ?",
-                a: "En France, plutôt oui (60-70 % des offres l'attendent culturellement). À l'international (US, UK, Canada anglophone), non — c'est même un signal de non-professionnalisme. Si vous mettez une photo, prenez-en une faite par un photographe, pas un selfie.",
-              },
-              {
-                q: "Combien de pages maximum ?",
-                a: "Moins de 10 ans d'expérience = 1 page, stricte. 10 à 20 ans = 2 pages max. 20+ ans = 2 pages max, format exécutif. Jamais 3 pages, peu importe votre profil.",
-              },
-              {
-                q: "En quelle langue rédiger mon CV ?",
-                a: "Langue de l'offre. Offre en français = CV en français. Offre en anglais (fréquent dans la tech / finance / consulting, même pour un poste en France) = CV en anglais. Si l'entreprise est internationale et que vous avez un doute, deux versions (FR + EN) ne font pas de mal.",
-              },
-              {
-                q: "Puis-je mettre une expérience de 2 mois ?",
-                a: "Oui, à condition qu'elle soit pertinente (stage, CDD, mission). Pour une expérience très courte où vous êtes parti rapidement, c'est au cas par cas : la cacher peut paraître suspect si ça crée un trou, la mettre peut amener des questions gênantes en entretien.",
-              },
-              {
-                q: "Mon CV doit-il être différent pour chaque candidature ?",
-                a: "Oui, dans la limite du raisonnable. Vous gardez une version master avec toutes vos infos, puis vous adaptez titre, accroche, mots-clés pour chaque offre. Voir notre guide pour adapter son CV à une offre d'emploi.",
-              },
-              {
-                q: "Faut-il mettre des liens cliquables (LinkedIn, GitHub) ?",
-                a: "Oui, absolument. Rendez-les cliquables dans le PDF (la plupart des éditeurs le font par défaut quand vous tapez une URL). Les recruteurs cliquent vraiment sur le LinkedIn depuis le PDF — c'est devenu un réflexe pour vérifier que le CV correspond au profil public.",
-              },
-            ].map((item, i) => (
+            {FAQ_ITEMS.map((item, i) => (
               <details
                 key={i}
                 className="group rounded-xl border border-slate-200 bg-white px-5 py-4 open:border-blue-200 open:bg-blue-50/30"
@@ -551,6 +560,48 @@ export default function CreerCvPage() {
               </details>
             ))}
           </div>
+        </section>
+
+        {/* Sources */}
+        <section className="mb-12 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+          <h2 className="text-base font-bold text-slate-900 mb-3 uppercase tracking-wide">
+            Sources et ressources
+          </h2>
+          <ul className="space-y-2 text-sm text-slate-700">
+            <li>
+              •{" "}
+              <a
+                href="https://www.francetravail.fr/candidat/mes-services/construire-son-cv.html"
+                rel="noopener"
+                className="text-blue-700 hover:text-blue-800 underline"
+              >
+                France Travail — Construire son CV
+              </a>{" "}
+              (modèles officiels et conseils méthodo).
+            </li>
+            <li>
+              •{" "}
+              <a
+                href="https://www.apec.fr/candidat/mon-projet-professionnel/je-reflechis-a-mon-projet/cv-lettre-de-motivation.html"
+                rel="noopener"
+                className="text-blue-700 hover:text-blue-800 underline"
+              >
+                APEC — CV et lettre de motivation
+              </a>{" "}
+              (section candidats cadres).
+            </li>
+            <li>
+              •{" "}
+              <a
+                href="https://europass.europa.eu/fr/create-europass-cv"
+                rel="noopener"
+                className="text-blue-700 hover:text-blue-800 underline"
+              >
+                Europass — CV européen
+              </a>{" "}
+              (format reconnu dans toute l&apos;UE).
+            </li>
+          </ul>
         </section>
 
         {/* CTA final */}
@@ -714,6 +765,10 @@ export default function CreerCvPage() {
           </nav>
         </div>
       </footer>
+
+      <JsonLdScript
+        data={[breadcrumbLd(BREADCRUMB), faqPageLd(FAQ_ITEMS)]}
+      />
     </div>
   );
 }

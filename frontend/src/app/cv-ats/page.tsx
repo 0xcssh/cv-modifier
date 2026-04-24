@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { JsonLdScript } from "@/components/json-ld-script";
+import { breadcrumbLd, faqPageLd, type FaqItem } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "CV ATS : comment passer les filtres automatiques des recruteurs",
@@ -16,6 +18,38 @@ export const metadata: Metadata = {
     type: "article",
   },
 };
+
+const FAQ_ITEMS: FaqItem[] = [
+  {
+    q: "PDF ou Word pour un CV ATS ?",
+    a: "Les deux fonctionnent, mais le PDF est préférable : votre mise en page reste stable quel que soit l'ordinateur du recruteur. Certains ATS anciens préfèrent Word — c'est rare aujourd'hui. Envoyez un PDF sauf si l'offre demande explicitement un autre format.",
+  },
+  {
+    q: "Faut-il mettre une photo sur un CV ATS ?",
+    a: "La photo est ignorée par l'ATS (c'est juste un objet image dans le PDF, sans effet sur le parsing). Côté recruteur humain, c'est culturel : plutôt oui en France, plutôt non dans les pays anglo-saxons. Une photo bien faite ne nuit pas, une mauvaise photo nuit.",
+  },
+  {
+    q: "Les CV créatifs (Canva, graphistes) passent-ils les ATS ?",
+    a: "Mal. Les templates très graphiques (avec icônes, colonnes décoratives, polices custom) ont des taux de parsing médiocres. Si vous candidatez à un poste créatif, envoyez deux versions : un CV créatif pour montrer votre style + un CV ATS-friendly pour passer les filtres.",
+  },
+  {
+    q: "Combien de mots-clés faut-il mettre ?",
+    a: "Visez 60 à 80 % des mots-clés explicites de l'offre. N'essayez pas de tout caser — un CV qui contient 100 % des mots-clés sent le bourrage et le recruteur humain le voit. Priorisez les 10-15 mots-clés les plus récurrents et les plus techniques.",
+  },
+  {
+    q: "Les ATS pénalisent-ils les fautes d'orthographe ?",
+    a: "Les ATS ne corrigent pas, mais ils matchent littéralement : une faute dans un mot-clé (« Pythno » au lieu de « Python ») vous rend invisible sur cette recherche. Relire deux fois, ou utiliser un correcteur.",
+  },
+  {
+    q: "Mon CV passé chez un ATS reste-t-il stocké ?",
+    a: "Oui, souvent plusieurs années. Le RGPD impose à l'entreprise d'informer sur la durée de conservation (généralement 2 ans). Ça signifie qu'un CV envoyé à un grand groupe revient parfois dans une recherche 18 mois plus tard pour un autre poste. Raison de plus pour qu'il soit bien fait.",
+  },
+];
+
+const BREADCRUMB = [
+  { name: "Accueil", url: "/" },
+  { name: "CV ATS", url: "/cv-ats" },
+];
 
 export default function CvAtsPage() {
   return (
@@ -477,32 +511,7 @@ export default function CvAtsPage() {
             Questions fréquentes
           </h2>
           <div className="space-y-4">
-            {[
-              {
-                q: "PDF ou Word pour un CV ATS ?",
-                a: "Les deux fonctionnent, mais le PDF est préférable : votre mise en page reste stable quel que soit l'ordinateur du recruteur. Certains ATS anciens préfèrent Word — c'est rare aujourd'hui. Envoyez un PDF sauf si l'offre demande explicitement un autre format.",
-              },
-              {
-                q: "Faut-il mettre une photo sur un CV ATS ?",
-                a: "La photo est ignorée par l'ATS (c'est juste un objet image dans le PDF, sans effet sur le parsing). Côté recruteur humain, c'est culturel : plutôt oui en France, plutôt non dans les pays anglo-saxons. Une photo bien faite ne nuit pas, une mauvaise photo nuit.",
-              },
-              {
-                q: "Les CV créatifs (Canva, graphistes) passent-ils les ATS ?",
-                a: "Mal. Les templates très graphiques (avec icônes, colonnes décoratives, polices custom) ont des taux de parsing médiocres. Si vous candidatez à un poste créatif, envoyez deux versions : un CV créatif pour montrer votre style + un CV ATS-friendly pour passer les filtres.",
-              },
-              {
-                q: "Combien de mots-clés faut-il mettre ?",
-                a: "Visez 60 à 80 % des mots-clés explicites de l'offre. N'essayez pas de tout caser — un CV qui contient 100 % des mots-clés sent le bourrage et le recruteur humain le voit. Priorisez les 10-15 mots-clés les plus récurrents et les plus techniques.",
-              },
-              {
-                q: "Les ATS pénalisent-ils les fautes d'orthographe ?",
-                a: "Les ATS ne corrigent pas, mais ils matchent littéralement : une faute dans un mot-clé (« Pythno » au lieu de « Python ») vous rend invisible sur cette recherche. Relire deux fois, ou utiliser un correcteur.",
-              },
-              {
-                q: "Mon CV passé chez un ATS reste-t-il stocké ?",
-                a: "Oui, souvent plusieurs années. Le RGPD impose à l'entreprise d'informer sur la durée de conservation (généralement 2 ans). Ça signifie qu'un CV envoyé à un grand groupe revient parfois dans une recherche 18 mois plus tard pour un autre poste. Raison de plus pour qu'il soit bien fait.",
-              },
-            ].map((item, i) => (
+            {FAQ_ITEMS.map((item, i) => (
               <details
                 key={i}
                 className="group rounded-xl border border-slate-200 bg-white px-5 py-4 open:border-blue-200 open:bg-blue-50/30"
@@ -520,6 +529,59 @@ export default function CvAtsPage() {
               </details>
             ))}
           </div>
+        </section>
+
+        {/* Sources */}
+        <section className="mb-12 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+          <h2 className="text-base font-bold text-slate-900 mb-3 uppercase tracking-wide">
+            Sources et ressources
+          </h2>
+          <ul className="space-y-2 text-sm text-slate-700">
+            <li>
+              •{" "}
+              <a
+                href="https://www.workday.com/en-us/products/talent-management/recruiting.html"
+                rel="noopener"
+                className="text-blue-700 hover:text-blue-800 underline"
+              >
+                Workday Recruiting
+              </a>{" "}
+              (un des ATS les plus déployés en grand compte).
+            </li>
+            <li>
+              •{" "}
+              <a
+                href="https://www.oracle.com/human-capital-management/taleo/"
+                rel="noopener"
+                className="text-blue-700 hover:text-blue-800 underline"
+              >
+                Oracle Taleo
+              </a>{" "}
+              (documentation éditeur).
+            </li>
+            <li>
+              •{" "}
+              <a
+                href="https://www.francetravail.fr/candidat/mes-services/construire-son-cv.html"
+                rel="noopener"
+                className="text-blue-700 hover:text-blue-800 underline"
+              >
+                France Travail — Construire son CV
+              </a>{" "}
+              (bonnes pratiques CV officielles).
+            </li>
+            <li>
+              •{" "}
+              <a
+                href="https://www.cnil.fr/fr/recrutement"
+                rel="noopener"
+                className="text-blue-700 hover:text-blue-800 underline"
+              >
+                CNIL — Recrutement et données personnelles
+              </a>{" "}
+              (durée de conservation, droits candidat).
+            </li>
+          </ul>
         </section>
 
         {/* CTA final */}
@@ -648,6 +710,10 @@ export default function CvAtsPage() {
           </nav>
         </div>
       </footer>
+
+      <JsonLdScript
+        data={[breadcrumbLd(BREADCRUMB), faqPageLd(FAQ_ITEMS)]}
+      />
     </div>
   );
 }

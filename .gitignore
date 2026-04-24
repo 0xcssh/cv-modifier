@@ -29,3 +29,6 @@ Thumbs.db
 mon_cv.pdf
 1767540873756.jpeg
 temp/
+
+# Local SEO audit artifacts
+.seo-audit/

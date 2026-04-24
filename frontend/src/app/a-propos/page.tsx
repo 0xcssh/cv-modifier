@@ -9,6 +9,8 @@ import {
   HeartHandshake,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { JsonLdScript } from "@/components/json-ld-script";
+import { aboutPageLd, breadcrumbLd } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "À propos — Notre mission",
@@ -316,6 +318,21 @@ export default function AProposPage() {
           </nav>
         </div>
       </footer>
+
+      <JsonLdScript
+        data={[
+          breadcrumbLd([
+            { name: "Accueil", url: "/" },
+            { name: "À propos", url: "/a-propos" },
+          ]),
+          aboutPageLd({
+            url: "/a-propos",
+            name: "À propos de CV Modifier",
+            description:
+              "La mission, l'équipe, la tech et les valeurs de CV Modifier — SaaS français qui adapte les CV et lettres de motivation à chaque offre d'emploi grâce à l'IA.",
+          }),
+        ]}
+      />
     </div>
   );
 }

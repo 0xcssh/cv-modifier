@@ -20,6 +20,11 @@ export interface CvMetierMistake {
   explanation: string;
 }
 
+export interface CvMetierFaqItem {
+  q: string;
+  a: string;
+}
+
 export interface CvMetier {
   slug: string;
   name: string;
@@ -44,6 +49,10 @@ export interface CvMetier {
   relatedSlugs: string[];
   relatedBlogSlugs: string[];
   relatedPillarSlugs: string[];
+
+  // Optionnel — alimente FAQPage JSON-LD + section FAQ dans la page
+  // si renseigné. 4 Q/A typiques : salaire, diplôme, évolution, format CV.
+  faq?: CvMetierFaqItem[];
 }
 
 // Badge colors per category — reuse palette cohérente avec le blog.
@@ -167,6 +176,24 @@ export const CV_METIERS: CvMetier[] = [
     relatedSlugs: ["devops", "data-analyst", "product-manager"],
     relatedBlogSlugs: ["cv-developpeur-2026", "10-erreurs-cv-ats"],
     relatedPillarSlugs: ["cv-ats", "adapter-cv-offre-emploi"],
+    faq: [
+      {
+        q: "Quel salaire pour un développeur web junior en 2026 ?",
+        a: "40 à 55 k€ brut annuel à Paris pour un junior (0-2 ans), 35 à 45 k€ en province. Les scale-ups françaises (Qonto, Alan, Payfit, Swile, Doctolib) sont plutôt en haut de la fourchette ; les ESN et agences, plutôt en bas. En freelance, un junior facture rarement au-dessus de 400 €/jour — le sweet spot commence vers 3 ans d'expérience.",
+      },
+      {
+        q: "Faut-il un diplôme d'école d'ingé pour être développeur ?",
+        a: "Non. Les bootcamps (Le Wagon, 42, OpenClassrooms) sont largement acceptés côté tech, notamment dans les scale-ups et les startups. Les écoles d'ingénieur gardent un petit avantage côté grands groupes et en consulting (Capgemini, Sopra), et pour les candidatures visa à l'international. Ce qui pèse le plus sur un CV, c'est le portfolio GitHub et les projets concrets, pas l'intitulé du diplôme.",
+      },
+      {
+        q: "GitHub public obligatoire sur un CV développeur ?",
+        a: "Quasi obligatoire pour un junior ou un candidat en reconversion : sans GitHub, on n'a aucun moyen de juger votre code. Pour un senior, un GitHub vide est moins bloquant si les expériences pro suffisent à illustrer le niveau. Conseil : au moins 2-3 repos avec README propre, un stack moderne (TypeScript, tests, CI), et le lien cliquable dans le header du CV.",
+      },
+      {
+        q: "Une page ou deux pour un CV développeur ?",
+        a: "Une page en dessous de 5 ans d'expérience. Au-delà, deux pages maximum en gardant l'expérience la plus récente en haut. Les recruteurs tech scanneront les 30 dernières secondes stack + rôle + réalisations : un CV qui scrolle au-delà de deux pages finit fermé avant d'être lu.",
+      },
+    ],
   },
 
   {
@@ -970,6 +997,24 @@ export const CV_METIERS: CvMetier[] = [
     relatedSlugs: ["charge-marketing-digital", "seo-manager", "chef-de-projet"],
     relatedBlogSlugs: ["mots-cles-offre-emploi", "lettre-motivation-ia-credible"],
     relatedPillarSlugs: ["creer-cv", "adapter-cv-offre-emploi"],
+    faq: [
+      {
+        q: "Quel salaire pour un community manager en 2026 ?",
+        a: "28 à 35 k€ brut annuel pour un CM junior en France (0-2 ans), 35 à 45 k€ pour un confirmé (3-5 ans), 45 à 60 k€ pour un social media manager senior ou un head of social en scale-up. En freelance, le TJM moyen tourne autour de 400-550 €/jour selon le portefeuille. Les DNVB (Sézane, Respire, Typology) paient un peu mieux que l'agence classique.",
+      },
+      {
+        q: "Faut-il un portfolio pour candidater comme CM ?",
+        a: "Oui, c'est quasi-systématique — un CV CM sans lien vers les comptes gérés (Instagram, TikTok, LinkedIn) est inaudible. Même des comptes perso ou bénévoles comptent s'ils démontrent votre angle éditorial et votre courbe de croissance. Rendez les liens cliquables dans le PDF et précisez votre rôle (concepteur, planner, rédacteur, modérateur).",
+      },
+      {
+        q: "TikTok ou Instagram : sur quoi se spécialiser ?",
+        a: "Les offres demandent de plus en plus les deux, mais avec une dominante. TikTok est survalorisé par les DNVB et les marques lifestyle ; Instagram reste roi en B2B, food, mode, beauté premium. LinkedIn devient incontournable dans le B2B tech. Plutôt que de choisir, montrez une courbe de progression sur au moins deux plateformes et précisez où vous avez piloté la stratégie.",
+      },
+      {
+        q: "Faut-il chiffrer les résultats sur un CV de CM ?",
+        a: "Oui, impérativement : abonnés gagnés, taux d'engagement moyen, reach, vues cumulées, conversions issues du social. Un CV de CM sans chiffre passe pour un profil « exécutant planning », pas pour un profil « pilote de marque ». Donnez la base de départ pour que la croissance soit lisible (ex : « 12k → 45k abonnés en 9 mois »).",
+      },
+    ],
   },
 
   {
@@ -1452,6 +1497,24 @@ export const CV_METIERS: CvMetier[] = [
     relatedSlugs: ["aide-soignant", "charge-recrutement", "customer-success"],
     relatedBlogSlugs: ["10-erreurs-cv-ats", "lettre-motivation-ia-credible"],
     relatedPillarSlugs: ["creer-cv", "cv-ats"],
+    faq: [
+      {
+        q: "Quel salaire pour une infirmière en début de carrière ?",
+        a: "26 à 32 k€ brut annuel dans le public (grille fonction publique hospitalière + primes Ségur), 28 à 38 k€ dans le privé (cliniques, Ramsay, Vivalto). En intérim santé, les missions à 35-55 k€/an deviennent courantes, surtout en Île-de-France et sur les spécialités tendues (bloc, urgences, néonat). Le Ségur a aligné pas mal de grilles ces deux dernières années.",
+      },
+      {
+        q: "Numéro RPPS ou ADELI sur le CV ?",
+        a: "Oui, systématiquement — et idéalement les deux si vous les avez (ADELI a été progressivement remplacé par le RPPS depuis 2022). Le cadre santé vérifie ces numéros avant même de lire la suite : un CV IDE sans RPPS reste en bas de la pile. Si vous êtes fraîchement diplômée et que le RPPS n'est pas encore attribué, mentionnez explicitement « RPPS en cours d'attribution, DE obtenu le JJ/MM/AAAA ».",
+      },
+      {
+        q: "Faut-il mettre ses stages d'IFSI sur le CV ?",
+        a: "Oui pour un profil IDE junior (moins de 3 ans de diplôme) : les cadres santé veulent voir les services dans lesquels vous avez tourné (chir, médecine, psy, urgences, SSR…). Au-delà de 3 ans d'exercice, ne gardez que les stages dans la spécialité visée ou dans des services marquants (réanimation, bloc, pédiatrie).",
+      },
+      {
+        q: "Quelle longueur pour un CV infirmier ?",
+        a: "Une page stricte pour moins de 5 ans de diplôme, deux pages maximum ensuite. Les cadres santé recrutent en lisant très vite : ils cherchent d'abord le diplôme, le numéro RPPS, les services fréquentés et les formations continues (DU). Un CV trop long ou trop design (colonnes graphiques) est souvent rejeté dès le premier tri.",
+      },
+    ],
   },
 
   {

@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 import {
   CATEGORY_ORDER,
   CATEGORY_STYLES,
+  CV_METIERS,
   getMetiersByCategory,
 } from "@/lib/cv-metiers";
+import { JsonLdScript } from "@/components/json-ld-script";
+import { breadcrumbLd, collectionPageLd } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title:
@@ -242,6 +245,25 @@ export default function CvParMetierIndexPage() {
           </nav>
         </div>
       </footer>
+
+      <JsonLdScript
+        data={[
+          breadcrumbLd([
+            { name: "Accueil", url: "/" },
+            { name: "CV par métier", url: "/cv-par-metier" },
+          ]),
+          collectionPageLd({
+            url: "/cv-par-metier",
+            name: "CV par métier : 20 guides (2026)",
+            description:
+              "Guides CV par métier avec compétences clés, KPIs, erreurs fréquentes, salaires et entreprises qui recrutent.",
+            items: CV_METIERS.map((m) => ({
+              url: `/cv-par-metier/${m.slug}`,
+              name: `CV ${m.name.toLowerCase()}`,
+            })),
+          }),
+        ]}
+      />
     </div>
   );
 }

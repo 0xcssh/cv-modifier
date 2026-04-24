@@ -13,6 +13,8 @@ import {
 import { AuthorBadge } from "@/components/blog/author-badge";
 import { TableOfContents } from "@/components/blog/table-of-contents";
 import { BlogContentRenderer } from "@/components/blog/blog-content-renderer";
+import { JsonLdScript } from "@/components/json-ld-script";
+import { breadcrumbLd, faqPageLd } from "@/lib/schema";
 
 // Prerender every article at build time.
 export async function generateStaticParams() {
@@ -293,7 +295,7 @@ export default async function BlogArticlePage({
                             <div className="relative w-16 h-16 shrink-0 rounded-lg overflow-hidden bg-slate-100">
                               <Image
                                 src={r.heroImage}
-                                alt=""
+                                alt={r.heroAlt}
                                 fill
                                 sizes="64px"
                                 className="object-cover"
@@ -420,11 +422,17 @@ export default async function BlogArticlePage({
         </div>
       </footer>
 
-      {/* JSON-LD Article schema */}
-      <script
-        type="application/ld+json"
-        // Safe — content is fully controlled by us.
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      {/* JSON-LD: Article + BreadcrumbList + FAQPage (if FAQs) */}
+      <JsonLdScript
+        data={[
+          jsonLd,
+          breadcrumbLd([
+            { name: "Accueil", url: "/" },
+            { name: "Blog", url: "/blog" },
+            { name: post.title, url: `/blog/${post.slug}` },
+          ]),
+          ...(post.faq.length > 0 ? [faqPageLd(post.faq)] : []),
+        ]}
       />
     </div>
   );

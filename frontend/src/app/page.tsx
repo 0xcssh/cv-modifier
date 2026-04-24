@@ -14,6 +14,43 @@ import {
   Bot,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { JsonLdScript } from "@/components/json-ld-script";
+import { faqPageLd, type FaqItem } from "@/lib/schema";
+
+const FAQ_ITEMS: FaqItem[] = [
+  {
+    q: "Comment CV Modifier adapte-t-il mon CV ?",
+    a: "Vous collez l'URL d'une offre d'emploi : notre scraper récupère le contenu, puis notre IA analyse les compétences clés, les mots-clés et le ton attendu. Vos expériences sont ensuite reformulées pour mettre en avant ce qui est pertinent pour CE poste précis — sans inventer de compétences que vous n'avez pas.",
+  },
+  {
+    q: "Puis-je personnaliser les règles d'adaptation ?",
+    a: "Oui. Dans votre profil, un champ d'instructions personnalisées vous permet de préciser vos préférences : ton plus formel, mise en avant de certains mots-clés, neutralité de genre, anglicismes à éviter, etc. Ces règles priment sur les règles par défaut.",
+  },
+  {
+    q: "Mes données sont-elles envoyées à des tiers ?",
+    a: "Les contenus de vos CV transitent par notre fournisseur IA le temps d'une génération, avec engagement contractuel de ne pas les utiliser pour entraîner les modèles. Aucun tiers marketing ne reçoit vos CV. La liste complète de nos sous-traitants figure sur notre page Confidentialité.",
+  },
+  {
+    q: "Quels formats de CV sont acceptés en import ?",
+    a: "PDF uniquement pour l'instant. L'IA extrait automatiquement vos expériences, formations, compétences et coordonnées. Vous pouvez relire et corriger le tout avant la première génération.",
+  },
+  {
+    q: "Combien de crédits me faut-il pour tester ?",
+    a: "Chaque compte démarre avec 3 crédits offerts, sans carte bancaire. 1 crédit = 1 CV + 1 lettre de motivation adaptés à une offre. Si la génération échoue pour une raison technique, le crédit est automatiquement remboursé.",
+  },
+  {
+    q: "Puis-je annuler mon abonnement à tout moment ?",
+    a: "Oui, depuis le portail client Stripe accessible dans votre espace Facturation. Aucun engagement, aucune pénalité. Vos crédits non utilisés restent disponibles après résiliation.",
+  },
+  {
+    q: "Les CV générés passent-ils les ATS ?",
+    a: "Oui. Nos 4 templates (Classique, Moderne, Minimaliste, Créatif) sont construits en texte sélectionnable (pas d'images de texte), avec une structure sémantique que les logiciels de tri (ATS : Workday, Taleo, Greenhouse, etc.) savent lire. Pas de colonnes complexes, pas de texte en image, pas d'icônes parasites : le contenu est extrait correctement par les principaux ATS du marché.",
+  },
+  {
+    q: "Quelle IA est utilisée derrière CV Modifier ?",
+    a: "CV Modifier utilise une IA générative de pointe. Nous sélectionnons le modèle qui offre le meilleur rapport qualité/coût pour l'adaptation de CV en français. Nous ne communiquons pas publiquement notre fournisseur actuel pour préserver notre flexibilité technique. La liste détaillée de nos sous-traitants figure sur notre page Confidentialité (obligation RGPD).",
+  },
+];
 
 export default function LandingPage() {
   return (
@@ -70,15 +107,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Trust bar — stats */}
+      {/* Trust bar — promesses factuelles, non numériques */}
       <section className="bg-slate-900 border-t border-slate-800 py-8">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
-              { value: "+2 500", label: "CV générés" },
-              { value: "4,7/5", label: "sur 180+ avis" },
-              { value: "92%", label: "compatibilité ATS" },
-              { value: "30s", label: "en moyenne" },
+              { value: "30s", label: "par candidature" },
+              { value: "Gratuit", label: "3 générations offertes" },
+              { value: "ATS", label: "format compatible" },
+              { value: "UE", label: "données hébergées en Europe" },
             ].map((s) => (
               <div key={s.label}>
                 <div className="text-2xl md:text-3xl font-extrabold text-white">
@@ -270,89 +307,8 @@ export default function LandingPage() {
               Hébergement Europe
             </span>
             <span className="bg-white border border-slate-200 rounded-full px-3 py-1.5">
-              +92% ATS-compatible
+              Format ATS-compatible
             </span>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4">
-            Ils l&apos;utilisent déjà
-          </h2>
-          <p className="text-slate-500 text-center mb-14 text-lg">
-            Candidats et recruteurs, même combat : gagner du temps sans sacrifier la qualité.
-          </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                initials: "LM",
-                name: "Léa Martin",
-                role: "Product Manager",
-                company: "Qonto",
-                quote:
-                  "J'ai enchaîné 12 candidatures en une soirée au lieu de 2. Résultat : trois entretiens la semaine suivante, dont celui que j'attendais.",
-                bg: "bg-blue-600",
-              },
-              {
-                initials: "TD",
-                name: "Thomas Dubois",
-                role: "Dev Full Stack (reconversion)",
-                company: "OpenClassrooms",
-                quote:
-                  "Je sors d'une reconversion depuis le marketing. L'IA a su mettre en avant mes projets perso sans les gonfler. Les adaptations par offre sont pertinentes, pas juste du copier-coller.",
-                bg: "bg-emerald-600",
-              },
-              {
-                initials: "SB",
-                name: "Sarah Benoît",
-                role: "Chargée de recrutement",
-                company: "Cabinet Robert Half",
-                quote:
-                  "Je recommande l'outil aux candidats que j'accompagne. La mise en forme est propre, les mots-clés sont là, et surtout le fond reste honnête — c'est rare.",
-                bg: "bg-violet-600",
-              },
-              {
-                initials: "KL",
-                name: "Karim Lefebvre",
-                role: "Commercial B2B",
-                company: "Doctolib",
-                quote:
-                  "La lettre de motivation générée est franchement bluffante. Je l'ajuste en 2 minutes au lieu d'y passer une heure à chaque fois.",
-                bg: "bg-amber-600",
-              },
-            ].map((t) => (
-              <div
-                key={t.name}
-                className="bg-slate-50 rounded-2xl border border-slate-100 p-6 flex flex-col"
-              >
-                <div className="flex items-center gap-1 text-amber-400 mb-3">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-current" />
-                  ))}
-                </div>
-                <p className="text-slate-700 text-sm leading-relaxed mb-6 flex-1">
-                  &laquo;&nbsp;{t.quote}&nbsp;&raquo;
-                </p>
-                <div className="flex items-center gap-3 mt-auto">
-                  <div
-                    className={`w-10 h-10 rounded-full ${t.bg} text-white flex items-center justify-center font-semibold text-sm`}
-                  >
-                    {t.initials}
-                  </div>
-                  <div>
-                    <div className="font-semibold text-slate-900 text-sm">
-                      {t.name}
-                    </div>
-                    <div className="text-xs text-slate-500">
-                      {t.role} · {t.company}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -434,40 +390,7 @@ export default function LandingPage() {
             Tout ce que vous voulez savoir avant de tester.
           </p>
           <div className="space-y-3">
-            {[
-              {
-                q: "Comment CV Modifier adapte-t-il mon CV ?",
-                a: "Vous collez l'URL d'une offre d'emploi : notre scraper récupère le contenu, puis notre IA analyse les compétences clés, les mots-clés et le ton attendu. Vos expériences sont ensuite reformulées pour mettre en avant ce qui est pertinent pour CE poste précis — sans inventer de compétences que vous n'avez pas.",
-              },
-              {
-                q: "Puis-je personnaliser les règles d'adaptation ?",
-                a: "Oui. Dans votre profil, un champ d'instructions personnalisées vous permet de préciser vos préférences : ton plus formel, mise en avant de certains mots-clés, neutralité de genre, anglicismes à éviter, etc. Ces règles priment sur les règles par défaut.",
-              },
-              {
-                q: "Mes données sont-elles envoyées à des tiers ?",
-                a: "Les contenus de vos CV transitent par notre fournisseur IA le temps d'une génération, avec engagement contractuel de ne pas les utiliser pour entraîner les modèles. Aucun tiers marketing ne reçoit vos CV. La liste complète de nos sous-traitants figure sur notre page Confidentialité.",
-              },
-              {
-                q: "Quels formats de CV sont acceptés en import ?",
-                a: "PDF uniquement pour l'instant. L'IA extrait automatiquement vos expériences, formations, compétences et coordonnées. Vous pouvez relire et corriger le tout avant la première génération.",
-              },
-              {
-                q: "Combien de crédits me faut-il pour tester ?",
-                a: "Chaque compte démarre avec 3 crédits offerts, sans carte bancaire. 1 crédit = 1 CV + 1 lettre de motivation adaptés à une offre. Si la génération échoue pour une raison technique, le crédit est automatiquement remboursé.",
-              },
-              {
-                q: "Puis-je annuler mon abonnement à tout moment ?",
-                a: "Oui, depuis le portail client Stripe accessible dans votre espace Facturation. Aucun engagement, aucune pénalité. Vos crédits non utilisés restent disponibles après résiliation.",
-              },
-              {
-                q: "Les CV générés passent-ils les ATS ?",
-                a: "Oui. Nos 4 templates (Classique, Moderne, Minimaliste, Créatif) sont construits en texte sélectionnable (pas d'images de texte), avec une structure sémantique que les logiciels de tri (ATS : Workday, Taleo, Greenhouse, etc.) savent lire. Nous mesurons 92% de compatibilité sur les principaux ATS du marché.",
-              },
-              {
-                q: "Quelle IA est utilisée derrière CV Modifier ?",
-                a: "CV Modifier utilise une IA générative de pointe. Nous sélectionnons le modèle qui offre le meilleur rapport qualité/coût pour l'adaptation de CV en français. Nous ne communiquons pas publiquement notre fournisseur actuel pour préserver notre flexibilité technique. La liste détaillée de nos sous-traitants figure sur notre page Confidentialité (obligation RGPD).",
-              },
-            ].map((f) => (
+            {FAQ_ITEMS.map((f) => (
               <details
                 key={f.q}
                 className="group bg-slate-50 border border-slate-100 rounded-xl overflow-hidden"
@@ -551,6 +474,8 @@ export default function LandingPage() {
           </nav>
         </div>
       </footer>
+
+      <JsonLdScript data={faqPageLd(FAQ_ITEMS)} />
     </div>
   );
 }

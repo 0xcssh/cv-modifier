@@ -6,6 +6,7 @@
 
 - [Page d'accueil](https://cvmodifier.com): présentation produit, fonctionnalités, tarifs.
 - [Inscription](https://cvmodifier.com/register): 3 générations offertes sans carte bancaire.
+- [À propos](https://cvmodifier.com/a-propos): mission, équipe, tech, valeurs.
 
 ## Fonctionnalités principales
 
@@ -22,6 +23,35 @@
 - Pro: 19,99€/mois pour 50 générations
 - Pack 10: 4,99€ sans abonnement (10 générations)
 - Pack 30: 12,99€ sans abonnement (30 générations)
+
+## Guides et ressources
+
+Guides longs (pillar pages), accessibles sans compte :
+
+- [Adapter son CV à une offre d'emploi](https://cvmodifier.com/adapter-cv-offre-emploi): méthode complète, extraction des mots-clés, checklist, erreurs classiques.
+- [CV ATS : passer les filtres automatiques](https://cvmodifier.com/cv-ats): fonctionnement des ATS (Taleo, Workday, Greenhouse), règles de format, pièges.
+- [Créer un CV en 2026](https://cvmodifier.com/creer-cv): formats, structure, longueur, informations à mettre, outils, templates.
+- [Lettre de motivation par IA : la rendre crédible](https://cvmodifier.com/lettre-motivation-ia): éviter le ton générique, brief efficace, structure Vous/Moi/Nous.
+
+## Blog
+
+- [Index du blog](https://cvmodifier.com/blog): articles de conseil carrière, CV et candidature.
+- [Les 10 erreurs qui font rejeter votre CV par les ATS](https://cvmodifier.com/blog/10-erreurs-cv-ats)
+- [Extraire les bons mots-clés d'une offre d'emploi](https://cvmodifier.com/blog/mots-cles-offre-emploi)
+- [CV commercial : la structure gagnante](https://cvmodifier.com/blog/cv-commercial-structure-gagnante)
+- [CV développeur en 2026](https://cvmodifier.com/blog/cv-developpeur-2026)
+- [Lettre de motivation par IA : comment la rendre crédible](https://cvmodifier.com/blog/lettre-motivation-ia-credible)
+
+## CV par métier (guides programmatic)
+
+- [Index CV par métier (20 guides)](https://cvmodifier.com/cv-par-metier)
+- Tech: [développeur web](https://cvmodifier.com/cv-par-metier/developpeur-web), [data analyst](https://cvmodifier.com/cv-par-metier/data-analyst), [designer UX/UI](https://cvmodifier.com/cv-par-metier/designer-ux-ui), [product manager](https://cvmodifier.com/cv-par-metier/product-manager), [devops](https://cvmodifier.com/cv-par-metier/devops)
+- Commerce: [commercial B2B](https://cvmodifier.com/cv-par-metier/commercial-b2b), [business developer](https://cvmodifier.com/cv-par-metier/business-developer), [ingénieur commercial](https://cvmodifier.com/cv-par-metier/ingenieur-commercial), [account manager](https://cvmodifier.com/cv-par-metier/account-manager)
+- Marketing: [chargé marketing digital](https://cvmodifier.com/cv-par-metier/charge-marketing-digital), [community manager](https://cvmodifier.com/cv-par-metier/community-manager), [SEO manager](https://cvmodifier.com/cv-par-metier/seo-manager)
+- RH: [chargé de recrutement](https://cvmodifier.com/cv-par-metier/charge-recrutement), [customer success](https://cvmodifier.com/cv-par-metier/customer-success)
+- Finance: [comptable](https://cvmodifier.com/cv-par-metier/comptable), [contrôleur de gestion](https://cvmodifier.com/cv-par-metier/controleur-gestion)
+- Santé: [infirmier](https://cvmodifier.com/cv-par-metier/infirmier), [aide-soignant](https://cvmodifier.com/cv-par-metier/aide-soignant)
+- Management: [chef de projet](https://cvmodifier.com/cv-par-metier/chef-de-projet), [consultant](https://cvmodifier.com/cv-par-metier/consultant)
 
 ## Légal
 

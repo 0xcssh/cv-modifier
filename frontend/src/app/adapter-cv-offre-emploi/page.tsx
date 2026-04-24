@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { JsonLdScript } from "@/components/json-ld-script";
+import { breadcrumbLd, faqPageLd, type FaqItem } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Adapter son CV à une offre d'emploi : le guide complet (2026)",
@@ -15,6 +17,38 @@ export const metadata: Metadata = {
     type: "article",
   },
 };
+
+const FAQ_ITEMS: FaqItem[] = [
+  {
+    q: "Combien de temps faut-il pour adapter un CV ?",
+    a: "Manuellement, comptez 20 à 40 minutes par offre si vous appliquez la méthode complète (extraction des mots-clés, réécriture du titre, accroche, réorganisation des bullets). Avec un outil comme CV Modifier, 30 secondes.",
+  },
+  {
+    q: "Faut-il vraiment adapter le CV pour chaque offre ?",
+    a: "Oui, dès que le poste visé change, même légèrement. Entre deux offres de Product Manager, les mots-clés peuvent varier du tout au tout (B2B vs B2C, hardware vs SaaS, discovery vs delivery). Envoyer le même CV à tout le monde divise vos chances par 2 à 3.",
+  },
+  {
+    q: "Est-ce que réorganiser un CV, c'est mentir ?",
+    a: "Non. Mettre en avant ce qui est pertinent pour une offre, réordonner des bullets, reformuler avec le vocabulaire du secteur : ce n'est pas mentir. Inventer une compétence ou une expérience qu'on n'a pas : c'est mentir. La frontière est claire.",
+  },
+  {
+    q: "Combien de versions de CV dois-je garder ?",
+    a: "Une version 'master' avec toutes vos expériences, compétences et réalisations. Puis une version adaptée par candidature, archivée avec un nom explicite (prenom-nom-entreprise-cv.pdf). Jamais plus de 30-40 versions en rotation — sinon vous êtes noyé.",
+  },
+  {
+    q: "Mon CV doit-il tenir sur une page ou deux ?",
+    a: "Règle simple : moins de 10 ans d'expérience = 1 page. 10+ ans = 2 pages max, jamais plus. Un recruteur qui voit 3 pages les ferme d'office. Le guide complet dans notre article sur comment créer un CV.",
+  },
+  {
+    q: "Les ATS détectent-ils l'adaptation d'un CV ?",
+    a: "Les ATS ne détectent pas l'adaptation, ils matchent des mots-clés. Un CV adapté avec les bons termes passe mieux qu'un CV générique, tout simplement parce qu'il contient plus de termes de l'offre. Zéro risque à adapter.",
+  },
+];
+
+const BREADCRUMB = [
+  { name: "Accueil", url: "/" },
+  { name: "Adapter son CV à une offre d'emploi", url: "/adapter-cv-offre-emploi" },
+];
 
 export default function AdapterCvOffreEmploiPage() {
   return (
@@ -398,32 +432,7 @@ export default function AdapterCvOffreEmploiPage() {
             Questions fréquentes
           </h2>
           <div className="space-y-4">
-            {[
-              {
-                q: "Combien de temps faut-il pour adapter un CV ?",
-                a: "Manuellement, comptez 20 à 40 minutes par offre si vous appliquez la méthode complète (extraction des mots-clés, réécriture du titre, accroche, réorganisation des bullets). Avec un outil comme CV Modifier, 30 secondes.",
-              },
-              {
-                q: "Faut-il vraiment adapter le CV pour chaque offre ?",
-                a: "Oui, dès que le poste visé change, même légèrement. Entre deux offres de Product Manager, les mots-clés peuvent varier du tout au tout (B2B vs B2C, hardware vs SaaS, discovery vs delivery). Envoyer le même CV à tout le monde divise vos chances par 2 à 3.",
-              },
-              {
-                q: "Est-ce que réorganiser un CV, c'est mentir ?",
-                a: "Non. Mettre en avant ce qui est pertinent pour une offre, réordonner des bullets, reformuler avec le vocabulaire du secteur : ce n'est pas mentir. Inventer une compétence ou une expérience qu'on n'a pas : c'est mentir. La frontière est claire.",
-              },
-              {
-                q: "Combien de versions de CV dois-je garder ?",
-                a: "Une version 'master' avec toutes vos expériences, compétences et réalisations. Puis une version adaptée par candidature, archivée avec un nom explicite (prenom-nom-entreprise-cv.pdf). Jamais plus de 30-40 versions en rotation — sinon vous êtes noyé.",
-              },
-              {
-                q: "Mon CV doit-il tenir sur une page ou deux ?",
-                a: "Règle simple : moins de 10 ans d'expérience = 1 page. 10+ ans = 2 pages max, jamais plus. Un recruteur qui voit 3 pages les ferme d'office. Le guide complet dans notre article sur comment créer un CV.",
-              },
-              {
-                q: "Les ATS détectent-ils l'adaptation d'un CV ?",
-                a: "Les ATS ne détectent pas l'adaptation, ils matchent des mots-clés. Un CV adapté avec les bons termes passe mieux qu'un CV générique, tout simplement parce qu'il contient plus de termes de l'offre. Zéro risque à adapter.",
-              },
-            ].map((item, i) => (
+            {FAQ_ITEMS.map((item, i) => (
               <details
                 key={i}
                 className="group rounded-xl border border-slate-200 bg-white px-5 py-4 open:border-blue-200 open:bg-blue-50/30"
@@ -441,6 +450,48 @@ export default function AdapterCvOffreEmploiPage() {
               </details>
             ))}
           </div>
+        </section>
+
+        {/* Sources */}
+        <section className="mb-12 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+          <h2 className="text-base font-bold text-slate-900 mb-3 uppercase tracking-wide">
+            Sources et ressources
+          </h2>
+          <ul className="space-y-2 text-sm text-slate-700">
+            <li>
+              •{" "}
+              <a
+                href="https://www.apec.fr/tous-nos-articles-candidat.html"
+                rel="noopener"
+                className="text-blue-700 hover:text-blue-800 underline"
+              >
+                APEC — Conseils candidat
+              </a>{" "}
+              (études marché, salaires cadres, conseils recruteurs).
+            </li>
+            <li>
+              •{" "}
+              <a
+                href="https://www.francetravail.fr/candidat/mes-services/construire-son-cv.html"
+                rel="noopener"
+                className="text-blue-700 hover:text-blue-800 underline"
+              >
+                France Travail — Construire son CV
+              </a>{" "}
+              (ex Pôle emploi, fiches méthodo officielles).
+            </li>
+            <li>
+              •{" "}
+              <a
+                href="https://www.service-public.fr/particuliers/vosdroits/F2918"
+                rel="noopener"
+                className="text-blue-700 hover:text-blue-800 underline"
+              >
+                Service-Public.fr — Recherche d&apos;emploi
+              </a>{" "}
+              (aides, démarches, droits).
+            </li>
+          </ul>
         </section>
 
         {/* CTA final */}
@@ -605,6 +656,10 @@ export default function AdapterCvOffreEmploiPage() {
           </nav>
         </div>
       </footer>
+
+      <JsonLdScript
+        data={[breadcrumbLd(BREADCRUMB), faqPageLd(FAQ_ITEMS)]}
+      />
     </div>
   );
 }

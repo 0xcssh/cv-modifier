@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { JsonLdScript } from "@/components/json-ld-script";
+import { breadcrumbLd } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Conditions Générales d'Utilisation",
@@ -209,6 +211,12 @@ export default function CguPage() {
           </footer>
         </article>
       </div>
+      <JsonLdScript
+        data={breadcrumbLd([
+          { name: "Accueil", url: "/" },
+          { name: "CGU", url: "/legal/cgu" },
+        ])}
+      />
     </div>
   );
 }

@@ -19,6 +19,8 @@ import {
   getRelatedMetiers,
 } from "@/lib/cv-metiers";
 import { getPostBySlug } from "@/lib/blog-posts";
+import { JsonLdScript } from "@/components/json-ld-script";
+import { breadcrumbLd, faqPageLd } from "@/lib/schema";
 
 // Pillar pages metadata — used for the "related pillars" card block.
 const PILLAR_META: Record<
@@ -420,6 +422,36 @@ export default async function CvMetierPage({
           </section>
         )}
 
+        {/* FAQ — uniquement sur les métiers qui ont des questions renseignées */}
+        {metier.faq && metier.faq.length > 0 && (
+          <section className="mt-10">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-5">
+              Questions fréquentes
+            </h2>
+            <div className="space-y-3">
+              {metier.faq.map((item, i) => (
+                <details
+                  key={i}
+                  className="group rounded-xl border border-slate-200 bg-white px-5 py-4 open:border-blue-200 open:bg-blue-50/30"
+                >
+                  <summary className="cursor-pointer list-none font-semibold text-slate-900 flex items-center justify-between gap-4">
+                    <span>{item.q}</span>
+                    <span
+                      aria-hidden="true"
+                      className="text-blue-600 text-xl font-normal group-open:rotate-45 transition-transform"
+                    >
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-3 text-slate-700 leading-relaxed">
+                    {item.a}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Related blog articles */}
         {relatedBlogs.length > 0 && (
           <section className="mt-10">
@@ -530,6 +562,22 @@ export default async function CvMetierPage({
           </nav>
         </div>
       </footer>
+
+      <JsonLdScript
+        data={[
+          breadcrumbLd([
+            { name: "Accueil", url: "/" },
+            { name: "CV par métier", url: "/cv-par-metier" },
+            {
+              name: `CV ${metier.name.toLowerCase()}`,
+              url: `/cv-par-metier/${metier.slug}`,
+            },
+          ]),
+          ...(metier.faq && metier.faq.length > 0
+            ? [faqPageLd(metier.faq)]
+            : []),
+        ]}
+      />
     </div>
   );
 }

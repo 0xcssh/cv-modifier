@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { JsonLdScript } from "@/components/json-ld-script";
+import { breadcrumbLd, faqPageLd, type FaqItem } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title:
@@ -17,6 +19,38 @@ export const metadata: Metadata = {
     type: "article",
   },
 };
+
+const FAQ_ITEMS: FaqItem[] = [
+  {
+    q: "Les recruteurs détectent-ils les lettres écrites par IA ?",
+    a: "Les lettres IA brutes, oui — en 5 à 10 secondes. Les lettres IA retravaillées avec le bon brief et une relecture humaine, non. Aucun outil de détection (Turnitin, GPTZero…) n'est fiable sur 200 mots de français. Le vrai risque, c'est le ton générique, pas la détection algorithmique.",
+  },
+  {
+    q: "Combien de temps dois-je passer sur une lettre ?",
+    a: "Avec IA + relecture : 5 à 10 minutes par lettre. Sans IA : 30 à 60 minutes. Si vous envoyez 20 candidatures par semaine, ça fait la différence entre 1h30 et 15h de travail. L'important : ne jamais envoyer ce que l'IA produit au premier jet.",
+  },
+  {
+    q: "Faut-il mettre une lettre de motivation en 2026 ?",
+    a: "La tendance est à la baisse — beaucoup de startups n'en demandent plus. Mais dès que c'est demandé (PME, grands groupes, secteur public, cabinets), l'absence de lettre est éliminatoire. Si l'offre la mentionne, vous en mettez une, point.",
+  },
+  {
+    q: "Quelle longueur pour une lettre ?",
+    a: "200 à 250 mots en français, soit une demi-page A4. Plus court, ça fait bâclé. Plus long, ça ne se lit pas. Une lettre qui tient sur l'écran d'un iPhone sans scroll est une bonne longueur.",
+  },
+  {
+    q: "Faut-il commencer par « Madame, Monsieur » ?",
+    a: "Si vous connaissez le nom du recruteur (souvent dispo sur l'offre LinkedIn ou le site carrière), adressez-vous à lui directement : « Madame Dupont ». Sinon, « Madame, Monsieur » reste standard en France. Évitez « Bonjour » dans un contexte corporate, c'est trop familier.",
+  },
+  {
+    q: "Puis-je utiliser la même lettre pour plusieurs offres ?",
+    a: "Non. Deux offres similaires ont rarement le même contexte, les mêmes mots-clés, la même culture. Adaptez a minima le paragraphe 'Vous' (sur l'entreprise) et 2-3 mots-clés dans le paragraphe 'Moi'. C'est 2 minutes de travail et ça multiplie les réponses.",
+  },
+];
+
+const BREADCRUMB = [
+  { name: "Accueil", url: "/" },
+  { name: "Lettre de motivation par IA", url: "/lettre-motivation-ia" },
+];
 
 export default function LettreMotivationIaPage() {
   return (
@@ -421,32 +455,7 @@ export default function LettreMotivationIaPage() {
             Questions fréquentes
           </h2>
           <div className="space-y-4">
-            {[
-              {
-                q: "Les recruteurs détectent-ils les lettres écrites par IA ?",
-                a: "Les lettres IA brutes, oui — en 5 à 10 secondes. Les lettres IA retravaillées avec le bon brief et une relecture humaine, non. Aucun outil de détection (Turnitin, GPTZero…) n'est fiable sur 200 mots de français. Le vrai risque, c'est le ton générique, pas la détection algorithmique.",
-              },
-              {
-                q: "Combien de temps dois-je passer sur une lettre ?",
-                a: "Avec IA + relecture : 5 à 10 minutes par lettre. Sans IA : 30 à 60 minutes. Si vous envoyez 20 candidatures par semaine, ça fait la différence entre 1h30 et 15h de travail. L'important : ne jamais envoyer ce que l'IA produit au premier jet.",
-              },
-              {
-                q: "Faut-il mettre une lettre de motivation en 2026 ?",
-                a: "La tendance est à la baisse — beaucoup de startups n'en demandent plus. Mais dès que c'est demandé (PME, grands groupes, secteur public, cabinets), l'absence de lettre est éliminatoire. Si l'offre la mentionne, vous en mettez une, point.",
-              },
-              {
-                q: "Quelle longueur pour une lettre ?",
-                a: "200 à 250 mots en français, soit une demi-page A4. Plus court, ça fait bâclé. Plus long, ça ne se lit pas. Une lettre qui tient sur l'écran d'un iPhone sans scroll est une bonne longueur.",
-              },
-              {
-                q: "Faut-il commencer par « Madame, Monsieur » ?",
-                a: "Si vous connaissez le nom du recruteur (souvent dispo sur l'offre LinkedIn ou le site carrière), adressez-vous à lui directement : « Madame Dupont ». Sinon, « Madame, Monsieur » reste standard en France. Évitez « Bonjour » dans un contexte corporate, c'est trop familier.",
-              },
-              {
-                q: "Puis-je utiliser la même lettre pour plusieurs offres ?",
-                a: "Non. Deux offres similaires ont rarement le même contexte, les mêmes mots-clés, la même culture. Adaptez a minima le paragraphe 'Vous' (sur l'entreprise) et 2-3 mots-clés dans le paragraphe 'Moi'. C'est 2 minutes de travail et ça multiplie les réponses.",
-              },
-            ].map((item, i) => (
+            {FAQ_ITEMS.map((item, i) => (
               <details
                 key={i}
                 className="group rounded-xl border border-slate-200 bg-white px-5 py-4 open:border-blue-200 open:bg-blue-50/30"
@@ -464,6 +473,48 @@ export default function LettreMotivationIaPage() {
               </details>
             ))}
           </div>
+        </section>
+
+        {/* Sources */}
+        <section className="mb-12 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+          <h2 className="text-base font-bold text-slate-900 mb-3 uppercase tracking-wide">
+            Sources et ressources
+          </h2>
+          <ul className="space-y-2 text-sm text-slate-700">
+            <li>
+              •{" "}
+              <a
+                href="https://www.apec.fr/candidat/mon-projet-professionnel/je-reflechis-a-mon-projet/cv-lettre-de-motivation.html"
+                rel="noopener"
+                className="text-blue-700 hover:text-blue-800 underline"
+              >
+                APEC — CV et lettre de motivation
+              </a>{" "}
+              (exemples et bonnes pratiques cadres).
+            </li>
+            <li>
+              •{" "}
+              <a
+                href="https://www.francetravail.fr/candidat/mes-services/construire-son-cv.html"
+                rel="noopener"
+                className="text-blue-700 hover:text-blue-800 underline"
+              >
+                France Travail — Candidature
+              </a>{" "}
+              (méthodo officielle lettre + CV).
+            </li>
+            <li>
+              •{" "}
+              <a
+                href="https://www.service-public.fr/particuliers/vosdroits/F2918"
+                rel="noopener"
+                className="text-blue-700 hover:text-blue-800 underline"
+              >
+                Service-Public.fr — Recherche d&apos;emploi
+              </a>{" "}
+              (droits et aides).
+            </li>
+          </ul>
         </section>
 
         {/* CTA final */}
@@ -590,6 +641,10 @@ export default function LettreMotivationIaPage() {
           </nav>
         </div>
       </footer>
+
+      <JsonLdScript
+        data={[breadcrumbLd(BREADCRUMB), faqPageLd(FAQ_ITEMS)]}
+      />
     </div>
   );
 }
