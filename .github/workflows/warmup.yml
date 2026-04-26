@@ -1,0 +1,37 @@
+name: Railway warmup
+
+# Empêche le container Railway (Hobby/Trial) de partir en sleep en
+# pingant /health toutes les 5 minutes. Sans ça, la 1re génération de
+# la journée subit un cold start de 30-45 s.
+#
+# Coût : 0 € (GitHub Actions est gratuit jusqu'à 2000 min/mois sur
+# repos public et 3000 min/mois sur Pro). Une exécution dure ~3-5 s →
+# environ 24h * 12/h * 5s = 24 min/jour = ~720 min/mois de quota.
+
+on:
+  schedule:
+    # GitHub Actions cron tourne en UTC. Granularité minimum = 5 min.
+    # Note : GitHub peut retarder de quelques minutes en cas de charge.
+    - cron: "*/5 * * * *"
+  # Pour pouvoir le déclencher manuellement depuis l'onglet Actions.
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Ping Railway /health
+        run: |
+          set -e
+          start=$(date +%s%3N)
+          status=$(curl -sS -o /dev/null -w "%{http_code}" \
+            --max-time 30 \
+            https://cv-modifier-production.up.railway.app/health)
+          end=$(date +%s%3N)
+          elapsed=$((end - start))
+          echo "status=$status elapsed_ms=$elapsed"
+          if [ "$status" != "200" ]; then
+            echo "::warning::Railway health returned $status (expected 200)"
+            exit 1
+          fi
