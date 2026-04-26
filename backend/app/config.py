@@ -21,8 +21,18 @@ class Settings(BaseSettings):
 
     # Anthropic
     anthropic_api_key: str = ""
-    claude_model: str = "claude-haiku-4-5-20251001"
-    max_tokens: int = 4000
+    # Default = Sonnet 4.6 : output streaming ~2x plus rapide que Haiku 4.5
+    # pour ~3x le coût/MTok output (passe de ~1.1¢ à ~3.3¢ par génération sur
+    # le bloc IA, marge brute reste ~86 % sur Pro worst-case).
+    claude_model: str = "claude-sonnet-4-6"
+    # Output réel observé : ~1700 tokens pour le CV-only, ~600 pour la lettre.
+    # 2200 laisse une marge confortable sans réserver trop de buffer.
+    max_tokens: int = 2200
+    # Split CV / lettre en 2 appels parallèles. Lance les deux via
+    # asyncio.gather → wall time = max(cv, lettre) au lieu de cv+lettre.
+    # Toggle off (AI_PARALLEL_SPLIT=false) si on observe des incohérences
+    # entre les bullets CV et le contenu de la lettre.
+    ai_parallel_split: bool = True
 
     # Storage
     storage_backend: str = "local"  # "local" or "s3"

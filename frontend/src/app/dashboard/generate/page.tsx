@@ -29,13 +29,25 @@ export default function GeneratePage() {
   const [result, setResult] = useState<{ job_title?: string; company_name?: string } | null>(null);
   const [error, setError] = useState("");
   const [scraping, setScraping] = useState(false);
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // SSE replaces the previous 2 s polling on /api/generations/{id}.
+  const streamRef = useRef<EventSource | null>(null);
+  // Human label for the current pipeline step shown during the loader.
+  const [progressLabel, setProgressLabel] = useState("Préparation…");
 
   useEffect(() => {
     return () => {
-      if (pollRef.current) clearInterval(pollRef.current);
+      streamRef.current?.close();
     };
   }, []);
+
+  const STEP_LABELS: Record<string, string> = {
+    scraping_started: "Lecture de l'offre…",
+    scraping_done: "Offre analysée",
+    ai_started: "Adaptation du CV par l'IA…",
+    ai_done: "CV et lettre rédigés",
+    pdfs_done: "Mise en page des PDFs…",
+    uploads_done: "Finalisation…",
+  };
 
   const handleScrapeAndGenerate = async () => {
     // Short-circuit unverified users before we scrape or consume a credit.
@@ -79,6 +91,7 @@ export default function GeneratePage() {
 
     // Generate
     setStep("generating");
+    setProgressLabel("Préparation…");
     setError("");
     try {
       const gen = await api.createGeneration({
@@ -87,23 +100,70 @@ export default function GeneratePage() {
       });
       setGenerationId(gen.id);
 
-      pollRef.current = setInterval(async () => {
+      // Open SSE stream. Same-origin so the auth cookie is sent automatically.
+      const stream = new EventSource(`/api/generations/${gen.id}/stream`);
+      streamRef.current = stream;
+
+      stream.onmessage = (msg) => {
+        try {
+          const event = JSON.parse(msg.data) as {
+            step: string;
+            error?: string;
+            job_title?: string;
+            company_name?: string;
+          };
+          if (event.step === "completed") {
+            stream.close();
+            streamRef.current = null;
+            setResult({
+              job_title: event.job_title,
+              company_name: event.company_name,
+            });
+            setStep("done");
+            refreshUser();
+            return;
+          }
+          if (event.step === "failed") {
+            stream.close();
+            streamRef.current = null;
+            setError(event.error || "La génération a échoué");
+            setStep("error");
+            return;
+          }
+          if (STEP_LABELS[event.step]) {
+            setProgressLabel(STEP_LABELS[event.step]);
+          }
+        } catch {
+          /* ignore malformed event */
+        }
+      };
+
+      // If the stream drops (network blip, Vercel proxy hiccup) we fall
+      // back to a single GET to recover the final state.
+      stream.onerror = async () => {
+        stream.close();
+        streamRef.current = null;
         try {
           const status = await api.getGeneration(gen.id);
           if (status.status === "completed") {
-            if (pollRef.current) clearInterval(pollRef.current);
-            setResult({ job_title: status.job_title, company_name: status.company_name });
+            setResult({
+              job_title: status.job_title,
+              company_name: status.company_name,
+            });
             setStep("done");
             refreshUser();
           } else if (status.status === "failed") {
-            if (pollRef.current) clearInterval(pollRef.current);
             setError(status.error_message || "La génération a échoué");
+            setStep("error");
+          } else {
+            setError("Connexion perdue, réessayez.");
             setStep("error");
           }
         } catch {
-          // Keep polling
+          setError("Connexion perdue, réessayez.");
+          setStep("error");
         }
-      }, 2000);
+      };
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Erreur";
       // Backend marker (see backend/app/api/generations.py). We also guard on
@@ -236,19 +296,13 @@ export default function GeneratePage() {
       {step === "generating" && (
         <div className="bg-white rounded-2xl border border-slate-200 p-12 shadow-sm text-center">
           <Loader2 className="w-10 h-10 text-blue-600 animate-spin mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-slate-900 mb-2">Génération en cours...</h3>
+          <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            {progressLabel}
+          </h3>
           <p className="text-slate-500 mb-4">
-            L&apos;IA analyse l&apos;offre et adapte votre CV. Cela prend environ 15 secondes.
+            CV et lettre adaptés en parallèle, ça ne prend qu&apos;une dizaine
+            de secondes.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-sm text-slate-400">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Offre analysée
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Loader2 className="w-4 h-4 animate-spin" /> Adaptation du CV
-            </span>
-            <span className="text-slate-300">Génération PDF</span>
-          </div>
         </div>
       )}
 

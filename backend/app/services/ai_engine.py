@@ -1,6 +1,30 @@
+"""Anthropic Claude wrapper for CV + cover letter generation.
+
+Two execution modes selected via `settings.ai_parallel_split` :
+
+* **Split + parallel (default)** — runs two `client.messages.stream()` in
+  parallel via `asyncio.gather()` :
+    - one for the CV body only (~1700 tokens output)
+    - one for the cover letter only (~600 tokens output)
+  Wall time = max(cv, letter) ≈ 50 % of the single-call baseline.
+  Costs +1 cache write per generation (~+0.5 ¢) but margin stays > 85 %.
+
+* **Single call (fallback)** — keeps the original behaviour where Claude
+  returns the full JSON (CV fields + lettre_motivation) in one shot.
+  Used as escape hatch if we ever observe coherence issues between the
+  two parallel outputs.
+
+Streaming is always on (`client.messages.stream(...)`) so we can pipe
+progress events to the SSE bus and keep wall-time-equivalent latency.
+"""
+
+from __future__ import annotations
+
+import asyncio
 import json
 import logging
 from dataclasses import dataclass
+from typing import Awaitable, Callable
 
 import anthropic
 
@@ -20,12 +44,30 @@ class UsageStats:
 
     @property
     def estimated_cost(self) -> float:
-        # Haiku 4.5 pricing (approx) — $1/M input, $5/M output
-        return (self.input_tokens * 1 / 1_000_000) + (
-            self.output_tokens * 5 / 1_000_000
+        # Sonnet 4.6 (default) : ~3 $/MTok input, ~15 $/MTok output.
+        # Haiku 4.5 fallback : ~1 $/MTok input, ~5 $/MTok output.
+        # We use Sonnet rates for the estimate when the configured model
+        # name contains "sonnet", else assume Haiku-class rates.
+        if "sonnet" in (settings.claude_model or "").lower():
+            return (
+                self.input_tokens * 3 / 1_000_000
+                + self.output_tokens * 15 / 1_000_000
+            )
+        return (
+            self.input_tokens * 1 / 1_000_000
+            + self.output_tokens * 5 / 1_000_000
+        )
+
+    def merged_with(self, other: "UsageStats") -> "UsageStats":
+        return UsageStats(
+            input_tokens=self.input_tokens + other.input_tokens,
+            output_tokens=self.output_tokens + other.output_tokens,
         )
 
 
+# ---------------------------------------------------------------------------
+# Prompt blocks
+# ---------------------------------------------------------------------------
 def _build_system_prompt(gender: str = "male") -> str:
     gender_rule = (
         'Le candidat est un HOMME. Utilise TOUJOURS la forme masculine (ex: "Chargé" et non "Chargé(e)", "Directeur" et non "Directeur/trice"). Jamais de forme inclusive ou féminine.'
@@ -57,18 +99,16 @@ sans montant chiffré).
 
 {gender_rule}
 
-Tu réponds UNIQUEMENT en JSON valide. Pas de markdown, pas de commentaires, pas de texte autour."""
+FORMAT DE RÉPONSE STRICT : tu réponds UNIQUEMENT avec un JSON brut.
+- Le 1er caractère de ta réponse DOIT être '{{' et le dernier '}}'.
+- AUCUNE balise markdown ```json ou ```. AUCUN texte avant ou après le JSON.
+- AUCUN commentaire, AUCUNE explication."""
 
 
-def _build_profile_and_format(
-    profile_data: dict,
-    custom_instructions: str | None = None,
-) -> str:
-    """Static/cacheable part of the user prompt: profile + custom instructions + output format + rules.
-
-    This string is stable for a given user (profile + custom instructions rarely change),
-    so it's marked with cache_control in the API call to benefit from Anthropic prompt caching.
-    """
+# ---------------------------------------------------------------------------
+# Profile block — shared between single-call and split modes.
+# ---------------------------------------------------------------------------
+def _profile_block(profile_data: dict, custom_instructions: str | None) -> str:
     exp_text = ""
     for exp in profile_data.get("experiences", []):
         exp_text += f"\n- {exp['title']} @ {exp['company']} ({exp.get('dates', '')})\n"
@@ -101,75 +141,103 @@ Expériences professionnelles :
 Compétences : {", ".join(profile_data.get("skills", []))}
 Atouts : {", ".join(profile_data.get("soft_skills", []))}
 Langues : {", ".join(profile_data.get("languages", []))}
-{custom_rules}
----
+{custom_rules}---"""
+
+
+# Schema + rules for the SINGLE-CALL mode (full CV + lettre).
+def _build_profile_and_format(
+    profile_data: dict, custom_instructions: str | None = None
+) -> str:
+    return f"""{_profile_block(profile_data, custom_instructions)}
 
 Tu vas générer un JSON avec cette structure EXACTE, en appliquant les règles ci-dessous à l'offre d'emploi fournie plus bas :
 
 {{
   "nom_entreprise": "Le nom de l'entreprise qui recrute (tel qu'il apparaît dans l'offre)",
   "titre_poste": "Le titre EXACT du poste tel qu'il apparaît dans l'offre d'emploi",
-  "resume_professionnel": "3-4 LIGNES COURTES maximum (environ 40-50 mots). Accroche percutante et directe : poste visé + 2-3 compétences clés de l'offre + lien avec le parcours. PAS de phrases longues ou de pavé de texte.",
+  "resume_professionnel": "3-4 LIGNES COURTES maximum (environ 40-50 mots). Accroche percutante : poste visé + 2-3 compétences clés de l'offre + lien avec le parcours.",
   "competences": ["compétence 1", "compétence 2", "..."],
   "atouts": ["atout 1", "atout 2", "..."],
   "experiences": [
-    {{
-      "title": "Titre du poste",
-      "company": "Entreprise",
-      "location": "Lieu",
-      "dates": "dates",
-      "bullets": ["point 1", "point 2", "point 3"]
-    }}
+    {{"title": "Titre", "company": "Entreprise", "location": "Lieu", "dates": "dates", "bullets": ["point 1", "point 2"]}}
   ],
   "lettre_motivation": "Texte complet de la lettre de motivation..."
 }}
 
 RÈGLES IMPÉRATIVES :
+1. Identifie les 5-10 mots-clés de l'offre. Chacun DOIT apparaître au moins une fois dans le CV.
+2. titre_poste = titre exact de l'offre.
+3. resume_professionnel = 40-50 mots, poste visé + 2-3 compétences clés + lien parcours.
+4. Les title des expériences restent EXACTEMENT identiques au profil original — JAMAIS modifiés.
+5. Chaque bullet est réécrite avec le vocabulaire EXACT de l'offre. Étoffe les bullets courtes en détaillant missions/méthodes (pas de chiffres inventés).
+6. N'INVENTE JAMAIS de chiffres absolus (CA, montants €, effectifs, ROAS). Reprends uniquement ceux du profil.
+7. Ordonne expériences et compétences par pertinence pour l'offre (récente d'abord).
+8. Compétences : reprends celles du profil qui matchent l'offre, reformule avec le vocab de l'offre. N'ajoute des compétences de l'offre QUE si crédibles au vu du parcours ET au cœur du métier visé. Ne liste PAS les compétences décrivant l'environnement (ex: "cybersécurité" pour un poste commercial).
+9. Atouts : adapte aux qualités recherchées dans l'offre.
+10. lettre_motivation : structure Vous (entreprise) / Moi (parcours avec mots-clés offre) / Nous (collab). 250-350 mots. Sépare les paragraphes avec \\n\\n.
+11. Maximum 6 expériences (3-4 bullets détaillées chacune), 12 compétences, 6 atouts.
+12. Conserve TOUTES les expériences du profil, ne supprime rien."""
 
-== ADAPTATION MAXIMALE ==
-0. AVANT DE RÉDIGER, liste mentalement les 5-10 mots-clés et compétences les plus importants de l'offre. Chacun de ces mots-clés DOIT apparaître au moins une fois dans le CV (résumé, compétences ou bullets).
 
-1. LE TITRE (titre_poste) DOIT être le titre du poste de l'offre d'emploi, PAS un titre générique.
+# Schema + rules for the CV-ONLY parallel call.
+def _build_profile_and_format_cv_only(
+    profile_data: dict, custom_instructions: str | None = None
+) -> str:
+    return f"""{_profile_block(profile_data, custom_instructions)}
 
-2. LE RÉSUMÉ (resume_professionnel) DOIT :
-   - Faire 3-4 LIGNES COURTES maximum (40-50 mots). C'est une ACCROCHE, pas un paragraphe.
-   - Mentionner le poste visé + 2-3 compétences clés de l'offre
-   - Montrer le lien direct entre le parcours et le poste
-   - Phrases courtes et percutantes, pas de longues envolées
+Tu vas générer un JSON avec cette structure EXACTE pour ADAPTER LE CV à l'offre d'emploi fournie plus bas. Tu ne génères PAS la lettre de motivation ici, uniquement le CV :
 
-3. TITRES DE POSTE : les titres (title) de TOUTES les expériences doivent rester EXACTEMENT identiques au profil original. Ne les modifie JAMAIS.
+{{
+  "nom_entreprise": "Le nom de l'entreprise qui recrute (tel qu'il apparaît dans l'offre)",
+  "titre_poste": "Le titre EXACT du poste tel qu'il apparaît dans l'offre",
+  "resume_professionnel": "3-4 LIGNES COURTES (40-50 mots). Accroche : poste visé + 2-3 compétences clés + lien parcours.",
+  "competences": ["compétence 1", "compétence 2", "..."],
+  "atouts": ["atout 1", "atout 2", "..."],
+  "experiences": [
+    {{"title": "Titre", "company": "Entreprise", "location": "Lieu", "dates": "dates", "bullets": ["point 1", "point 2"]}}
+  ]
+}}
 
-4. TOUTES les expériences DOIVENT être reformulées activement pour coller à l'offre :
-   - Chaque BULLET doit être réécrite pour créer un lien avec l'offre. Utilise le vocabulaire EXACT de l'offre.
-   - Étoffe les bullets courtes en détaillant les MISSIONS, MÉTHODES et RESPONSABILITÉS (pas en inventant des chiffres).
-   - N'INVENTE JAMAIS de chiffres absolus (CA, montants €, effectifs, nombre de clients, ROAS, taux de conversion). Reprends uniquement ceux du profil original.
-   - Si le profil contient un chiffre, tu peux le reprendre tel quel. Sinon, reste qualitatif.
-   - Règle d'or : chaque bullet doit contenir au moins un mot-clé de l'offre.
+RÈGLES IMPÉRATIVES :
+1. Identifie les 5-10 mots-clés de l'offre. Chacun DOIT apparaître au moins une fois dans le CV.
+2. titre_poste = titre exact de l'offre.
+3. resume_professionnel = 40-50 mots, poste visé + 2-3 compétences clés + lien parcours.
+4. Les title des expériences restent EXACTEMENT identiques au profil original — JAMAIS modifiés.
+5. Chaque bullet est réécrite avec le vocabulaire EXACT de l'offre. Étoffe les bullets courtes en détaillant missions/méthodes (pas de chiffres inventés).
+6. N'INVENTE JAMAIS de chiffres absolus (CA, montants €, effectifs, ROAS). Reprends uniquement ceux du profil.
+7. Ordonne expériences et compétences par pertinence pour l'offre (récente d'abord).
+8. Compétences : celles du profil qui matchent l'offre, reformulées avec le vocab de l'offre. N'ajoute de l'offre QUE si crédible + cœur de métier. Pas de compétences décrivant juste l'environnement.
+9. Atouts : adapte aux qualités recherchées.
+10. Maximum 6 expériences (3-4 bullets), 12 compétences, 6 atouts. Conserve TOUTES les expériences du profil."""
 
-5. ORDONNE les expériences et compétences par pertinence pour l'offre (la plus récente en premier).
 
-6. COMPÉTENCES : sélection rigoureuse et cohérente avec le RÔLE visé.
-   - PRIORITÉ 1 : reprends d'abord les compétences du profil original qui matchent l'offre, en les reformulant avec le vocabulaire EXACT de l'offre si besoin (ex: "Vente BtoB" → "Développement commercial BtoB" si l'offre le formule ainsi).
-   - PRIORITÉ 2 : ajoute des compétences de l'offre UNIQUEMENT si elles correspondent au CŒUR DE MÉTIER du poste visé ET sont crédibles au vu du parcours.
-   - FILTRE par fonction : pour un poste commercial/business, privilégie les compétences commerciales (prospection, négociation, cycle de vente, CRM, gestion de portefeuille, closing, account management). Ne liste PAS de compétences techniques profondes (cybersécurité, cloud, infrastructure, développement) même si elles apparaissent dans l'offre — elles décrivent l'environnement du poste, pas les compétences attendues du candidat. Inversement pour un poste technique, évite les compétences purement commerciales.
-   - Test de cohérence : avant d'ajouter une compétence, demande-toi "est-ce que cette compétence est attendue de MOI dans ce poste, ou décrit-elle juste le secteur/produit ?". Si c'est le secteur, ne l'ajoute pas aux compétences (mais tu peux la mentionner dans un bullet d'expérience ou le résumé comme connaissance de l'écosystème).
+# Schema + rules for the LETTER-ONLY parallel call.
+def _build_profile_and_format_letter_only(
+    profile_data: dict, custom_instructions: str | None = None
+) -> str:
+    return f"""{_profile_block(profile_data, custom_instructions)}
 
-7. ATOUTS : adapte les atouts aux qualités recherchées dans l'offre.
+Tu vas rédiger UNIQUEMENT la lettre de motivation pour l'offre d'emploi fournie plus bas. Tu ne génères PAS le CV ici. Format :
 
-8. La lettre de motivation suit la structure Vous/Moi/Nous :
-   - Vous : ce que l'entreprise fait/recherche (montre que tu as LU l'offre en détail)
-   - Moi : ce que je peux apporter (cite des exemples CONCRETS du parcours, avec les mots-clés de l'offre)
-   - Nous : ce qu'on pourrait accomplir ensemble
-   La lettre doit faire environ 250-350 mots. Utilise des \\n\\n pour séparer les paragraphes.
+{{
+  "nom_entreprise": "Le nom de l'entreprise qui recrute (tel qu'il apparaît dans l'offre)",
+  "titre_poste": "Le titre EXACT du poste tel qu'il apparaît dans l'offre",
+  "lettre_motivation": "Texte complet de la lettre, paragraphes séparés par \\n\\n"
+}}
 
-9. Maximum 6 expériences. Chaque expérience a 3-4 bullets DÉTAILLÉES (pas de bullets d'un seul mot).
-10. Maximum 12 compétences, maximum 6 atouts.
-11. Conserve TOUTES les expériences du profil, ne supprime rien.
-12. Réponds UNIQUEMENT avec le JSON, rien d'autre."""
+RÈGLES IMPÉRATIVES POUR LA LETTRE :
+1. Structure Vous / Moi / Nous :
+   - VOUS : ce que l'entreprise fait/recherche, montre que tu as LU l'offre en détail
+   - MOI : ce que je peux apporter, exemples CONCRETS du parcours, mots-clés de l'offre
+   - NOUS : ce qu'on pourrait accomplir ensemble
+2. Longueur : 250-350 mots. Paragraphes séparés par \\n\\n.
+3. Cite 2-3 expériences ou réalisations RÉELLES du profil (pas inventées).
+4. Réutilise 3-5 mots-clés EXACTS de l'offre.
+5. Ton professionnel mais pas guindé. Évite les formules creuses ("dynamique et motivé").
+6. nom_entreprise + titre_poste reprennent l'offre à l'identique."""
 
 
 def _build_job_section(job_text: str) -> str:
-    """Dynamic part of the user prompt: the job offer. Varies per generation."""
     return f"""---
 
 OFFRE D'EMPLOI À ADAPTER :
@@ -181,102 +249,251 @@ OFFRE D'EMPLOI À ADAPTER :
 Génère maintenant le JSON."""
 
 
+# ---------------------------------------------------------------------------
+# Streaming Claude call — shared by both modes.
+# ---------------------------------------------------------------------------
+async def _stream_claude(
+    system_prompt: str,
+    cached_block: str,
+    dynamic_block: str,
+    max_tokens: int,
+    on_text: Callable[[str], Awaitable[None] | None] | None = None,
+) -> tuple[str, UsageStats]:
+    """Run a single streaming Claude call, returning (text, usage).
+
+    Streams tokens to `on_text` if provided (lets the caller forward chunks
+    to an SSE bus). The function still waits for the full message before
+    returning — wall time is unchanged but the streaming hook lets us push
+    progress to the user without blocking.
+    """
+    client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+
+    async with client.messages.stream(
+        model=settings.claude_model,
+        max_tokens=max_tokens,
+        system=[
+            {
+                "type": "text",
+                "text": system_prompt,
+                "cache_control": {"type": "ephemeral"},
+            }
+        ],
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": cached_block,
+                        "cache_control": {"type": "ephemeral"},
+                    },
+                    {"type": "text", "text": dynamic_block},
+                ],
+            }
+        ],
+    ) as stream:
+        chunks: list[str] = []
+        async for text in stream.text_stream:
+            chunks.append(text)
+            if on_text is not None:
+                result = on_text(text)
+                if asyncio.iscoroutine(result):
+                    await result
+        final = await stream.get_final_message()
+
+    full_text = "".join(chunks).strip()
+    if full_text.startswith("```"):
+        full_text = full_text.split("\n", 1)[1] if "\n" in full_text else full_text
+        full_text = full_text.rsplit("```", 1)[0].strip()
+
+    usage = UsageStats(
+        input_tokens=final.usage.input_tokens,
+        output_tokens=final.usage.output_tokens,
+    )
+    cache_read = getattr(final.usage, "cache_read_input_tokens", 0) or 0
+    cache_write = getattr(final.usage, "cache_creation_input_tokens", 0) or 0
+    if cache_read or cache_write:
+        logger.info(
+            "Prompt cache — read: %s tokens, write: %s tokens",
+            cache_read,
+            cache_write,
+        )
+    return full_text, usage
+
+
+def _parse_json_with_keys(text: str, required: list[str]) -> dict:
+    data = json.loads(text)
+    missing = [k for k in required if k not in data]
+    if missing:
+        raise ValueError(f"Clés manquantes : {missing}")
+    return data
+
+
+# ---------------------------------------------------------------------------
+# Single-call mode (fallback).
+# ---------------------------------------------------------------------------
+async def _generate_unified(
+    job_text: str,
+    profile_data: dict,
+    custom_instructions: str | None,
+    gender: str,
+) -> tuple[dict, UsageStats]:
+    system_prompt = _build_system_prompt(gender)
+    cached_block = _build_profile_and_format(profile_data, custom_instructions)
+    dynamic_block = _build_job_section(job_text)
+    required = [
+        "nom_entreprise",
+        "titre_poste",
+        "resume_professionnel",
+        "competences",
+        "atouts",
+        "experiences",
+        "lettre_motivation",
+    ]
+
+    for attempt in range(2):
+        retry_suffix = (
+            "\n\nTA RÉPONSE PRÉCÉDENTE N'ÉTAIT PAS DU JSON VALIDE. Réponds UNIQUEMENT avec du JSON valide, sans markdown."
+            if attempt > 0
+            else ""
+        )
+        text, usage = await _stream_claude(
+            system_prompt=system_prompt,
+            cached_block=cached_block,
+            dynamic_block=dynamic_block + retry_suffix,
+            max_tokens=settings.max_tokens + 1000,  # full JSON needs more
+        )
+        try:
+            return _parse_json_with_keys(text, required), usage
+        except (json.JSONDecodeError, ValueError) as exc:
+            if attempt == 0:
+                logger.warning("Invalid unified response (%s), retrying...", exc)
+                continue
+            raise RuntimeError(
+                "Impossible d'obtenir une réponse JSON valide après 2 tentatives."
+            ) from exc
+
+    raise RuntimeError("Échec de la génération.")
+
+
+# ---------------------------------------------------------------------------
+# Split + parallel mode (default).
+# ---------------------------------------------------------------------------
+async def _generate_cv_only(
+    job_text: str,
+    profile_data: dict,
+    custom_instructions: str | None,
+    gender: str,
+) -> tuple[dict, UsageStats]:
+    system_prompt = _build_system_prompt(gender)
+    cached_block = _build_profile_and_format_cv_only(
+        profile_data, custom_instructions
+    )
+    dynamic_block = _build_job_section(job_text)
+    required = [
+        "nom_entreprise",
+        "titre_poste",
+        "resume_professionnel",
+        "competences",
+        "atouts",
+        "experiences",
+    ]
+
+    for attempt in range(2):
+        retry_suffix = (
+            "\n\nRappel : JSON brut uniquement, sans markdown."
+            if attempt > 0
+            else ""
+        )
+        text, usage = await _stream_claude(
+            system_prompt=system_prompt,
+            cached_block=cached_block,
+            dynamic_block=dynamic_block + retry_suffix,
+            max_tokens=settings.max_tokens,
+        )
+        try:
+            return _parse_json_with_keys(text, required), usage
+        except (json.JSONDecodeError, ValueError) as exc:
+            if attempt == 0:
+                logger.warning("Invalid CV-only response (%s), retrying...", exc)
+                continue
+            raise RuntimeError(
+                "Impossible d'obtenir un CV en JSON valide après 2 tentatives."
+            ) from exc
+
+    raise RuntimeError("Échec de la génération CV.")
+
+
+async def _generate_letter_only(
+    job_text: str,
+    profile_data: dict,
+    custom_instructions: str | None,
+    gender: str,
+) -> tuple[dict, UsageStats]:
+    system_prompt = _build_system_prompt(gender)
+    cached_block = _build_profile_and_format_letter_only(
+        profile_data, custom_instructions
+    )
+    dynamic_block = _build_job_section(job_text)
+    required = ["lettre_motivation", "nom_entreprise", "titre_poste"]
+
+    for attempt in range(2):
+        retry_suffix = (
+            "\n\nRappel : JSON brut uniquement, sans markdown."
+            if attempt > 0
+            else ""
+        )
+        # Letter is much shorter (~600 tokens output).
+        text, usage = await _stream_claude(
+            system_prompt=system_prompt,
+            cached_block=cached_block,
+            dynamic_block=dynamic_block + retry_suffix,
+            max_tokens=1000,
+        )
+        try:
+            return _parse_json_with_keys(text, required), usage
+        except (json.JSONDecodeError, ValueError) as exc:
+            if attempt == 0:
+                logger.warning("Invalid letter response (%s), retrying...", exc)
+                continue
+            raise RuntimeError(
+                "Impossible d'obtenir une lettre en JSON valide après 2 tentatives."
+            ) from exc
+
+    raise RuntimeError("Échec de la génération de la lettre.")
+
+
+# ---------------------------------------------------------------------------
+# Public entry point used by the pipeline.
+# ---------------------------------------------------------------------------
 async def generate_adapted_cv(
     job_text: str,
     profile_data: dict,
     custom_instructions: str | None = None,
     gender: str = "male",
 ) -> tuple[dict, UsageStats]:
-    """Generate an adapted CV using Claude API with prompt caching.
+    """Generate a fully adapted CV + cover letter.
 
-    The system prompt and the profile+rules block are cached (ephemeral, ~5min TTL)
-    so subsequent generations for the same user within that window benefit from
-    reduced latency and cost on those static sections.
-
-    Returns (adapted_data, usage_stats).
+    Dispatches to the parallel split or the unified single-call path based
+    on `settings.ai_parallel_split`. Returns (data, usage) where `data`
+    contains all the keys the pipeline expects (nom_entreprise, titre_poste,
+    resume_professionnel, competences, atouts, experiences, lettre_motivation).
     """
-    client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
-    system_prompt = _build_system_prompt(gender)
-    cached_content = _build_profile_and_format(profile_data, custom_instructions)
-    dynamic_content = _build_job_section(job_text)
+    if not settings.ai_parallel_split:
+        return await _generate_unified(
+            job_text, profile_data, custom_instructions, gender
+        )
 
-    for attempt in range(2):
-        try:
-            messages_content = [
-                {
-                    "type": "text",
-                    "text": cached_content,
-                    "cache_control": {"type": "ephemeral"},
-                },
-                {
-                    "type": "text",
-                    "text": (
-                        dynamic_content
-                        if attempt == 0
-                        else dynamic_content
-                        + "\n\nTA RÉPONSE PRÉCÉDENTE N'ÉTAIT PAS DU JSON VALIDE. Réponds UNIQUEMENT avec du JSON valide."
-                    ),
-                },
-            ]
+    cv_task = _generate_cv_only(job_text, profile_data, custom_instructions, gender)
+    letter_task = _generate_letter_only(
+        job_text, profile_data, custom_instructions, gender
+    )
+    (cv_data, cv_usage), (letter_data, letter_usage) = await asyncio.gather(
+        cv_task, letter_task
+    )
 
-            response = await client.messages.create(
-                model=settings.claude_model,
-                max_tokens=settings.max_tokens,
-                system=[
-                    {
-                        "type": "text",
-                        "text": system_prompt,
-                        "cache_control": {"type": "ephemeral"},
-                    }
-                ],
-                messages=[{"role": "user", "content": messages_content}],
-            )
-            content = response.content[0].text.strip()
-
-            # Remove markdown fences if present
-            if content.startswith("```"):
-                content = content.split("\n", 1)[1]
-                content = content.rsplit("```", 1)[0]
-
-            data = json.loads(content)
-
-            # Validate required keys
-            required = [
-                "nom_entreprise",
-                "titre_poste",
-                "resume_professionnel",
-                "competences",
-                "atouts",
-                "experiences",
-                "lettre_motivation",
-            ]
-            missing = [k for k in required if k not in data]
-            if missing:
-                raise ValueError(f"Clés manquantes : {missing}")
-
-            usage = UsageStats(
-                input_tokens=response.usage.input_tokens,
-                output_tokens=response.usage.output_tokens,
-            )
-            cache_read = getattr(response.usage, "cache_read_input_tokens", 0) or 0
-            cache_write = getattr(response.usage, "cache_creation_input_tokens", 0) or 0
-            if cache_read or cache_write:
-                logger.info(
-                    f"Prompt cache — read: {cache_read} tokens, write: {cache_write} tokens"
-                )
-            return data, usage
-
-        except json.JSONDecodeError:
-            if attempt == 0:
-                logger.warning("Invalid JSON response, retrying...")
-            else:
-                raise RuntimeError(
-                    "Impossible d'obtenir une réponse JSON valide après 2 tentatives."
-                )
-        except ValueError as e:
-            if attempt == 0:
-                logger.warning(f"{e}, retrying...")
-            else:
-                raise
-
-    raise RuntimeError("Échec de la génération.")
+    # Merge: the CV call is authoritative for nom_entreprise / titre_poste
+    # (the two answers should agree, but we don't risk a mismatch). The
+    # letter call only contributes its `lettre_motivation` text.
+    merged = {**cv_data, "lettre_motivation": letter_data["lettre_motivation"]}
+    return merged, cv_usage.merged_with(letter_usage)

@@ -132,6 +132,59 @@ async def get_generation(
     return gen
 
 
+@router.get("/{generation_id}/stream")
+async def stream_generation(
+    generation_id: uuid.UUID,
+    user: User = Depends(current_active_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Server-sent events stream of pipeline progress for this generation.
+
+    Events follow the schema described in `services/sse_bus.py`. The frontend
+    consumes this in place of the previous 2s polling on
+    `GET /api/generations/{id}` so the UI updates as soon as each step
+    finishes instead of every poll tick.
+    """
+    from fastapi.responses import StreamingResponse
+    from app.services.sse_bus import subscribe
+    import json as _json
+
+    gen = await db.get(Generation, generation_id)
+    if not gen or gen.user_id != user.id:
+        raise HTTPException(404, "Génération non trouvée")
+
+    # If the generation is already terminal we still emit one event so the
+    # client can finalize without waiting on the bus.
+    initial_event = None
+    if gen.status == "completed":
+        initial_event = {
+            "step": "completed",
+            "generation_id": str(gen.id),
+            "job_title": gen.job_title or "",
+            "company_name": gen.company_name or "",
+            "duration_ms": 0,
+        }
+    elif gen.status == "failed":
+        initial_event = {"step": "failed", "error": gen.error_message or "Erreur"}
+
+    async def event_stream():
+        if initial_event is not None:
+            yield f"data: {_json.dumps(initial_event)}\n\n"
+            return
+        async for event in subscribe(generation_id):
+            yield f"data: {_json.dumps(event)}\n\n"
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache, no-transform",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        },
+    )
+
+
 @router.patch("/{generation_id}", response_model=GenerationDetail)
 async def update_generation(
     generation_id: uuid.UUID,

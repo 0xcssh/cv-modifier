@@ -134,36 +134,65 @@ def _clean_html(soup: BeautifulSoup) -> str:
     return soup.get_text(separator="\n", strip=True)[:MAX_TEXT_LENGTH]
 
 
+# Alternate UA used on retry — sites that fingerprint the first request
+# sometimes accept a different UA on the second try.
+_RETRY_HEADERS = {
+    **HEADERS,
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) "
+        "AppleWebKit/605.1.15 (KHTML, like Gecko) "
+        "Version/17.5 Safari/605.1.15"
+    ),
+}
+
+
 async def _scrape_with_requests(url: str) -> ScrapingResult:
-    try:
-        async with httpx.AsyncClient(
-            headers=HEADERS, follow_redirects=True, timeout=20.0
-        ) as client:
-            resp = await client.get(url)
-            resp.raise_for_status()
+    """Try httpx twice (Chrome UA then Safari UA) before giving up.
 
-        soup = BeautifulSoup(resp.text, "html.parser")
-        text = _clean_html(soup)
+    Each attempt gets 8 s — total at most 16 s — which still leaves headroom
+    before we fall back to the (much slower) Playwright path.
+    """
+    last_error: str | None = None
+    for attempt, headers in enumerate((HEADERS, _RETRY_HEADERS), start=1):
+        try:
+            async with httpx.AsyncClient(
+                headers=headers, follow_redirects=True, timeout=8.0
+            ) as client:
+                resp = await client.get(url)
+                resp.raise_for_status()
 
-        if len(text.strip()) < 100:
+            soup = BeautifulSoup(resp.text, "html.parser")
+            text = _clean_html(soup)
+
+            if _is_blocked_page(text):
+                return ScrapingResult(
+                    text="",
+                    char_count=0,
+                    method="requests",
+                    success=False,
+                    error="Le site bloque l'extraction automatique. Copiez-collez le texte de l'offre manuellement.",
+                )
+
+            if len(text.strip()) < 100:
+                last_error = "Contenu insuffisant (site SPA probable)"
+                continue  # retry once with the alt UA
+
             return ScrapingResult(
-                text="", char_count=0, method="requests", success=False,
-                error="Contenu insuffisant (site SPA probable)",
+                text=text, char_count=len(text), method="requests", success=True,
             )
+        except Exception as e:
+            last_error = str(e)
+            if attempt == 1:
+                continue
+            # Both attempts failed — fall through.
 
-        if _is_blocked_page(text):
-            return ScrapingResult(
-                text="", char_count=0, method="requests", success=False,
-                error="Le site bloque l'extraction automatique. Copiez-collez le texte de l'offre manuellement.",
-            )
-
-        return ScrapingResult(
-            text=text, char_count=len(text), method="requests", success=True,
-        )
-    except Exception as e:
-        return ScrapingResult(
-            text="", char_count=0, method="requests", success=False, error=str(e),
-        )
+    return ScrapingResult(
+        text="",
+        char_count=0,
+        method="requests",
+        success=False,
+        error=last_error or "httpx attempts failed",
+    )
 
 
 async def _scrape_with_playwright(url: str) -> ScrapingResult:

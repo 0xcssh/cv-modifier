@@ -1,5 +1,7 @@
+import asyncio
 import logging
 import re
+import time
 import uuid
 
 import sentry_sdk
@@ -13,6 +15,7 @@ from app.services.ai_engine import generate_adapted_cv
 from app.services.cover_letter import generate_cover_letter_pdf
 from app.services.cv_templates import generate_cv_pdf
 from app.services.scraper import scrape_job_offer
+from app.services.sse_bus import publish, publish_terminal
 from app.services.storage import get_storage
 
 logger = logging.getLogger(__name__)
@@ -122,16 +125,34 @@ async def run_generation_pipeline(
             logger.error(f"Generation {generation_id}: missing data")
             return
 
+        pipeline_start = time.perf_counter()
         try:
-            # Step 1: Scrape if no job text provided
+            # Step 1: Scrape if no job text provided.
             if not job_text and job_url:
                 generation.status = "processing"
                 await db.commit()
 
+                await publish(generation_id, {"step": "scraping_started"})
+                t0 = time.perf_counter()
                 result = await scrape_job_offer(job_url)
+                scrape_ms = int((time.perf_counter() - t0) * 1000)
                 if not result.success:
                     raise RuntimeError(f"Scraping échoué : {result.error}")
                 job_text = result.text
+                logger.info(
+                    "Scraping done in %d ms via %s (%d chars)",
+                    scrape_ms,
+                    result.method,
+                    result.char_count,
+                )
+                await publish(
+                    generation_id,
+                    {
+                        "step": "scraping_done",
+                        "duration_ms": scrape_ms,
+                        "method": result.method,
+                    },
+                )
 
             if not job_text:
                 raise RuntimeError("Aucun texte d'offre fourni.")
@@ -140,13 +161,31 @@ async def run_generation_pipeline(
             generation.status = "processing"
             await db.commit()
 
-            # Step 2: Generate adapted CV with Claude
+            # Step 2: Generate CV + cover letter via Claude (split + parallel).
+            await publish(generation_id, {"step": "ai_started"})
+            t0 = time.perf_counter()
             profile_data = _profile_to_dict(profile)
             adapted, usage = await generate_adapted_cv(
                 job_text=job_text,
                 profile_data=profile_data,
                 custom_instructions=profile.custom_instructions,
                 gender=profile.gender,
+            )
+            ai_ms = int((time.perf_counter() - t0) * 1000)
+            logger.info(
+                "AI done in %d ms (%d input + %d output tokens, model=%s)",
+                ai_ms,
+                usage.input_tokens,
+                usage.output_tokens,
+                settings.claude_model,
+            )
+            await publish(
+                generation_id,
+                {
+                    "step": "ai_done",
+                    "duration_ms": ai_ms,
+                    "tokens": usage.total_tokens,
+                },
             )
 
             generation.adapted_data = adapted
@@ -157,8 +196,8 @@ async def run_generation_pipeline(
             generation.model_used = settings.claude_model
             generation.profile_snapshot = profile_data
 
-            # Step 3: Generate PDFs
-            # Load photo if available
+            # Step 3: Generate PDFs in parallel (CV + cover letter).
+            t0 = time.perf_counter()
             photo_bytes = None
             if profile.photo_path:
                 try:
@@ -166,21 +205,41 @@ async def run_generation_pipeline(
                 except FileNotFoundError:
                     pass
 
-            cv_bytes = generate_cv_pdf(
-                profile.cv_template or "classic",
-                adapted,
-                profile_data,
-                photo_bytes,
+            cv_template = profile.cv_template or "classic"
+            cv_bytes, letter_bytes = await asyncio.gather(
+                asyncio.to_thread(
+                    generate_cv_pdf,
+                    cv_template,
+                    adapted,
+                    profile_data,
+                    photo_bytes,
+                ),
+                asyncio.to_thread(
+                    generate_cover_letter_pdf,
+                    adapted["lettre_motivation"],
+                    profile_data,
+                    adapted,
+                ),
             )
-            letter_bytes = generate_cover_letter_pdf(
-                adapted["lettre_motivation"], profile_data, adapted
+            pdf_ms = int((time.perf_counter() - t0) * 1000)
+            logger.info("PDFs done in %d ms", pdf_ms)
+            await publish(
+                generation_id, {"step": "pdfs_done", "duration_ms": pdf_ms}
             )
 
-            # Step 4: Store PDFs
+            # Step 4: Store PDFs in parallel.
+            t0 = time.perf_counter()
             cv_key = f"generations/{generation_id}/cv.pdf"
             letter_key = f"generations/{generation_id}/letter.pdf"
-            await storage.put(cv_key, cv_bytes)
-            await storage.put(letter_key, letter_bytes)
+            await asyncio.gather(
+                storage.put(cv_key, cv_bytes),
+                storage.put(letter_key, letter_bytes),
+            )
+            upload_ms = int((time.perf_counter() - t0) * 1000)
+            logger.info("R2 uploads done in %d ms", upload_ms)
+            await publish(
+                generation_id, {"step": "uploads_done", "duration_ms": upload_ms}
+            )
 
             generation.cv_pdf_path = cv_key
             generation.cover_letter_pdf_path = letter_key
@@ -197,8 +256,23 @@ async def run_generation_pipeline(
             )
 
             await db.commit()
+            total_ms = int((time.perf_counter() - pipeline_start) * 1000)
             logger.info(
-                f"Generation {generation_id} completed: {adapted.get('titre_poste', '?')} @ {adapted.get('nom_entreprise', '?')}"
+                "Generation %s completed in %d ms: %s @ %s",
+                generation_id,
+                total_ms,
+                adapted.get("titre_poste", "?"),
+                adapted.get("nom_entreprise", "?"),
+            )
+            await publish_terminal(
+                generation_id,
+                {
+                    "step": "completed",
+                    "generation_id": str(generation_id),
+                    "duration_ms": total_ms,
+                    "job_title": adapted.get("titre_poste", ""),
+                    "company_name": adapted.get("nom_entreprise", ""),
+                },
             )
 
             # Referral reward — if this was the referee's first successful
@@ -231,6 +305,10 @@ async def run_generation_pipeline(
             generation.error_message = _sanitize_error(e)
             await db.commit()
             logger.exception(f"Generation {generation_id} failed")
+            await publish_terminal(
+                generation_id,
+                {"step": "failed", "error": generation.error_message},
+            )
             # Send the FULL exception to Sentry — the sanitized message above
             # is only for the client response. No-op if Sentry isn't init'd.
             sentry_sdk.capture_exception(e)
